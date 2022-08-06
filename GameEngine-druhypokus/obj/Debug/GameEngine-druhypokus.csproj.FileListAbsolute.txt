@@ -1,0 +1,13 @@
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\GameEngine_druhypokus.exe
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\GameEngine_druhypokus.pdb
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\obj\Debug\GameEngine-druhypokus.csproj.AssemblyReference.cache
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\obj\Debug\GameEngine-druhypokus.csproj.CoreCompileInputs.cache
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\obj\Debug\GameEngine-druhypokus.csproj.CopyComplete
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\obj\Debug\GameEngine_druhypokus.exe
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\obj\Debug\GameEngine_druhypokus.pdb
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\csfml-audio-2.dll
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\csfml-graphics-2.dll
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\csfml-system-2.dll
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\csfml-window-2.dll
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\openal32.dll
+C:\Projekty\CSharpFiles\GameEngine-druhypokus\GameEngine-druhypokus\bin\Debug\OpenTK.dll
