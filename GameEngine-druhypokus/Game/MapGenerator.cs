@@ -58,35 +58,35 @@ namespace GameEngine_druhypokus
                 {
                     
                     var temp = (int)Math.Abs(Math.Round(map[y, x], 1) * 10);
-                    // if (temp > 7)
-                    // {
-                    //     parsedMap[y, x] = 0;
-                    //     continue;
-                    // }
-                    //
-                    // if (temp == 0)
-                    // {
-                    //     parsedMap[y, x] = 1;
-                    //     continue;
-                    // }
-                    // if (temp == 2)
-                    // {
-                    //     parsedMap[y, x] = 8;
-                    //     continue;
-                    // }
-                    //
-                    // if (temp == 3)
-                    // {
-                    //     parsedMap[y, x] = 0;
-                    //     continue;
-                    // }
-                    // if (temp > 3)
-                    // {
-                    //     parsedMap[y, x] = 2;
-                    //     continue;
-                    // }
-                    // parsedMap[y, x] = temp;
-                    parsedMap[y, x] = 9;
+                    if (temp > 7)
+                    {
+                        parsedMap[y, x] = 0;
+                        continue;
+                    }
+                    
+                    if (temp == 0)
+                    {
+                        parsedMap[y, x] = 1;
+                        continue;
+                    }
+                    if (temp == 2)
+                    {
+                        parsedMap[y, x] = 8;
+                        continue;
+                    }
+                    
+                    if (temp == 3)
+                    {
+                        parsedMap[y, x] = 0;
+                        continue;
+                    }
+                    if (temp > 3)
+                    {
+                        parsedMap[y, x] = 2;
+                        continue;
+                    }
+                    parsedMap[y, x] = temp;
+                    //parsedMap[y, x] = 9;
                 }
             }
 

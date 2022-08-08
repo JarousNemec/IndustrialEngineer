@@ -81,84 +81,75 @@ namespace GameEngine_druhypokus
             if (left)
             {
                 View.Move(new Vector2f(-step * GameTime.DeltaTime, 0));
+                _player.Move(-step * GameTime.DeltaTime, 0);
                 Window.SetView(View);
             }
 
             if (up)
             {
                 View.Move(new Vector2f(0, -step * GameTime.DeltaTime));
+                _player.Move(0, -step * GameTime.DeltaTime);
                 Window.SetView(View);
             }
 
             if (down)
             {
                 View.Move(new Vector2f(0, step * GameTime.DeltaTime));
+                _player.Move(0, step * GameTime.DeltaTime);
                 Window.SetView(View);
             }
 
             if (right)
             {
                 View.Move(new Vector2f(step * GameTime.DeltaTime, 0));
+                _player.Move(step * GameTime.DeltaTime, 0);
                 Window.SetView(View);
             }
 
-            //msg = _player.Sprite.Position.ToString();
-            msg = View.Center.ToString();
+            //_player.SetPosition(View.Center.X, View.Center.Y);
         }
 
         private uint zoom = 2;
+        private short zoomed = 1;
 
         public override void WindowOnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e)
         {
-            if (e.Delta == 1)
+            if (e.Delta == 1 && zoomed > 0)
             {
                 view_height /= zoom;
                 view_width /= zoom;
+                zoomed--;
             }
-            else
+            if(e.Delta == -1 && zoomed < 2)
             {
                 view_height *= zoom;
                 view_width *= zoom;
+                zoomed++;
             }
             View.Size = new Vector2f(view_width,view_height);
-            msg = zoom + " X";
+            //msg = zoomed + " X";
             Window.SetView(View);
         }
 
         public override void Initialize()
         {
             GameData = new GameData();
-            // int[] level =
-            // {
-            //     0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            //     0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0,
-            //     1, 1, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3,
-            //     0, 1, 0, 0, 2, 0, 3, 3, 3, 0, 1, 1, 1, 0, 0, 0,
-            //     0, 1, 1, 0, 3, 3, 3, 0, 0, 0, 1, 1, 1, 2, 0, 0,
-            //     0, 0, 1, 0, 3, 0, 2, 2, 0, 0, 1, 1, 1, 1, 2, 0,
-            //     2, 0, 1, 0, 3, 0, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1,
-            //     0, 0, 1, 0, 3, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1,
-            //     0, 0, 1, 0, 3, 2, 2, 0, 0, 0, 0, 0, 1, 1, 1, 1,
-            //     0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-            //     0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0,
-            //     1, 1, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3,
-            //     0, 1, 0, 0, 2, 0, 3, 3, 3, 0, 1, 1, 1, 0, 0, 0,
-            //     0, 1, 1, 0, 3, 3, 3, 0, 0, 0, 1, 1, 1, 2, 0, 0,
-            //     0, 0, 1, 0, 3, 0, 2, 2, 0, 0, 1, 1, 1, 1, 2, 0,
-            //     2, 0, 1, 0, 3, 0, 2, 2, 2, 0, 1, 1, 1, 1, 1, 1,
-            //     0, 0, 1, 0, 3, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1,
-            //     0, 0, 1, 0, 3, 2, 2, 2, 0, 0, 0, 0, 1, 1, 1, 1,
-            // };
             Random r = new Random();
             var generator = new MapGenerator();
-            int mapSize = 1000;
+            var mapRender = new MapRender();
+            int chunkSize = 40;
+            int mapSize = chunkSize*25;
+            int tileSize = 32;
+            int renderArea = chunkSize*3;
             int[] level = generator.Generate(mapSize, r.Next(1,9999));
+            int[] renderedPart = mapRender.GetCurrentChunks(level,mapSize,renderArea);
             map = new Tilemap();
-            map.load(new Vector2u(32, 32), level, (uint)mapSize, (uint)mapSize);
+            map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea, (uint)renderArea);
             View = new View(new FloatRect(0, 0, view_width, view_height));
-            View.Center = new Vector2f(200, 200);
+            View.Center = new Vector2f((renderArea/2)*tileSize, (renderArea/2)*tileSize);
             Window.SetView(View);
             _player = new Player(GameData.GetSprites()["player"]);
+            _player.SetPosition((renderArea/2)*tileSize, (renderArea/2)*tileSize);
         }
 
         public override void Update(GameTime gameTime)
@@ -169,7 +160,8 @@ namespace GameEngine_druhypokus
         public override void Draw(GameTime gameTime)
         {
             Window.Draw(map);
-            _player.Draw(Window, View);
+            _player.Draw(Window);
+            msg = _player.PrintPosition();
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg);
         }
     }
