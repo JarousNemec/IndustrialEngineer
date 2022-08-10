@@ -15,7 +15,7 @@ namespace GameEngine_druhypokus
             consoleFont = new Font(CONSOLE_FONT_PATH);
         }
 
-        public static void DrawPerformanceData(GameLoop gameLoop, Color fontColor, View view, string msg)
+        public static void DrawPerformanceData(GameLoop gameLoop, Color fontColor, View view, string msg, string msg2)
         {
             if (consoleFont == null)
                 return;
@@ -41,11 +41,15 @@ namespace GameEngine_druhypokus
             textD.Position = new Vector2f((view.Center.X-view.Size.X/2) + 4f, (view.Center.Y-view.Size.Y/2) + 64f);
             textD.Color = Color.White;
             
+            Text textE = new Text(msg2, DebugUtil.consoleFont, 16);
+            textE.Position = new Vector2f((view.Center.X-view.Size.X/2) + 4f, (view.Center.Y-view.Size.Y/2) + 84f);
+            textE.Color = Color.White;
 
             gameLoop.Window.Draw(textA);
             gameLoop.Window.Draw(textB);
             gameLoop.Window.Draw(textC);
             gameLoop.Window.Draw(textD);
+            gameLoop.Window.Draw(textE);
         }
     }
 }

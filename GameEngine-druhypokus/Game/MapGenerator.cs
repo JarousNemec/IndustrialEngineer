@@ -1,11 +1,13 @@
 using System;
+using GameEngine_druhypokus.GameEntities;
 using SFML.System;
 
 namespace GameEngine_druhypokus
 {
     public class MapGenerator
     {
-        public int[] Generate(int size, int seed)
+        //public int[] Generate(int size, int seed)
+        public Block[,] Generate(int size, int seed)
         {
             FastNoiseLite noise = new FastNoiseLite();
             var type = FastNoiseLite.NoiseType.OpenSimplex2;
@@ -20,9 +22,10 @@ namespace GameEngine_druhypokus
             float[,] noiseData = new float[size, size];
             GenerateNoiseData(noiseData, noise);
 
-            int[,] map2d = Parse(noiseData);
-            int[] map = ConvertArray(map2d);
-            return map;
+            Block[,] map2d = Parse(noiseData);
+            // int[] map = ConvertArray(map2d);
+            // return map;
+            return map2d;
         }
 
         private static void GenerateNoiseData(float[,] noiseData, FastNoiseLite noise)
@@ -49,9 +52,9 @@ namespace GameEngine_druhypokus
             noise.SetFractalType(fractalType);
         }
 
-        private int[,] Parse(float[,] map)
+        private Block[,] Parse(float[,] map)
         {
-            int[,] parsedMap = new int[map.GetLength(0),map.GetLength(1)];
+            Block[,] parsedMap = new Block[map.GetLength(0),map.GetLength(1)];
             for (int y = 0; y < map.GetLength(0); y++)
             {
                 for (int x = 0; x < map.GetLength(1); x++)
@@ -60,52 +63,37 @@ namespace GameEngine_druhypokus
                     var temp = (int)Math.Abs(Math.Round(map[y, x], 1) * 10);
                     if (temp > 7)
                     {
-                        parsedMap[y, x] = 0;
+                        parsedMap[y, x] = new Block(0);
                         continue;
                     }
                     
                     if (temp == 0)
                     {
-                        parsedMap[y, x] = 1;
+                        parsedMap[y, x] = new Block(1, false);
                         continue;
                     }
                     if (temp == 2)
                     {
-                        parsedMap[y, x] = 8;
+                        parsedMap[y, x] = new Block(8);
                         continue;
                     }
                     
                     if (temp == 3)
                     {
-                        parsedMap[y, x] = 0;
+                        parsedMap[y, x] = new Block(0);
                         continue;
                     }
                     if (temp > 3)
                     {
-                        parsedMap[y, x] = 2;
+                        parsedMap[y, x] = new Block(2, false);
                         continue;
                     }
-                    parsedMap[y, x] = temp;
+                    parsedMap[y, x] = new Block(1, false);
                     //parsedMap[y, x] = 9;
                 }
             }
 
             return parsedMap;
-        }
-
-        private int[] ConvertArray(int[,] array2d)
-        {
-            var array1d = new int[array2d.Length];
-            int index = 0;
-            for (int i = 0; i < array2d.GetLength(0); i++)
-            {
-                for (int j = 0; j < array2d.GetLength(1); j++)
-                {
-                    array1d[index++] = array2d[i, j];
-                }
-            }
-
-            return array1d;
         }
     }
 }

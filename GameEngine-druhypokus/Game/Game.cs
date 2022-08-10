@@ -1,5 +1,4 @@
 using System;
-using System.Security.Cryptography;
 using GameEngine_druhypokus.GameEntities;
 using SFML.Graphics;
 using SFML.System;
@@ -15,17 +14,24 @@ namespace GameEngine_druhypokus
         public uint view_height = DEFAULT_WIN_HEIGHT / 2;
         public const string WINDOW_TITLE = "Game";
         public GameData GameData;
+        private MapLoader _mapLoader;
         private Tilemap map;
         private float step = 80;
 
-        private View View;
+        public uint zoom = 2;
+        public static int chunkSize = 40;
+        public int mapSize = chunkSize * 27;
+        public int tileSize = 32;
+        public int renderArea = chunkSize * 3;
+
+
         private bool left;
         private bool right;
         private bool up;
         private bool down;
-        private Player _player;
 
-        public bool move = false;
+        private View View;
+        private Player _player;
 
         public Game() : base(DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT, WINDOW_TITLE, Color.Black)
         {
@@ -75,41 +81,44 @@ namespace GameEngine_druhypokus
         }
 
         private string msg = "----";
+        private string msg2 = "----";
 
         public void Move()
         {
-            if (left)
+            if (left && level[(int)(_player.GetX() - step * GameTime.DeltaTime / tileSize), (int)_player.GetY()]
+                    .CanStepOn)
             {
                 View.Move(new Vector2f(-step * GameTime.DeltaTime, 0));
-                _player.Move(-step * GameTime.DeltaTime, 0);
+                _player.Move((-step * GameTime.DeltaTime) / tileSize, 0);
                 Window.SetView(View);
             }
 
-            if (up)
+            if (up && level[(int)_player.GetX(), (int)(_player.GetY() - step * GameTime.DeltaTime / tileSize)]
+                    .CanStepOn)
             {
                 View.Move(new Vector2f(0, -step * GameTime.DeltaTime));
-                _player.Move(0, -step * GameTime.DeltaTime);
+                _player.Move(0, (-step * GameTime.DeltaTime) / tileSize);
                 Window.SetView(View);
             }
 
-            if (down)
+            if (down && level[(int)_player.GetX(),
+                    (int)(_player.GetY() + step * GameTime.DeltaTime / tileSize)].CanStepOn)
             {
                 View.Move(new Vector2f(0, step * GameTime.DeltaTime));
-                _player.Move(0, step * GameTime.DeltaTime);
+                _player.Move(0, (step * GameTime.DeltaTime) / tileSize);
                 Window.SetView(View);
             }
 
-            if (right)
+            if (right && level[(int)(_player.GetX() + step * GameTime.DeltaTime / tileSize),
+                    (int)_player.GetY()].CanStepOn)
             {
                 View.Move(new Vector2f(step * GameTime.DeltaTime, 0));
-                _player.Move(step * GameTime.DeltaTime, 0);
+                _player.Move((step * GameTime.DeltaTime) / tileSize, 0);
                 Window.SetView(View);
             }
-
-            //_player.SetPosition(View.Center.X, View.Center.Y);
+            
         }
 
-        private uint zoom = 2;
         private short zoomed = 1;
 
         public override void WindowOnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e)
@@ -120,49 +129,95 @@ namespace GameEngine_druhypokus
                 view_width /= zoom;
                 zoomed--;
             }
-            if(e.Delta == -1 && zoomed < 2)
+
+            if (e.Delta == -1 && zoomed < 999)
             {
                 view_height *= zoom;
                 view_width *= zoom;
                 zoomed++;
             }
-            View.Size = new Vector2f(view_width,view_height);
-            //msg = zoomed + " X";
+
+            View.Size = new Vector2f(view_width, view_height);
             Window.SetView(View);
         }
+
+        private Block[,] level;
+        private Block[,] renderedPart;
+        private int lastStandXChunk = 1;
+        private int lastStandYChunk = 1;
 
         public override void Initialize()
         {
             GameData = new GameData();
             Random r = new Random();
             var generator = new MapGenerator();
-            var mapRender = new MapRender();
-            int chunkSize = 40;
-            int mapSize = chunkSize*25;
-            int tileSize = 32;
-            int renderArea = chunkSize*3;
-            int[] level = generator.Generate(mapSize, r.Next(1,9999));
-            int[] renderedPart = mapRender.GetCurrentChunks(level,mapSize,renderArea);
+            _mapLoader = new MapLoader();
+            _player = new Player(GameData.GetSprites()["player"]);
             map = new Tilemap();
+            lastStandXChunk = _mapLoader.middleXChunk;
+            lastStandYChunk = _mapLoader.middleYChunk;
+            level = generator.Generate(mapSize, r.Next(1, 99999999));
+            renderedPart = _mapLoader.GetCurrentChunks(level, mapSize, renderArea, _player, chunkSize);
             map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea, (uint)renderArea);
             View = new View(new FloatRect(0, 0, view_width, view_height));
-            View.Center = new Vector2f((renderArea/2)*tileSize, (renderArea/2)*tileSize);
+            View.Center = new Vector2f((renderArea / 2) * tileSize, (renderArea / 2) * tileSize);
             Window.SetView(View);
-            _player = new Player(GameData.GetSprites()["player"]);
-            _player.SetPosition((renderArea/2)*tileSize, (renderArea/2)*tileSize);
+            _player.SetPosition((renderArea / 2), (renderArea / 2));
         }
+
 
         public override void Update(GameTime gameTime)
         {
+            
+            _mapLoader.Update(_player, chunkSize);
+            if (lastStandXChunk != _mapLoader.middleXChunk || lastStandYChunk != _mapLoader.middleYChunk)
+            {
+                renderedPart = _mapLoader.GetCurrentChunks(level, mapSize, renderArea, _player, chunkSize);
+                map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea,
+                    (uint)renderArea);
+                MoveCameraAfterLoadNewWorldPart();
+                ActualizeLastStandedChunksValues();
+            }
             Move();
+        }
+
+        private void ActualizeLastStandedChunksValues()
+        {
+            lastStandXChunk = _mapLoader.middleXChunk;
+            lastStandYChunk = _mapLoader.middleYChunk;
+        }
+
+        private void MoveCameraAfterLoadNewWorldPart()
+        {
+            if (lastStandXChunk > _mapLoader.middleXChunk)
+            {
+                View.Move(new Vector2f(chunkSize * tileSize, 0));
+            }
+            else if (lastStandXChunk < _mapLoader.middleXChunk)
+            {
+                View.Move(new Vector2f(-chunkSize * tileSize, 0));
+            }
+
+            if (lastStandYChunk > _mapLoader.middleYChunk)
+            {
+                View.Move(new Vector2f(0, chunkSize * tileSize));
+            }
+            else if (lastStandYChunk < _mapLoader.middleYChunk)
+            {
+                View.Move(new Vector2f(0, -chunkSize * tileSize));
+            }
+
+            Window.SetView(View);
         }
 
         public override void Draw(GameTime gameTime)
         {
             Window.Draw(map);
-            _player.Draw(Window);
+            _player.Draw(Window, View);
+
             msg = _player.PrintPosition();
-            DebugUtil.DrawPerformanceData(this, Color.White, View, msg);
+            msg2 = $"YChunk: {_mapLoader.middleYChunk}, XChunk: {_mapLoader.middleXChunk}";
+            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2);
         }
     }
 }

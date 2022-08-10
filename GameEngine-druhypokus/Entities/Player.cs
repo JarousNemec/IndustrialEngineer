@@ -15,10 +15,10 @@ namespace GameEngine_druhypokus.GameEntities
             Sprite = sprite;
         }
 
-        public void Draw(RenderWindow window)
+        public void Draw(RenderWindow window, View view)
         {
-            float px = X - (Sprite.Texture.Size.X / 2);
-            float py = Y - (Sprite.Texture.Size.Y / 2);
+            float px = view.Center.X - (Sprite.Texture.Size.X / 2);
+            float py = view.Center.Y - (Sprite.Texture.Size.Y / 2);
             Sprite.Position = new Vector2f(px, py);
             Sprite.Scale = new Vector2f(1, 1);
             window.Draw(Sprite);
@@ -28,6 +28,16 @@ namespace GameEngine_druhypokus.GameEntities
         {
             X = x;
             Y = y;
+        }
+
+        public float GetX()
+        {
+            return X;
+        }
+
+        public float GetY()
+        {
+            return Y;
         }
 
         public string PrintPosition()
