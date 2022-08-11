@@ -32,6 +32,7 @@ namespace GameEngine_druhypokus
 
         private View View;
         private Player _player;
+        private Cursor _cursor;
 
         public Game() : base(DEFAULT_WIN_WIDTH, DEFAULT_WIN_HEIGHT, WINDOW_TITLE, Color.Black)
         {
@@ -116,10 +117,28 @@ namespace GameEngine_druhypokus
                 _player.Move((step * GameTime.DeltaTime) / tileSize, 0);
                 Window.SetView(View);
             }
-            
         }
 
         private short zoomed = 1;
+        private short minZoom = 4;
+
+        public override void WindowOnMouseButtonPressed(object sender, MouseButtonEventArgs e)
+        {
+            var pos = _cursor.GetWorldPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window),
+                _mapLoader, chunkSize);
+            int blockId = 10;
+            if (e.Button == Mouse.Button.Right)
+            {
+                blockId = 13;
+            }
+            if (level[pos.X, pos.Y].Id == 1)
+            {
+                level[pos.X, pos.Y] = new Block(blockId);
+                renderedPart = _mapLoader.GetCurrentChunks(level, mapSize, renderArea, _player, chunkSize);
+                map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea, (uint)renderArea);
+            }
+            
+        }
 
         public override void WindowOnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e)
         {
@@ -128,17 +147,18 @@ namespace GameEngine_druhypokus
                 view_height /= zoom;
                 view_width /= zoom;
                 zoomed--;
+                View.Size = new Vector2f(view_width, view_height);
+                Window.SetView(View);
             }
 
-            if (e.Delta == -1 && zoomed < 999)
+            if (e.Delta == -1 && zoomed+1 != minZoom)
             {
                 view_height *= zoom;
                 view_width *= zoom;
                 zoomed++;
+                View.Size = new Vector2f(view_width, view_height);
+                Window.SetView(View);
             }
-
-            View.Size = new Vector2f(view_width, view_height);
-            Window.SetView(View);
         }
 
         private Block[,] level;
@@ -148,12 +168,18 @@ namespace GameEngine_druhypokus
 
         public override void Initialize()
         {
+            Window.SetMouseCursorVisible(false);
             GameData = new GameData();
             Random r = new Random();
             var generator = new MapGenerator();
             _mapLoader = new MapLoader();
-            _player = new Player(GameData.GetSprites()["player"]);
+            _player = new Player(GameData.GetSprites()["Chuck"]);
+            _cursor = new Cursor(GameData.GetSprites()["selector"], _player);
             map = new Tilemap();
+            if (renderArea > mapSize)
+            {
+                renderArea = mapSize;
+            }
             lastStandXChunk = _mapLoader.middleXChunk;
             lastStandYChunk = _mapLoader.middleYChunk;
             level = generator.Generate(mapSize, r.Next(1, 99999999));
@@ -162,13 +188,12 @@ namespace GameEngine_druhypokus
             View = new View(new FloatRect(0, 0, view_width, view_height));
             View.Center = new Vector2f((renderArea / 2) * tileSize, (renderArea / 2) * tileSize);
             Window.SetView(View);
-            _player.SetPosition((renderArea / 2), (renderArea / 2));
+            _player.SetPosition(renderArea / 2, renderArea / 2);
         }
 
 
         public override void Update(GameTime gameTime)
         {
-            
             _mapLoader.Update(_player, chunkSize);
             if (lastStandXChunk != _mapLoader.middleXChunk || lastStandYChunk != _mapLoader.middleYChunk)
             {
@@ -178,6 +203,7 @@ namespace GameEngine_druhypokus
                 MoveCameraAfterLoadNewWorldPart();
                 ActualizeLastStandedChunksValues();
             }
+
             Move();
         }
 
@@ -214,9 +240,13 @@ namespace GameEngine_druhypokus
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-
-            msg = _player.PrintPosition();
-            msg2 = $"YChunk: {_mapLoader.middleYChunk}, XChunk: {_mapLoader.middleXChunk}";
+            var cpos = _cursor.GetPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window));
+            msg2 = _cursor.Draw(Window, cpos);
+            //msg = _player.PrintPosition();
+            msg = zoomed.ToString();
+            //msg2 = $"YChunk: {_mapLoader.middleYChunk}, XChunk: {_mapLoader.middleXChunk}";
+            //msg2 = Mouse.GetPosition(Window).ToString();
+            //msg2 = $"Y {Mouse.GetPosition(Window).Y - Window.Size.Y / 2},X {Mouse.GetPosition(Window).X - Window.Size.X / 2}";
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2);
         }
     }

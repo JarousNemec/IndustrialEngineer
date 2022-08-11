@@ -5,14 +5,10 @@ using SFML.Window;
 
 namespace GameEngine_druhypokus.GameEntities
 {
-    public class Player
+    public class Player : Entity
     {
-        public Sprite Sprite { get; private set; }
-        private float X = 0;
-        private float Y = 0;
-        public Player(Sprite sprite)
+        public Player(Sprite sprite):base(sprite)
         {
-            Sprite = sprite;
         }
 
         public void Draw(RenderWindow window, View view)
@@ -26,29 +22,19 @@ namespace GameEngine_druhypokus.GameEntities
 
         public void SetPosition(float x, float y)
         {
-            X = x;
-            Y = y;
-        }
-
-        public float GetX()
-        {
-            return X;
-        }
-
-        public float GetY()
-        {
-            return Y;
+            SetX(x);
+            SetY(y);
         }
 
         public string PrintPosition()
         {
-            return $"X: {X}, Y: {Y}";
+            return $"X: {GetX()}, Y: {GetY()}";
         }
 
         public void Move(float xStep, float yStep)
         {
-            X += xStep;
-            Y += yStep;
+            SetX(GetX() + xStep);
+            SetY(GetY() + yStep);
         }
     }
 }

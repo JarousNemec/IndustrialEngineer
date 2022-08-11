@@ -53,6 +53,8 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Blocks\Block.cs" />
+        <Compile Include="Entities\Cursor.cs" />
+        <Compile Include="Entities\Entity.cs" />
         <Compile Include="Entities\Player.cs" />
         <Compile Include="GameLoop\GameLoop.cs" />
         <Compile Include="GameLoop\GameTime.cs" />

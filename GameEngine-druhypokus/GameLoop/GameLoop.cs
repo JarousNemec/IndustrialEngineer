@@ -26,7 +26,10 @@ namespace GameEngine_druhypokus
             Window.KeyReleased += KeyReleased;
             Window.KeyPressed += KeyPressed;
             Window.MouseWheelScrolled += WindowOnMouseWheelScrolled;
+            Window.MouseButtonPressed += WindowOnMouseButtonPressed;
         }
+
+        public abstract void WindowOnMouseButtonPressed(object sender, MouseButtonEventArgs e);
 
         public abstract void WindowOnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e);
 
