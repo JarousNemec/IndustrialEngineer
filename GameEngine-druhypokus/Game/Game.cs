@@ -25,10 +25,7 @@ namespace GameEngine_druhypokus
         public int renderArea = chunkSize * 3;
 
 
-        private bool left;
-        private bool right;
-        private bool up;
-        private bool down;
+        private Moving _moving;
 
         private View View;
         private Player _player;
@@ -43,16 +40,16 @@ namespace GameEngine_druhypokus
             switch (k.Code)
             {
                 case Keyboard.Key.A:
-                    left = true;
+                    _moving.left = true;
                     break;
                 case Keyboard.Key.W:
-                    up = true;
+                    _moving.up = true;
                     break;
                 case Keyboard.Key.S:
-                    down = true;
+                    _moving.down = true;
                     break;
                 case Keyboard.Key.D:
-                    right = true;
+                    _moving.right = true;
                     break;
             }
         }
@@ -62,16 +59,16 @@ namespace GameEngine_druhypokus
             switch (k.Code)
             {
                 case Keyboard.Key.A:
-                    left = false;
+                    _moving.left = false;
                     break;
                 case Keyboard.Key.W:
-                    up = false;
+                    _moving.up = false;
                     break;
                 case Keyboard.Key.S:
-                    down = false;
+                    _moving.down = false;
                     break;
                 case Keyboard.Key.D:
-                    right = false;
+                    _moving.right = false;
                     break;
             }
         }
@@ -86,37 +83,40 @@ namespace GameEngine_druhypokus
 
         public void Move()
         {
-            if (left && level[(int)(_player.GetX() - step * GameTime.DeltaTime / tileSize), (int)_player.GetY()]
-                    .CanStepOn)
+            if (CanStepOn(_moving.left, -step, 0))
             {
                 View.Move(new Vector2f(-step * GameTime.DeltaTime, 0));
                 _player.Move((-step * GameTime.DeltaTime) / tileSize, 0);
                 Window.SetView(View);
             }
 
-            if (up && level[(int)_player.GetX(), (int)(_player.GetY() - step * GameTime.DeltaTime / tileSize)]
-                    .CanStepOn)
+            if (CanStepOn(_moving.up, 0, -step))
             {
                 View.Move(new Vector2f(0, -step * GameTime.DeltaTime));
                 _player.Move(0, (-step * GameTime.DeltaTime) / tileSize);
                 Window.SetView(View);
             }
 
-            if (down && level[(int)_player.GetX(),
-                    (int)(_player.GetY() + step * GameTime.DeltaTime / tileSize)].CanStepOn)
+            if (CanStepOn(_moving.down, 0, step))
             {
                 View.Move(new Vector2f(0, step * GameTime.DeltaTime));
                 _player.Move(0, (step * GameTime.DeltaTime) / tileSize);
                 Window.SetView(View);
             }
 
-            if (right && level[(int)(_player.GetX() + step * GameTime.DeltaTime / tileSize),
-                    (int)_player.GetY()].CanStepOn)
+            if (CanStepOn(_moving.right, step, 0))
             {
                 View.Move(new Vector2f(step * GameTime.DeltaTime, 0));
                 _player.Move((step * GameTime.DeltaTime) / tileSize, 0);
                 Window.SetView(View);
             }
+        }
+
+        private bool CanStepOn(bool direction, float stepX, float stepY)
+        {
+            return direction && level[(int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize),
+                    (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize)]
+                .CanStepOn;
         }
 
         private short zoomed = 1;
@@ -126,6 +126,9 @@ namespace GameEngine_druhypokus
         {
             var pos = _cursor.GetWorldPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window),
                 _mapLoader, chunkSize);
+            if(pos.X < 0 || pos.Y < 0 || pos.X > mapSize || pos.Y > mapSize)
+                return;
+            
             int blockId = 10;
             if (e.Button == Mouse.Button.Right)
             {
@@ -169,6 +172,7 @@ namespace GameEngine_druhypokus
         public override void Initialize()
         {
             Window.SetMouseCursorVisible(false);
+            _moving = new Moving();
             GameData = new GameData();
             Random r = new Random();
             var generator = new MapGenerator();

@@ -63,8 +63,10 @@
         <Compile Include="Game\FastNoiseLite.cs" />
         <Compile Include="Game\Game.cs" />
         <Compile Include="Game\GameData.cs" />
+        <Compile Include="Game\KeyBoard.cs" />
         <Compile Include="Game\MapGenerator.cs" />
         <Compile Include="Game\MapLoader.cs" />
+        <Compile Include="Game\Moving.cs" />
         <Compile Include="Game\SpriteFactory.cs" />
         <Compile Include="Game\Tilemap.cs" />
         <Compile Include="Program.cs" />

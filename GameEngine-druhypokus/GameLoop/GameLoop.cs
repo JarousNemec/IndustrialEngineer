@@ -70,7 +70,6 @@ namespace GameEngine_druhypokus
                 }
             }
         }
-
         public abstract void KeyPressed(object o, KeyEventArgs k);
         public abstract void KeyReleased(object o, KeyEventArgs k);
         public abstract void LoadContent();
