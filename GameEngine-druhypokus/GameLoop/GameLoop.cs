@@ -5,7 +5,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public abstract class GameLoop
     {
@@ -25,13 +25,16 @@ namespace GameEngine_druhypokus
             Window.Closed += WindowClosed;
             Window.KeyReleased += KeyReleased;
             Window.KeyPressed += KeyPressed;
-            Window.MouseWheelScrolled += WindowOnMouseWheelScrolled;
-            Window.MouseButtonPressed += WindowOnMouseButtonPressed;
+            Window.MouseWheelScrolled += OnMouseScrolled;
+            Window.MouseButtonPressed += OnMousePressed;
+            Window.MouseButtonReleased += OnMouseReleased;
         }
 
-        public abstract void WindowOnMouseButtonPressed(object sender, MouseButtonEventArgs e);
+        public abstract void OnMouseReleased(object sender, MouseButtonEventArgs e);
 
-        public abstract void WindowOnMouseWheelScrolled(object sender, MouseWheelScrollEventArgs e);
+        public abstract void OnMousePressed(object sender, MouseButtonEventArgs e);
+
+        public abstract void OnMouseScrolled(object sender, MouseWheelScrollEventArgs e);
 
         protected GameLoop()
         {

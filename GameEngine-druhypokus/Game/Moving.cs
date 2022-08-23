@@ -1,4 +1,4 @@
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class Moving
     {
@@ -6,5 +6,10 @@ namespace GameEngine_druhypokus
         public bool right { get; set; }
         public bool up { get; set; }
         public bool down { get; set; }
+
+        public bool IsMoving()
+        {
+            return left || right || up || down;
+        }
     }
 }

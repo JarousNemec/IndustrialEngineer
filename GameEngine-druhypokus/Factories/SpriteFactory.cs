@@ -3,7 +3,7 @@ using System.IO;
 using SFML.Graphics;
 using SFML.System;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class SpriteFactory
     {

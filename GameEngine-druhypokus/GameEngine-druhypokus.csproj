@@ -33,6 +33,10 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+        </Reference>
+        <Reference Include="mscorlib" />
         <Reference Include="sfml-audio, Version=2.4.2.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>..\..\..\..\Users\Strejda Jára\Downloads\SFML.Net-2.4-32-bit\SFML.Net-2.4\lib\sfml-audio.dll</HintPath>
         </Reference>
@@ -46,16 +50,59 @@
           <HintPath>..\..\..\..\Users\Strejda Jára\Downloads\SFML.Net-2.4-32-bit\SFML.Net-2.4\lib\sfml-window.dll</HintPath>
         </Reference>
         <Reference Include="System" />
+        <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+        </Reference>
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
         <Reference Include="System.Drawing" />
+        <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Numerics" />
+        <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Text.Json, Version=6.0.0.5, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Text.Json.6.0.5\lib\net461\System.Text.Json.dll</HintPath>
+        </Reference>
+        <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+        </Reference>
+        <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+          <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+        </Reference>
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Blocks\Block.cs" />
+        <Compile Include="Blocks\BlockRegistry.cs" />
+        <Compile Include="Blocks\Bridge.cs" />
+        <Compile Include="Blocks\Coal.cs" />
+        <Compile Include="Blocks\Copper.cs" />
+        <Compile Include="Blocks\Diamond.cs" />
+        <Compile Include="Blocks\Emerald.cs" />
+        <Compile Include="Blocks\Gold.cs" />
+        <Compile Include="Blocks\Grass.cs" />
+        <Compile Include="Blocks\Sand.cs" />
+        <Compile Include="Blocks\Stone.cs" />
+        <Compile Include="Blocks\Tree.cs" />
+        <Compile Include="Blocks\Water.cs" />
+        <Compile Include="Blocks\Workbench.cs" />
         <Compile Include="Entities\Cursor.cs" />
         <Compile Include="Entities\Entity.cs" />
         <Compile Include="Entities\Player.cs" />
+        <Compile Include="Entities\ProgressBar.cs" />
+        <Compile Include="Enums\BlockType.cs" />
+        <Compile Include="Enums\MiningLevel.cs" />
+        <Compile Include="Factories\BlockFactory.cs" />
+        <Compile Include="Factories\SpriteFactory.cs" />
         <Compile Include="GameLoop\GameLoop.cs" />
         <Compile Include="GameLoop\GameTime.cs" />
         <Compile Include="Game\DebugUtil.cs" />
@@ -67,8 +114,8 @@
         <Compile Include="Game\MapGenerator.cs" />
         <Compile Include="Game\MapLoader.cs" />
         <Compile Include="Game\Moving.cs" />
-        <Compile Include="Game\SpriteFactory.cs" />
         <Compile Include="Game\Tilemap.cs" />
+        <Compile Include="Interfaces\IBlock.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
@@ -92,7 +139,18 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
+    <ItemGroup>
+      <None Include="App.config" />
+      <None Include="packages.config" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <Import Project="..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" />
+    <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+      <PropertyGroup>
+        <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105.The missing file is {0}.</ErrorText>
+      </PropertyGroup>
+      <Error Condition="!Exists('..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.5\build\System.Text.Json.targets'))" />
+    </Target>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

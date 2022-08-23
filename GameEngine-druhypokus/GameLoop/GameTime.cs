@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class GameTime
     {

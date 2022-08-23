@@ -1,4 +1,6 @@
-﻿namespace GameEngine_druhypokus
+﻿using IndustrialEnginner.Blocks;
+
+namespace IndustrialEnginner
 {
     internal class Program
     {

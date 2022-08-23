@@ -1,4 +1,4 @@
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public enum Direction
     {

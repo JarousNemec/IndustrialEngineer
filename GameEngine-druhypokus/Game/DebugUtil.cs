@@ -1,8 +1,9 @@
+using System;
 using System.ComponentModel;
 using SFML.Graphics;
 using SFML.System;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public static class DebugUtil
     {

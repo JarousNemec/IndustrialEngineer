@@ -1,9 +1,10 @@
 using System.Runtime.CompilerServices;
-using GameEngine_druhypokus.GameEntities;
+using IndustrialEnginner.GameEntities;
+using IndustrialEnginner.Blocks;
 using SFML.Graphics;
 using SFML.System;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class Tilemap : Drawable
     {
@@ -23,7 +24,7 @@ namespace GameEngine_druhypokus
                 {
                     // get the current tile number
                     //int tileNumber = tiles[i + j * width];
-                    int tileNumber = tiles[i, j].Id;
+                    int tileNumber = tiles[i, j].TileId;
                     // find its position in the tileset texture
                     long tu = tileNumber % (m_tileset.Size.X / tileSize.X);
                     long tv = tileNumber / (m_tileset.Size.X / tileSize.X);

@@ -1,6 +1,7 @@
-using GameEngine_druhypokus.GameEntities;
+using IndustrialEnginner.Blocks;
+using IndustrialEnginner.GameEntities;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class MapLoader
     {
@@ -30,6 +31,12 @@ namespace GameEngine_druhypokus
         {
             middleXChunk = (int)(player.GetX() / chunkSize);
             middleYChunk = (int)(player.GetY() / chunkSize);
+            if (middleXChunk < 1)
+                middleXChunk = 1;
+            if (middleYChunk < 1)
+            {
+                middleYChunk = 1;
+            }
         }
 
         private static void CheckBorders(int mapSize, ref int middleXChunk, ref int middleYChunk)

@@ -1,12 +1,18 @@
 using System;
-using GameEngine_druhypokus.GameEntities;
+using IndustrialEnginner.GameEntities;
+using IndustrialEnginner.Blocks;
 using SFML.System;
 
-namespace GameEngine_druhypokus
+namespace IndustrialEnginner
 {
     public class MapGenerator
     {
-        //public int[] Generate(int size, int seed)
+        private BlockRegistry _blockRegistry;
+
+        public MapGenerator(BlockRegistry blockRegistry)
+        {
+            _blockRegistry = blockRegistry;
+        }
         public Block[,] Generate(int size, int seed)
         {
             FastNoiseLite noise = new FastNoiseLite();
@@ -23,8 +29,6 @@ namespace GameEngine_druhypokus
             GenerateNoiseData(noiseData, noise);
 
             Block[,] map2d = Parse(noiseData);
-            // int[] map = ConvertArray(map2d);
-            // return map;
             return map2d;
         }
 
@@ -63,33 +67,32 @@ namespace GameEngine_druhypokus
                     var temp = (int)Math.Abs(Math.Round(map[y, x], 1) * 10);
                     if (temp > 7)
                     {
-                        parsedMap[y, x] = new Block(0);
+                        parsedMap[y, x] = _blockRegistry.Grass.Copy();
                         continue;
                     }
                     
                     if (temp == 0)
                     {
-                        parsedMap[y, x] = new Block(1, false);
+                        parsedMap[y, x] = _blockRegistry.Water.Copy();
                         continue;
                     }
                     if (temp == 2)
                     {
-                        parsedMap[y, x] = new Block(8);
+                        parsedMap[y, x] = _blockRegistry.Sand.Copy();
                         continue;
                     }
                     
                     if (temp == 3)
                     {
-                        parsedMap[y, x] = new Block(0);
+                        parsedMap[y, x] = _blockRegistry.Grass.Copy();
                         continue;
                     }
                     if (temp > 3)
                     {
-                        parsedMap[y, x] = new Block(2, false);
+                        parsedMap[y, x] = _blockRegistry.Tree.Copy();
                         continue;
                     }
-                    parsedMap[y, x] = new Block(1, false);
-                    //parsedMap[y, x] = 9;
+                    parsedMap[y, x] = _blockRegistry.Water.Copy();
                 }
             }
 

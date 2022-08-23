@@ -3,7 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-namespace GameEngine_druhypokus.GameEntities
+namespace IndustrialEnginner.GameEntities
 {
     public class Player : Entity
     {

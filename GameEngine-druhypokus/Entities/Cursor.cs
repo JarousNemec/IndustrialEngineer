@@ -2,15 +2,17 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 
-namespace GameEngine_druhypokus.GameEntities
+namespace IndustrialEnginner.GameEntities
 {
     public class Cursor : Entity
     {
         public Player Player { get; set; }
+        private ProgressBar _progressBar;
 
-        public Cursor(Sprite sprite, Player player) : base(sprite)
+        public Cursor(Sprite sprite, Player player, Sprite progerssBarBase) : base(sprite)
         {
             Player = player;
+            _progressBar = new ProgressBar(progerssBarBase);
         }
 
         public string Draw(RenderWindow window, Vector2i pos)

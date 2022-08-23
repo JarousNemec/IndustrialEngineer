@@ -1,10 +1,13 @@
+using System.Collections.Generic;
 using SFML.Graphics;
 
-namespace GameEngine_druhypokus.GameEntities
+namespace IndustrialEnginner.GameEntities
 {
     public class Entity
     {
         public Sprite Sprite { get; private set; }
+        public List<Sprite> States { get; set; }
+        
         private float X = 0;
         private float Y = 0;
 
