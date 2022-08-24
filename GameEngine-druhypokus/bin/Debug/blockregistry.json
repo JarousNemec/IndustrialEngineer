@@ -10,6 +10,8 @@
     "foundationId": 1,
     "richness": 1,
     "miningLevel":0,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -23,6 +25,8 @@
     "foundationId": 1,
     "richness": 1,
     "miningLevel":7,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "10"
   },
   {
@@ -34,7 +38,9 @@
     "harvestTime": 4,
     "blockType": 1,
     "foundationId": 0,
-    "richness": 2,
+    "richness": 1,
+    "dropId":0,
+    "dropCount":3,
     "canPlaceOn": "-1"
   },
   {
@@ -48,6 +54,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":0,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -61,6 +69,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":1,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -74,6 +84,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":2,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -87,6 +99,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":2,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -100,6 +114,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":1,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -113,6 +129,8 @@
     "foundationId": 1,
     "richness": 1,
     "miningLevel":0,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -126,6 +144,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":0,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -139,6 +159,8 @@
     "foundationId": 1,
     "richness": 1,
     "miningLevel":0,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   },
   {
@@ -152,6 +174,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":1,
+    "dropId":8,
+    "dropCount":1,
     "canPlaceOn": "-1"
   }
 ]

@@ -11,11 +11,15 @@ namespace IndustrialEnginner.Blocks
         public int HarvestTime { get; private set; }
         public int BlockType { get; private set; }
         public int FoundationId { get; private set; }
-        public int Richness { get; private set; }
+        public int Richness { get; set; }
         public int MiningLevel { get; private set; }
+        
+        public int DropId { get; private set; }
+
+        public int DropCount { get; private set; }
         public bool CanPlaceOn { get; private set; }
 
-        public Block(int id,int tileId, int[] blocksCanPlaceOn,string name, int miningLevel, int richness, int foundationId, int blockType, int harvestTime, bool harvestable, bool canPlaceOn = true, bool canStepOn = true)
+        public Block(int id,int tileId, int[] blocksCanPlaceOn,string name, int miningLevel, int richness, int foundationId, int blockType, int harvestTime, bool harvestable, int dropId, int dropCount, bool canPlaceOn = true, bool canStepOn = true)
         {
             Id = id;
             TileId = tileId;
@@ -29,6 +33,8 @@ namespace IndustrialEnginner.Blocks
             BlockType = blockType;
             HarvestTime = harvestTime;
             Harvestable = harvestable;
+            DropId = dropId;
+            DropCount = dropCount;
         }
     }
 }

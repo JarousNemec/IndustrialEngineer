@@ -7,19 +7,19 @@ namespace IndustrialEnginner.GameEntities
     public class Cursor : Entity
     {
         public Player Player { get; set; }
-        private ProgressBar _progressBar;
+        public ProgressBar _progressBar;
 
-        public Cursor(Sprite sprite, Player player, Sprite progerssBarBase) : base(sprite)
+        public Cursor(Sprite baseSprite, Player player, Sprite[] progressBarStates) : base(baseSprite)
         {
             Player = player;
-            _progressBar = new ProgressBar(progerssBarBase);
+            _progressBar = new ProgressBar(progressBarStates);
         }
 
         public string Draw(RenderWindow window, Vector2i pos)
         {
-            Sprite.Position = new Vector2f(pos.X, pos.Y);
-            Sprite.Scale = new Vector2f(1, 1);
-            window.Draw(Sprite);
+            BaseSprite.Position = new Vector2f(pos.X, pos.Y);
+            BaseSprite.Scale = new Vector2f(1, 1);
+            window.Draw(BaseSprite);
             return pos.ToString();
         }
 

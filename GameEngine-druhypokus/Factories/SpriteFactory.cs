@@ -7,7 +7,7 @@ namespace IndustrialEnginner
 {
     public class SpriteFactory
     {
-        public static Dictionary<string, Sprite> LoadSprites(string TEXTURES_DIRECTORY_PATH, int size)
+        public static Dictionary<string, Sprite> LoadSprites(string TEXTURES_DIRECTORY_PATH)
         {
             Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
             string[] texturesPaths = Directory.GetFiles(TEXTURES_DIRECTORY_PATH);

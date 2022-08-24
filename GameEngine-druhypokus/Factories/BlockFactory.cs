@@ -80,7 +80,7 @@ namespace IndustrialEnginner.Blocks
             }
 
             var temp = new Block(preset.id, preset.tileId, blockCanPlacedOn.ToArray(), preset.name, preset.miningLevel,
-                preset.richness, preset.foundationId, preset.blockType, preset.harvestTime, preset.harvestable,
+                preset.richness, preset.foundationId, preset.blockType, preset.harvestTime, preset.harvestable,preset.dropId, preset.dropCount,
                 preset.canPlaceOn != "-1",
                 preset.canStepOn);
             return temp;
@@ -99,6 +99,10 @@ namespace IndustrialEnginner.Blocks
         public int foundationId { get; set; }
         public int richness { get; set; }
         public int miningLevel { get; set; }
+
+        public int dropId { get; set; }
+
+        public int dropCount { get; set; }
         public string canPlaceOn { get; set; }
     }
 }
