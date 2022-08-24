@@ -45,6 +45,11 @@ namespace IndustrialEnginner
         {
         }
 
+        #region Controls
+
+        
+
+        
         public override void KeyPressed(object o, KeyEventArgs k)
         {
             switch (k.Code)
@@ -82,7 +87,51 @@ namespace IndustrialEnginner
                     break;
             }
         }
+        
+        public override void OnMouseReleased(object sender, MouseButtonEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case Mouse.Button.Left:
+                    _mining.IsMining = false;
+                    break;
+                case Mouse.Button.Middle:
+                    break;
+                case Mouse.Button.Right:
+                    break;
+            }
+        }
 
+        public override void OnMousePressed(object sender, MouseButtonEventArgs e)
+        {
+            switch (e.Button)
+            {
+                case Mouse.Button.Left:
+                    SetupMining();
+                    break;
+                case Mouse.Button.Middle:
+                    break;
+                case Mouse.Button.Right:
+                    Build(_cursor.GetWorldPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window),
+                        _mapLoader, chunkSize), _blockRegistry.Bridge.Copy());
+                    break;
+            }
+        }
+        
+        public override void OnMouseScrolled(object sender, MouseWheelScrollEventArgs e)
+        {
+            if (e.Delta == 1 && zoomed > 0)
+            {
+                ZoomIn();
+            }
+
+            if (e.Delta == -1 && zoomed + 1 != minZoom)
+            {
+                ZoomOut();
+            }
+        }
+        #endregion
+        
         public override void LoadContent()
         {
             DebugUtil.LoadContent();
@@ -138,35 +187,7 @@ namespace IndustrialEnginner
         private short zoomed = 1;
         private short minZoom = 4;
 
-        public override void OnMouseReleased(object sender, MouseButtonEventArgs e)
-        {
-            switch (e.Button)
-            {
-                case Mouse.Button.Left:
-                    _mining.IsMining = false;
-                    break;
-                case Mouse.Button.Middle:
-                    break;
-                case Mouse.Button.Right:
-                    break;
-            }
-        }
-
-        public override void OnMousePressed(object sender, MouseButtonEventArgs e)
-        {
-            switch (e.Button)
-            {
-                case Mouse.Button.Left:
-                    SetupMining();
-                    break;
-                case Mouse.Button.Middle:
-                    break;
-                case Mouse.Button.Right:
-                    Build(_cursor.GetWorldPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window),
-                        _mapLoader, chunkSize), _blockRegistry.Bridge.Copy());
-                    break;
-            }
-        }
+        
 
         private void SetupMining()
         {
@@ -226,18 +247,7 @@ namespace IndustrialEnginner
                 (uint)renderArea);
         }
 
-        public override void OnMouseScrolled(object sender, MouseWheelScrollEventArgs e)
-        {
-            if (e.Delta == 1 && zoomed > 0)
-            {
-                ZoomIn();
-            }
-
-            if (e.Delta == -1 && zoomed + 1 != minZoom)
-            {
-                ZoomOut();
-            }
-        }
+        
 
         private void ZoomOut()
         {
@@ -275,7 +285,7 @@ namespace IndustrialEnginner
 
         private void InitializeGame()
         {
-            Window.SetMouseCursorVisible(false);
+            Window.SetMouseCursorVisible(true);
             _moving = new Moving();
             _mining = new Mining();
             GameData = new GameData();

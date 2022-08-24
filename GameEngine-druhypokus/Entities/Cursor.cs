@@ -47,6 +47,13 @@ namespace IndustrialEnginner.GameEntities
             // calculate how long is cursor from the center of window that means from the player
             int tpx = (mouse.X - halfWindowX - oversizeX) / resolution;
             int tpy = (mouse.Y - halfWindowY - oversizeY) / resolution;
+            
+            //quickfix problem with window half edges
+            if (mouse.X <= halfWindowX+oversizeX)
+                tpx -= 1;
+            if (mouse.Y <= halfWindowY+oversizeY)
+                tpy -= 1;
+            
             tpx *= tileSize;
             tpy *= tileSize;
             
