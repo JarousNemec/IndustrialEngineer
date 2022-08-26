@@ -7,17 +7,17 @@ namespace IndustrialEnginner.GameEntities
 {
     public class Player : Entity
     {
-        public Player(Sprite baseSprite):base(baseSprite)
+        public Player(Sprite sprite):base(sprite)
         {
         }
 
         public void Draw(RenderWindow window, View view)
         {
-            float px = view.Center.X - (BaseSprite.Texture.Size.X / 2);
-            float py = view.Center.Y - (BaseSprite.Texture.Size.Y / 2);
-            BaseSprite.Position = new Vector2f(px, py);
-            BaseSprite.Scale = new Vector2f(1, 1);
-            window.Draw(BaseSprite);
+            float px = view.Center.X - (Sprite.Texture.Size.X / 2);
+            float py = view.Center.Y - (Sprite.Texture.Size.Y / 2);
+            Sprite.Position = new Vector2f(px, py);
+            Sprite.Scale = new Vector2f(1, 1);
+            window.Draw(Sprite);
         }
 
         public void SetPosition(float x, float y)

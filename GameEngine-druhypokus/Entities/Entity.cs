@@ -5,14 +5,14 @@ namespace IndustrialEnginner.GameEntities
 {
     public class Entity
     {
-        public Sprite BaseSprite { get; private set; }
+        public Sprite Sprite { get; private set; }
         
         private float X = 0;
         private float Y = 0;
 
-        public Entity(Sprite baseSprite)
+        public Entity(Sprite sprite)
         {
-            BaseSprite = baseSprite;
+            Sprite = sprite;
         }
         
         public float GetX()

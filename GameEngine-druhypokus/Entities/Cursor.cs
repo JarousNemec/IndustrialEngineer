@@ -9,7 +9,7 @@ namespace IndustrialEnginner.GameEntities
         public Player Player { get; set; }
         public ProgressBar _progressBar;
 
-        public Cursor(Sprite baseSprite, Player player, Sprite[] progressBarStates) : base(baseSprite)
+        public Cursor(Sprite sprite, Player player, Sprite[] progressBarStates) : base(sprite)
         {
             Player = player;
             _progressBar = new ProgressBar(progressBarStates);
@@ -17,9 +17,9 @@ namespace IndustrialEnginner.GameEntities
 
         public string Draw(RenderWindow window, Vector2i pos)
         {
-            BaseSprite.Position = new Vector2f(pos.X, pos.Y);
-            BaseSprite.Scale = new Vector2f(1, 1);
-            window.Draw(BaseSprite);
+            Sprite.Position = new Vector2f(pos.X, pos.Y);
+            Sprite.Scale = new Vector2f(1, 1);
+            window.Draw(Sprite);
             return pos.ToString();
         }
 

@@ -117,6 +117,15 @@
         <Compile Include="Game\Mining.cs" />
         <Compile Include="Game\Moving.cs" />
         <Compile Include="Game\Tilemap.cs" />
+        <Compile Include="Gui\Crafting.cs" />
+        <Compile Include="Gui\Gui.cs" />
+        <Compile Include="Gui\GuiComponent.cs" />
+        <Compile Include="Gui\GuiManager.cs" />
+        <Compile Include="Gui\GuiState.cs" />
+        <Compile Include="Gui\Hotbar.cs" />
+        <Compile Include="Gui\Inventory.cs" />
+        <Compile Include="Gui\ItemSlot.cs" />
+        <Compile Include="Gui\ItemTransportPacket.cs" />
         <Compile Include="Interfaces\IBlock.cs" />
         <Compile Include="Interfaces\IItem.cs" />
         <Compile Include="Items\Item.cs" />
