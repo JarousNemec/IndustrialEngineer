@@ -50,7 +50,7 @@ namespace IndustrialEnginner.Gui
         {
             if (!IsSelected)
             {
-                base.Draw(window, zoomed);    
+                base.Draw(window, zoomed);
             }
             else
             {
@@ -58,13 +58,14 @@ namespace IndustrialEnginner.Gui
                 _selectedSprite.Scale = new Vector2f(zoomed, zoomed);
                 window.Draw(_selectedSprite);
             }
+
             if (Item == null)
                 return;
             var itemSprite = Item.Sprite;
             var itemSpritePosX = Sprite.Texture.Size.X / 2 - itemSprite.Texture.Size.X / 2;
             var itemSpritePosY = Sprite.Texture.Size.Y / 2 - itemSprite.Texture.Size.Y / 2;
-            itemSprite.Position = new Vector2f(DisplayingX+itemSpritePosX,DisplayingY+itemSpritePosY);
-            itemSprite.Scale = new Vector2f(1, 1);
+            itemSprite.Position = new Vector2f(DisplayingX + itemSpritePosX*zoomed, DisplayingY + itemSpritePosY*zoomed);
+            itemSprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(itemSprite);
         }
     }

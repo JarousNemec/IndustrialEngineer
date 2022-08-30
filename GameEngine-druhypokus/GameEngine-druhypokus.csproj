@@ -95,6 +95,7 @@
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Blocks\Workbench.cs" />
+        <Compile Include="Components\Area.cs" />
         <Compile Include="Entities\Cursor.cs" />
         <Compile Include="Entities\Entity.cs" />
         <Compile Include="Entities\Player.cs" />

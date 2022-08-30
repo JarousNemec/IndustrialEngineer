@@ -48,10 +48,6 @@ namespace IndustrialEnginner
         }
 
         #region Controls
-
-        
-
-        
         public override void KeyPressed(object o, KeyEventArgs k)
         {
             switch (k.Code)
@@ -67,6 +63,9 @@ namespace IndustrialEnginner
                     break;
                 case Keyboard.Key.D:
                     _moving.right = true;
+                    break;
+                case Keyboard.Key.E:
+                    _guiManager.OpenOrClosePlayerInventory();
                     break;
             }
         }
@@ -292,7 +291,7 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiManager = new GuiManager(GameData,View, _itemRegistry);
+            _guiManager = new GuiManager(GameData,View, _itemRegistry, Window);
         }
         private void InitializeGame()
         {
