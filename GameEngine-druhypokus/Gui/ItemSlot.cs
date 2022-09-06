@@ -68,5 +68,10 @@ namespace IndustrialEnginner.Gui
             itemSprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(itemSprite);
         }
+
+        public override void OnClick(Vector2i mouse)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

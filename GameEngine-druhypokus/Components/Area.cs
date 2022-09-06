@@ -12,5 +12,10 @@ namespace IndustrialEnginner.Components
             LeftUpCorner = leftUpCorner;
             RightDownCorner = rightDownCorner;
         }
+
+        public override string ToString()
+        {
+            return $"leftUp X {LeftUpCorner.X}, Y {LeftUpCorner.Y} : rightDown X {RightDownCorner.X}, Y {RightDownCorner.Y}";
+        }
     }
 }

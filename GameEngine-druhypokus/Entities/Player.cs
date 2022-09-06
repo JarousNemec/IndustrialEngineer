@@ -16,7 +16,7 @@ namespace IndustrialEnginner.GameEntities
             float px = view.Center.X - (Sprite.Texture.Size.X / 2);
             float py = view.Center.Y - (Sprite.Texture.Size.Y / 2);
             Sprite.Position = new Vector2f(px, py);
-            Sprite.Scale = new Vector2f(1, 1);
+            Sprite.Scale = new Vector2f(0.9f, 0.9f);
             window.Draw(Sprite);
         }
 

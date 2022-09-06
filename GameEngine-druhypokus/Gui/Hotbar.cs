@@ -27,6 +27,11 @@ namespace IndustrialEnginner.Gui
             }
         }
 
+        public override void OnClick(Vector2i mouse)
+        {
+            //throw new System.NotImplementedException();
+        }
+
         public override void ActualizeDisplayingCords(float newX, float newY, float zoomed)
         {
             base.ActualizeDisplayingCords(newX, newY, zoomed);

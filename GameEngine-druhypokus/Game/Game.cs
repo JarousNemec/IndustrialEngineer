@@ -16,8 +16,8 @@ namespace IndustrialEnginner
     {
         public const uint DEFAULT_WIN_WIDTH = 1200;
         public const uint DEFAULT_WIN_HEIGHT = 900;
-        public uint view_width = DEFAULT_WIN_WIDTH / 2;
-        public uint view_height = DEFAULT_WIN_HEIGHT / 2;
+        public uint view_width = DEFAULT_WIN_WIDTH;
+        public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "Game";
         public GameData GameData;
         private BlockRegistry _blockRegistry;
@@ -27,9 +27,9 @@ namespace IndustrialEnginner
         private GuiManager _guiManager;
         private float step = 80;
 
-        public uint zoom = 2;
+        public static uint zoom = 2;
         public static int chunkSize = 40;
-        public int mapSize = chunkSize * 1;
+        public int mapSize = chunkSize * 27;
         public int tileSize = 32;
         public int renderArea = chunkSize * 3;
 
@@ -48,6 +48,7 @@ namespace IndustrialEnginner
         }
 
         #region Controls
+
         public override void KeyPressed(object o, KeyEventArgs k)
         {
             switch (k.Code)
@@ -88,7 +89,7 @@ namespace IndustrialEnginner
                     break;
             }
         }
-        
+
         public override void OnMouseReleased(object sender, MouseButtonEventArgs e)
         {
             switch (e.Button)
@@ -108,7 +109,15 @@ namespace IndustrialEnginner
             switch (e.Button)
             {
                 case Mouse.Button.Left:
-                    SetupMining();
+                    if (_guiManager.GetGuiState() == GuiState.GamePlay)
+                    {
+                        SetupMining();
+                    }
+                    else if (_guiManager.GetGuiState() == GuiState.OpenPlayerInventory)
+                    {
+                        msg = _guiManager.ClickOnGuiComponent(Mouse.GetPosition(Window), Window);
+                    }
+
                     break;
                 case Mouse.Button.Middle:
                     break;
@@ -118,7 +127,7 @@ namespace IndustrialEnginner
                     break;
             }
         }
-        
+
         public override void OnMouseScrolled(object sender, MouseWheelScrollEventArgs e)
         {
             if (e.Delta == 1 && zoomed > 0)
@@ -131,8 +140,9 @@ namespace IndustrialEnginner
                 ZoomOut();
             }
         }
+
         #endregion
-        
+
         public override void LoadContent()
         {
             DebugUtil.LoadContent();
@@ -174,27 +184,27 @@ namespace IndustrialEnginner
             _mapLoader.Update(_player, chunkSize);
         }
 
-        private int futurex = 0;
-        private int futurey = 0;
+        private int _futurex = 0;
+        private int _futurey = 0;
 
         private bool CanStepOn(bool direction, float stepX, float stepY)
         {
-            futurex = (int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize);
-            futurey = (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize);
-            return direction && level[futurex, futurey]
-                .CanStepOn && futurex > 0 && futurex < mapSize - 1 && futurey > 0 && futurey < mapSize - 1;
+            _futurex = (int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize);
+            _futurey = (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize);
+            return direction && level[_futurex, _futurey]
+                .CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
 
-        private short zoomed = 1;
+        private short zoomed = 2;
         private short minZoom = 4;
 
-        
 
         private void SetupMining()
         {
-            if (_cursorWorldPos.X < 0 || _cursorWorldPos.Y < 0 || _cursorWorldPos.X > mapSize || _cursorWorldPos.Y > mapSize)
+            if (_cursorWorldPos.X < 0 || _cursorWorldPos.Y < 0 || _cursorWorldPos.X > mapSize ||
+                _cursorWorldPos.Y > mapSize)
                 return;
-            
+
             if (level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable)
             {
                 _mining.IsMining = true;
@@ -229,13 +239,13 @@ namespace IndustrialEnginner
             {
                 _mining.IsMining = false;
                 level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
-                
+
                 if (level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId == _itemRegistry.Log.Id)
                 {
                     LogCount += level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount;
                 }
 
-                if (level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness==0)
+                if (level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
                 {
                     level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
                         x.Id == level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
@@ -251,7 +261,6 @@ namespace IndustrialEnginner
                 (uint)renderArea);
         }
 
-        
 
         private void ZoomOut()
         {
@@ -280,7 +289,6 @@ namespace IndustrialEnginner
 
         public override void Initialize()
         {
-            
             InitializeGame();
             InitializeWorld();
             InitializeTilemap();
@@ -291,8 +299,9 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiManager = new GuiManager(GameData,View, _itemRegistry, Window);
+            _guiManager = new GuiManager(GameData, View, _itemRegistry, Window, (int)zoom);
         }
+
         private void InitializeGame()
         {
             Window.SetMouseCursorVisible(true);
@@ -300,7 +309,7 @@ namespace IndustrialEnginner
             _mining = new Mining();
             GameData = new GameData();
             _blockRegistry = BlockFactory.LoadBlocks("blockregistry.json");
-            _itemRegistry = ItemFactory.LoadItems("itemregistry.json",GameData);
+            _itemRegistry = ItemFactory.LoadItems("itemregistry.json", GameData);
         }
 
         private void InitializeEntities()
@@ -352,7 +361,6 @@ namespace IndustrialEnginner
 
         public override void Update(GameTime gameTime)
         {
-            
             _cursorWorldPos = _cursor.GetWorldPosition(Window, View, tileSize, zoomed, minZoom,
                 Mouse.GetPosition(Window),
                 _mapLoader, chunkSize);
@@ -374,6 +382,7 @@ namespace IndustrialEnginner
             {
                 Mine(_cursorWorldPos, 4);
             }
+
             _guiManager.UpdatePosition(View, zoomed);
         }
 
@@ -410,17 +419,21 @@ namespace IndustrialEnginner
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-            
-            msg2 = _cursor.Draw(Window, _cursorPos);
+
+            _cursor.Draw(Window, _cursorPos);
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiManager.DrawGui(Window, zoomed);
+            msg2 = View.Size.ToString();
             //msg = zoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
-            msg2 = zoomed.ToString();
-            msg = View.Size.ToString();
-            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, zoomed);
+            //msg2 = zoomed.ToString();
+            //msg2 = Mouse.GetPosition(Window).ToString();
+            //msg2 = _guiManager.GetGui().Inventory.Sprite.Texture.Size.ToString();
+            //msg = View.Size.ToString();
+            //msg2 = Mouse.GetPosition(Window).ToString();
+            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, zoomed > 2 ? (zoomed+1) : zoomed);
         }
     }
 }
