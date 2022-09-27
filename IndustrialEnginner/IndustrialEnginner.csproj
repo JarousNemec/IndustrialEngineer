@@ -7,8 +7,8 @@
         <ProjectGuid>{DD568C7B-49E1-413B-B498-C5ADAA076D1B}</ProjectGuid>
         <OutputType>WinExe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>GameEngine_druhypokus</RootNamespace>
-        <AssemblyName>GameEngine_druhypokus</AssemblyName>
+        <RootNamespace>IndustrialEnginner</RootNamespace>
+        <AssemblyName>IndustrialEnginner</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
         <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
