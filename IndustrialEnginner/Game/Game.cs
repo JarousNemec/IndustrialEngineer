@@ -130,12 +130,12 @@ namespace IndustrialEnginner
 
         public override void OnMouseScrolled(object sender, MouseWheelScrollEventArgs e)
         {
-            if (e.Delta == 1 && zoomed > 0)
+            if (e.Delta == 1 && zoomed > 0.5)
             {
                 ZoomIn();
             }
 
-            if (e.Delta == -1 && zoomed + 1 != minZoom)
+            if (e.Delta == -1 && zoomed < minZoom)
             {
                 ZoomOut();
             }
@@ -195,8 +195,8 @@ namespace IndustrialEnginner
                 .CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
 
-        private short zoomed = 2;
-        private short minZoom = 4;
+        private float zoomed = 2;
+        private float minZoom = 4;
 
 
         private void SetupMining()
@@ -266,7 +266,7 @@ namespace IndustrialEnginner
         {
             view_height *= zoom;
             view_width *= zoom;
-            zoomed++;
+            zoomed *= zoom;
             View.Size = new Vector2f(view_width, view_height);
             Window.SetView(View);
         }
@@ -275,7 +275,7 @@ namespace IndustrialEnginner
         {
             view_height /= zoom;
             view_width /= zoom;
-            zoomed--;
+            zoomed /= zoom;
             View.Size = new Vector2f(view_width, view_height);
             Window.SetView(View);
         }
@@ -424,8 +424,8 @@ namespace IndustrialEnginner
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiManager.DrawGui(Window, zoomed);
-            msg2 = View.Size.ToString();
-            //msg = zoomed.ToString();
+            //msg2 = View.Size.ToString();
+            msg = zoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = zoomed.ToString();

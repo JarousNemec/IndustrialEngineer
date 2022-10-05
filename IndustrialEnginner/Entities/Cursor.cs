@@ -23,7 +23,7 @@ namespace IndustrialEnginner.GameEntities
             return pos.ToString();
         }
 
-        public Vector2i GetPosition(RenderWindow window, View view, int tileSize, int zoomed, int minzoom,
+        public Vector2i GetPosition(RenderWindow window, View view, int tileSize, float zoomed, float minzoom,
             Vector2i mouse)
         {
             // half of both window dimensions
@@ -31,22 +31,22 @@ namespace IndustrialEnginner.GameEntities
             int halfWindowY = (int)(window.Size.Y / 2);
             
             // inverted value of zoom for calculate resolution of displayed blocks
-            int invertedZoomed = minzoom - zoomed;
+            float invertedZoomed = minzoom - zoomed;
             
             // calculate resolution of the blocks with current zoom
-            int resolution = MathSequence(16, invertedZoomed);
+            float resolution = CalculateResolution(16, invertedZoomed);
             
             // get player coordinates
             int px = (int)Player.GetX();
             int py = (int)Player.GetY();
             
             // calculate how many pixels stands player from the upper left corner of the block he stands
-            int oversizeX = (int)((int)Player.GetX() * resolution - view.Center.X / tileSize * resolution);
-            int oversizeY = (int)((int)Player.GetY() * resolution - view.Center.Y / tileSize * resolution);
+            int oversizeX = (int)(px * resolution - view.Center.X / tileSize * resolution);
+            int oversizeY = (int)(py * resolution - view.Center.Y / tileSize * resolution);
             
             // calculate how long is cursor from the center of window that means from the player
-            int tpx = (mouse.X - halfWindowX - oversizeX) / resolution;
-            int tpy = (mouse.Y - halfWindowY - oversizeY) / resolution;
+            int tpx = (int)((mouse.X - halfWindowX - oversizeX) / resolution);
+            int tpy = (int)((mouse.Y - halfWindowY - oversizeY) / resolution);
             
             //quickfix problem with window half edges
             if (mouse.X <= halfWindowX+oversizeX)
@@ -63,7 +63,7 @@ namespace IndustrialEnginner.GameEntities
             return new Vector2i(px, py);
         }
 
-        public Vector2i GetWorldPosition(RenderWindow window, View view, int tileSize, int zoomed, int minzoom,
+        public Vector2i GetWorldPosition(RenderWindow window, View view, int tileSize, float zoomed, float minzoom,
             Vector2i mouse,
             MapLoader mapLoader,
             int chunkSize)
@@ -78,15 +78,23 @@ namespace IndustrialEnginner.GameEntities
             return new Vector2i(px, py);
         }
 
-        private int MathSequence(int start, int count)
+        private float CalculateResolution(int start, float count)
         {
-            int sequence = start;
-            for (int i = 1; i < count; i++)
+            if (count >= 1)
             {
-                sequence += sequence;
+                int sequence = start;
+                for (int i = 1; i < count; i++)
+                {
+                    sequence += sequence;
+                }
+                return sequence;
+            }
+            if (count == 0.5)
+            {
+                return start / 2;
             }
 
-            return sequence;
+            return start;
         }
     }
 }
