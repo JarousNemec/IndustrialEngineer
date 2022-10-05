@@ -20,8 +20,6 @@ namespace IndustrialEnginner
         {
             if (consoleFont == null)
                 return;
-            if(zoomed == 0)
-                zoomed = 0.5f;
             string totalTimeElapsed = gameLoop.GameTime.TotalTimeElapsed.ToString("0.000");
             string deltaTime = gameLoop.GameTime.DeltaTime.ToString("0.00000");
             float fps = 1f / gameLoop.GameTime.DeltaTime;

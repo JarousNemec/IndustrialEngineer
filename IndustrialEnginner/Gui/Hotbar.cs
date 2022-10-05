@@ -16,6 +16,8 @@ namespace IndustrialEnginner.Gui
             {
                 Bar[i] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite,(i * _itemSlotSize.X)+pos.X, pos.Y);
             }
+
+            Bar[8].IsSelected = true;
         }
 
         public override void Draw(RenderWindow window, float zoomed)
@@ -29,7 +31,13 @@ namespace IndustrialEnginner.Gui
 
         public override void OnClick(Vector2i mouse)
         {
-            //throw new System.NotImplementedException();
+            var MouseXPositionInBar = mouse.X - LayoutX;
+            if (MouseXPositionInBar > 0)
+            {
+                var slotSizeX = Sprite.Texture.Size.X*2 / Bar.Length;
+                int clickedSlot = (int)(MouseXPositionInBar / slotSizeX);
+                Bar[clickedSlot - 1].IsSelected = true;
+            }
         }
 
         public override void ActualizeDisplayingCords(float newX, float newY, float zoomed)

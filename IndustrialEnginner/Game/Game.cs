@@ -191,7 +191,7 @@ namespace IndustrialEnginner
         {
             _futurex = (int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize);
             _futurey = (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize);
-            return direction && level[_futurex, _futurey]
+            return direction && _level[_futurex, _futurey]
                 .CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
 
@@ -205,11 +205,11 @@ namespace IndustrialEnginner
                 _cursorWorldPos.Y > mapSize)
                 return;
 
-            if (level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable)
+            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable)
             {
                 _mining.IsMining = true;
                 _mining.MiningCoords = _cursorWorldPos;
-                _mining.FinishValue = level[_cursorWorldPos.X, _cursorWorldPos.Y].HarvestTime;
+                _mining.FinishValue = _level[_cursorWorldPos.X, _cursorWorldPos.Y].HarvestTime;
                 _mining.ActualProgress = 0.01f;
             }
         }
@@ -219,9 +219,9 @@ namespace IndustrialEnginner
             if (pos.X < 0 || pos.Y < 0 || pos.X > mapSize || pos.Y > mapSize)
                 return;
 
-            if (level[pos.X, pos.Y].CanPlaceOn && level[pos.X, pos.Y].BlocksCanPlaceOn.Contains(block.Id))
+            if (_level[pos.X, pos.Y].CanPlaceOn && _level[pos.X, pos.Y].BlocksCanPlaceOn.Contains(block.Id))
             {
-                level[pos.X, pos.Y] = block;
+                _level[pos.X, pos.Y] = block;
                 UpdateMap();
             }
         }
@@ -238,17 +238,17 @@ namespace IndustrialEnginner
             if (_mining.ActualProgress > _mining.FinishValue)
             {
                 _mining.IsMining = false;
-                level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
+                _level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
 
-                if (level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId == _itemRegistry.Log.Id)
+                if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId == _itemRegistry.Log.Id)
                 {
-                    LogCount += level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount;
+                    LogCount += _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount;
                 }
 
-                if (level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
+                if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
                 {
-                    level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
-                        x.Id == level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
+                        x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
                     UpdateMap();
                 }
             }
@@ -256,8 +256,8 @@ namespace IndustrialEnginner
 
         private void UpdateMap()
         {
-            renderedPart = _mapLoader.GetCurrentChunks(level, mapSize, renderArea, _player, chunkSize);
-            map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea,
+            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, _player, chunkSize);
+            map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea,
                 (uint)renderArea);
         }
 
@@ -280,10 +280,10 @@ namespace IndustrialEnginner
             Window.SetView(View);
         }
 
-        private Block[,] level;
-        private Block[,] renderedPart;
-        private int lastStandXChunk = 1;
-        private int lastStandYChunk = 1;
+        private Block[,] _level;
+        private Block[,] _renderedPart;
+        private int _lastStandXChunk = 1;
+        private int _lastStandYChunk = 1;
 
         #region Initialization
 
@@ -338,7 +338,7 @@ namespace IndustrialEnginner
         private void InitializeTilemap()
         {
             map = new Tilemap();
-            map.load(new Vector2u((uint)tileSize, (uint)tileSize), renderedPart, (uint)renderArea, (uint)renderArea);
+            map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea, (uint)renderArea);
         }
 
         private void InitializeWorld()
@@ -351,10 +351,10 @@ namespace IndustrialEnginner
                 renderArea = mapSize;
             }
 
-            lastStandXChunk = _mapLoader.middleXChunk;
-            lastStandYChunk = _mapLoader.middleYChunk;
-            level = generator.Generate(mapSize, r.Next(1, 99999999));
-            renderedPart = _mapLoader.GetCurrentChunks(level, mapSize, renderArea, _player, chunkSize);
+            _lastStandXChunk = _mapLoader.middleXChunk;
+            _lastStandYChunk = _mapLoader.middleYChunk;
+            _level = generator.Generate(mapSize, r.Next(1, 99999999));
+            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, _player, chunkSize);
         }
 
         #endregion
@@ -366,7 +366,7 @@ namespace IndustrialEnginner
                 _mapLoader, chunkSize);
             _cursorPos = _cursor.GetPosition(Window, View, tileSize, zoomed, minZoom, Mouse.GetPosition(Window));
 
-            if (lastStandXChunk != _mapLoader.middleXChunk || lastStandYChunk != _mapLoader.middleYChunk)
+            if (_lastStandXChunk != _mapLoader.middleXChunk || _lastStandYChunk != _mapLoader.middleYChunk)
             {
                 UpdateMap();
                 MoveCameraAfterLoadNewWorldPart();
@@ -388,26 +388,26 @@ namespace IndustrialEnginner
 
         private void ActualizeLastStandedChunksValues()
         {
-            lastStandXChunk = _mapLoader.middleXChunk;
-            lastStandYChunk = _mapLoader.middleYChunk;
+            _lastStandXChunk = _mapLoader.middleXChunk;
+            _lastStandYChunk = _mapLoader.middleYChunk;
         }
 
         private void MoveCameraAfterLoadNewWorldPart()
         {
-            if (lastStandXChunk > _mapLoader.middleXChunk)
+            if (_lastStandXChunk > _mapLoader.middleXChunk)
             {
                 View.Move(new Vector2f(chunkSize * tileSize, 0));
             }
-            else if (lastStandXChunk < _mapLoader.middleXChunk)
+            else if (_lastStandXChunk < _mapLoader.middleXChunk)
             {
                 View.Move(new Vector2f(-chunkSize * tileSize, 0));
             }
 
-            if (lastStandYChunk > _mapLoader.middleYChunk)
+            if (_lastStandYChunk > _mapLoader.middleYChunk)
             {
                 View.Move(new Vector2f(0, chunkSize * tileSize));
             }
-            else if (lastStandYChunk < _mapLoader.middleYChunk)
+            else if (_lastStandYChunk < _mapLoader.middleYChunk)
             {
                 View.Move(new Vector2f(0, -chunkSize * tileSize));
             }
@@ -425,15 +425,15 @@ namespace IndustrialEnginner
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiManager.DrawGui(Window, zoomed);
             //msg2 = View.Size.ToString();
-            msg = zoomed.ToString();
+            //msg = zoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = zoomed.ToString();
             //msg2 = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiManager.GetGui().Inventory.Sprite.Texture.Size.ToString();
             //msg = View.Size.ToString();
-            //msg2 = Mouse.GetPosition(Window).ToString();
-            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, zoomed > 2 ? (zoomed+1) : zoomed);
+            msg2 = Mouse.GetPosition(Window).ToString();
+            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, zoomed);
         }
     }
 }

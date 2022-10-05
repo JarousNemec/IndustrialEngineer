@@ -26,35 +26,6 @@ namespace IndustrialEnginner.Gui
 
         private void CalculateComponentsClickAreas(Window window, int defaultZoom)
         {
-            //version with right definition
-             // var leftUpCornerHotbar = new Vector2i((int)(window.Size.X / 2 - _gui.Hotbar.Sprite.Texture.Size.X / 2),
-             //     (int)(window.Size.Y - _gui.Hotbar.Sprite.Texture.Size.Y));
-             // var rightDownCornerHotbar = new Vector2i((int)(window.Size.X / 2 + _gui.Hotbar.Sprite.Texture.Size.X / 2),
-             //     (int)(window.Size.Y));
-             // _gui.Hotbar.ClickArea = new Area(leftUpCornerHotbar, rightDownCornerHotbar);
-             //
-             // var leftUpCornerInventory =
-             //     new Vector2i(
-             //         (int)(window.Size.X / 2 -
-             //               (_gui.Inventory.Sprite.Texture.Size.X + _gui.Crafting.Sprite.Texture.Size.X) / 2),
-             //         (int)(window.Size.Y / 2 - _gui.Inventory.Sprite.Texture.Size.Y / 2));
-             // var rightDownCornerInventory =
-             //     new Vector2i((int)(leftUpCornerInventory.X + _gui.Inventory.Sprite.Texture.Size.X),
-             //         (int)(leftUpCornerInventory.Y + _gui.Inventory.Sprite.Texture.Size.Y));
-             // _gui.Inventory.ClickArea = new Area(leftUpCornerInventory, rightDownCornerInventory);
-             //
-             // var leftUpCornerCrafting = new Vector2i(
-             //     (int)((window.Size.X / 2 -
-             //            (_gui.Inventory.Sprite.Texture.Size.X + _gui.Crafting.Sprite.Texture.Size.X) / 2) +
-             //           _gui.Inventory.Sprite.Texture.Size.X),
-             //     (int)(window.Size.Y / 2 - _gui.Crafting.Sprite.Texture.Size.Y / 2));
-             // var rightDownCornerCrafting =
-             //     new Vector2i((int)(leftUpCornerCrafting.X + _gui.Crafting.Sprite.Texture.Size.X),
-             //         (int)(leftUpCornerCrafting.Y + _gui.Crafting.Sprite.Texture.Size.Y));
-             // _gui.Crafting.ClickArea = new Area(leftUpCornerCrafting, rightDownCornerCrafting);
-             //
-            ////////////////////////////////////////////////////////////////////////////////////////////////////  working version
-            // everything needs to be times default zoom that means 2
              var leftUpCornerHotbar = new Vector2i((int)(window.Size.X / 2 - _gui.Hotbar.Sprite.Texture.Size.X),
                  (int)(window.Size.Y - _gui.Hotbar.Sprite.Texture.Size.Y*2));
              var rightDownCornerHotbar = new Vector2i((int)(window.Size.X / 2 + _gui.Hotbar.Sprite.Texture.Size.X),
@@ -83,23 +54,11 @@ namespace IndustrialEnginner.Gui
         }
         public void UpdatePosition(View view, float zoomed)
         {
-            if (zoomed == 0)
-            {
-                zoomed = 0.5f;
-            }
-
             _gui.ActualizeComponentsPositions(view, zoomed);
         }
 
-        private float previousZoomed = 0;
-
         public void DrawGui(RenderWindow window, float zoomed)
         {
-            if (zoomed == 0)
-            {
-                zoomed = 0.5f;
-            }
-
             _gui.DrawComponents(window, zoomed, _state);
         }
 
