@@ -16,4 +16,4 @@ jobs:
           target_repo_url:
             git@ssh.gitlab.ssakhk.cz:nemec.jaroslav/IndustrialEnginner.git
           ssh_private_key:                              # <-- use 'secrets' to pass credential information.
-            ${{ GITLAB_SSH_PRIVATE_KEY }}
+            ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
