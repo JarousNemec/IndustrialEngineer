@@ -12,7 +12,7 @@ namespace IndustrialEnginner.Gui
 
         private Sprite _selectedSprite;
 
-        public ItemSlot(Sprite sprite, Sprite selectedSprite, float x, float y) : base(sprite, x, y)
+        public ItemSlot(Sprite sprite, Sprite selectedSprite) : base(sprite)
         {
             _selectedSprite = selectedSprite;
             Item = null;

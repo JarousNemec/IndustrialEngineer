@@ -7,7 +7,7 @@ namespace IndustrialEnginner.Gui
     {
         public ItemSlot[,] Storage { get; set; }
         private Vector2u _itemSlotSize;
-        public Inventory(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, Vector2f pos) : base(sprite, pos.X, pos.Y)
+        public Inventory(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite) : base(sprite)
         {
             _itemSlotSize = itemSlotSprite.Texture.Size;
             _itemSlotSize.X = _itemSlotSize.X - 4;
@@ -17,7 +17,7 @@ namespace IndustrialEnginner.Gui
             {
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
-                    Storage[i,j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite,(i * _itemSlotSize.X)+pos.X, (i * _itemSlotSize.Y)+pos.Y);
+                    Storage[i,j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite);
                 }
             }
         }

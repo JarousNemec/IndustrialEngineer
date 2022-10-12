@@ -9,16 +9,12 @@ namespace IndustrialEnginner.Gui
     {
 
         public Sprite Sprite { get; set; }
-        public float LayoutX { get; set; }
-        public float LayoutY { get; set; }
         public float DisplayingX { get; set; }
         public float DisplayingY { get; set; }
         public Area ClickArea { get;set; }
-        public GuiComponent(Sprite sprite, float layoutX, float layoutY)
+        public GuiComponent(Sprite sprite)
         {
             Sprite = sprite;
-            LayoutX = layoutX;
-            LayoutY = layoutY;
         }
 
         public virtual void ActualizeDisplayingCords(float newX, float newY, float zoomed)

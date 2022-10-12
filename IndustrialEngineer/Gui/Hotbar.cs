@@ -8,13 +8,13 @@ namespace IndustrialEnginner.Gui
     {
         public ItemSlot[] Bar { get; set; }
         private Vector2u _itemSlotSize;
-        public Hotbar(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, Vector2f pos) : base(sprite, pos.X, pos.Y)
+        public Hotbar(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite) : base(sprite)
         {
             _itemSlotSize = itemSlotSprite.Texture.Size;
             Bar = new ItemSlot[9];
             for (int i = 0; i < Bar.Length; i++)
             {
-                Bar[i] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite,(i * _itemSlotSize.X)+pos.X, pos.Y);
+                Bar[i] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite);
             }
 
             Bar[8].IsSelected = true;
@@ -31,12 +31,12 @@ namespace IndustrialEnginner.Gui
 
         public override void OnClick(Vector2i mouse)
         {
-            var MouseXPositionInBar = mouse.X - LayoutX;
+            var MouseXPositionInBar = mouse.X - ClickArea.LeftUpCorner.X;
             if (MouseXPositionInBar > 0)
             {
                 var slotSizeX = Sprite.Texture.Size.X*2 / Bar.Length;
                 int clickedSlot = (int)(MouseXPositionInBar / slotSizeX);
-                Bar[clickedSlot - 1].IsSelected = true;
+                Bar[clickedSlot].IsSelected = true;
             }
         }
 

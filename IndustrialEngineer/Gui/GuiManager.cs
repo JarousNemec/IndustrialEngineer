@@ -14,7 +14,7 @@ namespace IndustrialEnginner.Gui
         public GuiManager(GameData gameData, View view, ItemRegistry itemRegistry, Window window, int defaultZoom)
         {
             _state = GuiState.GamePlay;
-            _gui = new Gui(gameData);
+            _gui = new Gui(gameData, window);
             _gui.Inventory.Storage[0, 0].AddItem(itemRegistry.Log.Copy());
             CalculateComponentsClickAreas(window, defaultZoom);
         }
