@@ -1,3 +1,4 @@
+using System;
 using SFML.System;
 
 namespace IndustrialEnginner.Components
@@ -11,6 +12,15 @@ namespace IndustrialEnginner.Components
         {
             LeftUpCorner = leftUpCorner;
             RightDownCorner = rightDownCorner;
+        }
+
+        public int GetWidth()
+        {
+            return Math.Abs(RightDownCorner.X - LeftUpCorner.X);
+        }
+        public int GetHeight()
+        {
+            return Math.Abs(RightDownCorner.Y - LeftUpCorner.Y);
         }
 
         public override string ToString()

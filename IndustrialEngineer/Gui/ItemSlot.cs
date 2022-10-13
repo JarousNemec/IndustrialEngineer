@@ -12,7 +12,7 @@ namespace IndustrialEnginner.Gui
 
         private Sprite _selectedSprite;
 
-        public ItemSlot(Sprite sprite, Sprite selectedSprite) : base(sprite)
+        public ItemSlot(Sprite sprite, Sprite selectedSprite, int rows, int columns) : base(sprite, rows, columns)
         {
             _selectedSprite = selectedSprite;
             Item = null;
@@ -67,11 +67,6 @@ namespace IndustrialEnginner.Gui
             itemSprite.Position = new Vector2f(DisplayingX + itemSpritePosX*zoomed, DisplayingY + itemSpritePosY*zoomed);
             itemSprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(itemSprite);
-        }
-
-        public override void OnClick(Vector2i mouse)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

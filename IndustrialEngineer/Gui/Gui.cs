@@ -12,16 +12,15 @@ namespace IndustrialEnginner.Gui
         
         public Gui(GameData gameData, Window window)
         {
-            
-            // Hotbar = new Hotbar(gameData.GetSprites()["hotbar"],gameData.GetSprites()["itemslot"],gameData.GetSprites()["itemslot_selected"], new Vector2f(window.Size.X/2 - gameData.GetSprites()["hotbar"].Texture.Size.X/2,window.Size.Y-(gameData.GetSprites()["hotbar"].Texture.Size.Y-2)));
-            // Inventory = new Inventory(gameData.GetSprites()["inventory"], gameData.GetSprites()["itemslot"],
-            //     gameData.GetSprites()["itemslot_selected"], new Vector2f(window.Size.X/2 - (gameData.GetSprites()["inventory"].Texture.Size.X+gameData.GetSprites()["crafting"].Texture.Size.X)/2, window.Size.Y/2-gameData.GetSprites()["inventory"].Texture.Size.Y/2));
-            // Crafting = new Crafting(gameData.GetSprites()["crafting"], window.Size.X/2 - (gameData.GetSprites()["inventory"].Texture.Size.X+gameData.GetSprites()["crafting"].Texture.Size.X)/2+gameData.GetSprites()["inventory"].Texture.Size.X, window.Size.Y/2-gameData.GetSprites()["crafting"].Texture.Size.Y/2);
-            Hotbar = new Hotbar(gameData.GetSprites()["hotbar"],gameData.GetSprites()["itemslot"],gameData.GetSprites()["itemslot_selected"]);
-            Inventory = new Inventory(gameData.GetSprites()["inventory"], gameData.GetSprites()["itemslot"],
-                gameData.GetSprites()["itemslot_selected"]);
-            Crafting = new Crafting(gameData.GetSprites()["crafting"]);
+            InitializeComponents(gameData);
+        }
 
+        private void InitializeComponents(GameData gameData)
+        {
+            Hotbar = new Hotbar(gameData.GetSprites()["hotbar"],gameData.GetSprites()["itemslot"],gameData.GetSprites()["itemslot_selected"], 1,9);
+            Inventory = new Inventory(gameData.GetSprites()["inventory"], gameData.GetSprites()["itemslot"],
+                gameData.GetSprites()["itemslot_selected"],4,8);
+            Crafting = new Crafting(gameData.GetSprites()["crafting"],6,3);
         }
 
         

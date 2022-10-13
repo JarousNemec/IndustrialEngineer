@@ -24,7 +24,7 @@ namespace IndustrialEnginner
         private ItemRegistry _itemRegistry;
         private MapLoader _mapLoader;
         private Tilemap map;
-        private GuiManager _guiManager;
+        private GuiController _guiController;
         private float step = 80;
 
         public static uint zoom = 2;
@@ -66,7 +66,7 @@ namespace IndustrialEnginner
                     _moving.right = true;
                     break;
                 case Keyboard.Key.E:
-                    _guiManager.OpenOrClosePlayerInventory();
+                    _guiController.OpenOrClosePlayerInventory();
                     break;
             }
         }
@@ -109,13 +109,13 @@ namespace IndustrialEnginner
             switch (e.Button)
             {
                 case Mouse.Button.Left:
-                    if (_guiManager.GetGuiState() == GuiState.GamePlay)
+                    if (_guiController.GetGuiState() == GuiState.GamePlay)
                     {
                         SetupMining();
                     }
-                    else if (_guiManager.GetGuiState() == GuiState.OpenPlayerInventory)
+                    else if (_guiController.GetGuiState() == GuiState.OpenPlayerInventory)
                     {
-                        msg = _guiManager.ClickOnGuiComponent(Mouse.GetPosition(Window), Window);
+                        msg = _guiController.ClickOnGuiComponent(Mouse.GetPosition(Window));
                     }
 
                     break;
@@ -299,7 +299,7 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiManager = new GuiManager(GameData, View, _itemRegistry, Window, (int)zoom);
+            _guiController = new GuiController(GameData, View, _itemRegistry, Window, (int)zoom);
         }
 
         private void InitializeGame()
@@ -383,7 +383,7 @@ namespace IndustrialEnginner
                 Mine(_cursorWorldPos, 4);
             }
 
-            _guiManager.UpdatePosition(View, zoomed);
+            _guiController.UpdatePosition(View, zoomed);
         }
 
         private void ActualizeLastStandedChunksValues()
@@ -419,18 +419,17 @@ namespace IndustrialEnginner
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-
             _cursor.Draw(Window, _cursorPos);
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
-            _guiManager.DrawGui(Window, zoomed);
+            _guiController.DrawGui(Window, zoomed);
             //msg2 = View.Size.ToString();
             //msg = zoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = zoomed.ToString();
             //msg2 = Mouse.GetPosition(Window).ToString();
-            //msg2 = _guiManager.GetGui().Inventory.Sprite.Texture.Size.ToString();
+            //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
             //msg = View.Size.ToString();
             msg2 = Mouse.GetPosition(Window).ToString();
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, zoomed);

@@ -11,10 +11,13 @@ namespace IndustrialEnginner.Gui
         public Sprite Sprite { get; set; }
         public float DisplayingX { get; set; }
         public float DisplayingY { get; set; }
-        public Area ClickArea { get;set; }
-        public GuiComponent(Sprite sprite)
+        public SlotGrid SlotGrid { get; set; }
+        public GuiComponent(Sprite sprite, int rows, int columns)
         {
             Sprite = sprite;
+            SlotGrid = new SlotGrid();
+            SlotGrid.Rows = rows;
+            SlotGrid.Columns = columns;
         }
 
         public virtual void ActualizeDisplayingCords(float newX, float newY, float zoomed)
@@ -28,11 +31,6 @@ namespace IndustrialEnginner.Gui
             Sprite.Position = new Vector2f(DisplayingX, DisplayingY);
             Sprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(Sprite);
-        }
-
-        public virtual void OnClick(Vector2i mouse)
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
