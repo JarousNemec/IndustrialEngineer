@@ -12,6 +12,9 @@ namespace IndustrialEnginner.Gui
         public float DisplayingX { get; set; }
         public float DisplayingY { get; set; }
         public SlotGrid SlotGrid { get; set; }
+        
+        public int ComponentPosInWindowX { get; set; }
+        public int ComponentPosInWindowY { get; set; }
         public GuiComponent(Sprite sprite, int rows, int columns)
         {
             Sprite = sprite;
@@ -20,6 +23,11 @@ namespace IndustrialEnginner.Gui
             SlotGrid.Columns = columns;
         }
 
+        public void SetPosInWindow(int x, int y)
+        {
+            ComponentPosInWindowX = x;
+            ComponentPosInWindowY = y;
+        }
         public virtual void ActualizeDisplayingCords(float newX, float newY, float zoomed)
         {
             DisplayingX = newX;

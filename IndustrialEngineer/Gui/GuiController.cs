@@ -14,9 +14,8 @@ namespace IndustrialEnginner.Gui
         public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, Window window, int defaultZoom)
         {
             _state = GuiState.GamePlay;
-            _gui = new Gui(gameData, window);
+            _gui = new Gui(gameData, window, defaultZoom);
             _gui.Inventory.Storage[0, 0].AddItem(itemRegistry.Log.Copy());
-            CalculateComponentsClickAreas(window, defaultZoom);
         }
 
         public Gui GetGui()
@@ -24,48 +23,7 @@ namespace IndustrialEnginner.Gui
             return _gui;
         }
 
-        private void CalculateComponentsClickAreas(Window window, int defaultZoom)
-        {
-            var leftUpCornerHotbar = new Vector2i(312, 840);
-            var rightDownCornerHotbar = new Vector2i(890,900);
-            _gui.Hotbar.SlotGrid.ClickArea = new Area(leftUpCornerHotbar, rightDownCornerHotbar);
-
-            var leftUpCornerInventory = new Vector2i(250,280);
-            var rightDownCornerInventory = new Vector2i(693,498);
-            _gui.Inventory.SlotGrid.ClickArea = new Area(leftUpCornerInventory, rightDownCornerInventory);
-
-            var leftUpCornerCrafting = new Vector2i(730,280);
-            var rightDownCornerCrafting = new Vector2i(950, 600);
-            _gui.Crafting.SlotGrid.ClickArea = new Area(leftUpCornerCrafting, rightDownCornerCrafting);
-            
-            // var leftUpCornerHotbar = new Vector2i((int)(window.Size.X / 2 - _gui.Hotbar.Sprite.Texture.Size.X),
-            //     (int)(window.Size.Y - _gui.Hotbar.Sprite.Texture.Size.Y*2));
-            // var rightDownCornerHotbar = new Vector2i((int)(window.Size.X / 2 + _gui.Hotbar.Sprite.Texture.Size.X),
-            //     (int)(window.Size.Y));
-            // _gui.Hotbar.SlotGrid.ClickArea = new Area(leftUpCornerHotbar, rightDownCornerHotbar);
-            //
-            // var leftUpCornerInventory =
-            //     new Vector2i(
-            //         (int)(window.Size.X / 2 -
-            //               (_gui.Inventory.Sprite.Texture.Size.X + _gui.Crafting.Sprite.Texture.Size.X)),
-            //         (int)(window.Size.Y / 2 - _gui.Inventory.Sprite.Texture.Size.Y));
-            // var rightDownCornerInventory =
-            //     new Vector2i((int)(leftUpCornerInventory.X + _gui.Inventory.Sprite.Texture.Size.X*2),
-            //         (int)((leftUpCornerInventory.Y + _gui.Inventory.Sprite.Texture.Size.Y))/_gui.Inventory.);
-            // _gui.Inventory.SlotGrid.ClickArea = new Area(leftUpCornerInventory, rightDownCornerInventory);
-            //
-            // var leftUpCornerCrafting = new Vector2i(
-            //     (int)((window.Size.X / 2 -
-            //            (_gui.Inventory.Sprite.Texture.Size.X + _gui.Crafting.Sprite.Texture.Size.X)) +
-            //           _gui.Inventory.Sprite.Texture.Size.X*2),
-            //     (int)(window.Size.Y / 2 - _gui.Crafting.Sprite.Texture.Size.Y));
-            // var rightDownCornerCrafting =
-            //     new Vector2i((int)(leftUpCornerCrafting.X + _gui.Crafting.Sprite.Texture.Size.X*2),
-            //         (int)(leftUpCornerCrafting.Y + _gui.Crafting.Sprite.Texture.Size.Y*2));
-            // _gui.Crafting.SlotGrid.ClickArea = new Area(leftUpCornerCrafting, rightDownCornerCrafting);
-
-
-        }
+        
         public void UpdatePosition(View view, float zoomed)
         {
             _gui.ActualizeComponentsPositions(view, zoomed);
