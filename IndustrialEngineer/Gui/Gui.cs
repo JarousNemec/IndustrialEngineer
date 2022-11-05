@@ -54,7 +54,8 @@ namespace IndustrialEnginner.Gui
             Inventory.ActualizeDisplayingCords(view.Center.X - (Inventory.Sprite.Texture.Size.X+Crafting.Sprite.Texture.Size.X)/2*zoomed, view.Center.Y-Inventory.Sprite.Texture.Size.Y/2*zoomed, zoomed);
             Crafting.ActualizeDisplayingCords(view.Center.X - (Inventory.Sprite.Texture.Size.X+Crafting.Sprite.Texture.Size.X)/2*zoomed+Inventory.Sprite.Texture.Size.X*zoomed, view.Center.Y-Crafting.Sprite.Texture.Size.Y/2*zoomed, zoomed);
         }
-        public void CalculateComponentsPositionsInWindow(Window window, float zoomed)
+
+        private void CalculateComponentsPositionsInWindow(Window window, float zoomed)
         {  
             CalculateCenter(window);
             Hotbar.SetPosInWindow((int)(Center.X - Hotbar.Sprite.Texture.Size.X/2*zoomed),(int)(Center.Y+window.Size.Y/2-(Hotbar.Sprite.Texture.Size.Y-2)*zoomed));

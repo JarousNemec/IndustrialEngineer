@@ -8,9 +8,12 @@ namespace IndustrialEnginner
     {
         private const string TEXTURES_DIRECTORY_PATH = "./textures/";
         private Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
-
+        // public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";font.psp
+        public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";
+        public static Font Font;
         public GameData()
         {
+            Font = new Font(CONSOLE_FONT_PATH);
             Sprites = SpriteFactory.LoadSprites(TEXTURES_DIRECTORY_PATH);
         }
         

@@ -11,9 +11,14 @@ namespace IndustrialEnginner.Gui
         public bool IsSelected { get; set; }
 
         private Sprite _selectedSprite;
+        private Text countText;
+        private static uint fontSize = 16;
+        private Vector2f textPos;
 
         public ItemSlot(Sprite sprite, Sprite selectedSprite, int rows, int columns) : base(sprite, rows, columns)
         {
+            countText = new Text("0", GameData.Font, fontSize);
+            countText.Color = Color.Black;
             _selectedSprite = selectedSprite;
             Item = null;
             Count = 0;
@@ -26,12 +31,15 @@ namespace IndustrialEnginner.Gui
             {
                 Item = item;
                 Count = count;
+                countText.DisplayedString = Count.ToString();
                 return true;
             }
 
-            if (Item == item)
+            if (Item.Id == item.Id)
             {
                 Count += count;
+
+                countText.DisplayedString = Count.ToString();
                 return true;
             }
 
@@ -61,10 +69,34 @@ namespace IndustrialEnginner.Gui
 
             if (Item == null)
                 return;
+
             var itemSprite = Item.Sprite;
             var itemSpritePosX = Sprite.Texture.Size.X / 2 - itemSprite.Texture.Size.X / 2;
             var itemSpritePosY = Sprite.Texture.Size.Y / 2 - itemSprite.Texture.Size.Y / 2;
-            itemSprite.Position = new Vector2f(DisplayingX + itemSpritePosX*zoomed, DisplayingY + itemSpritePosY*zoomed);
+
+            DrawItemIconToSlot(window, zoomed, itemSprite, itemSpritePosX, itemSpritePosY);
+            DrawItemCountToSlot(window, zoomed, itemSpritePosX, itemSpritePosY);
+        }
+
+        private static float requiredFontSize = 8;
+        private static float fontSizeCorrection = requiredFontSize / fontSize;
+        private float minfontCellSize = fontSize / 2 * fontSizeCorrection;
+
+        private void DrawItemCountToSlot(RenderWindow window, float zoomed, uint itemSpritePosX, uint itemSpritePosY)
+        {
+            textPos = new Vector2f((16 - minfontCellSize * (Count.ToString().Length - 1)) * zoomed,
+                13 * zoomed);
+            countText.Position = new Vector2f(DisplayingX + textPos.X + itemSpritePosX * zoomed,
+                DisplayingY + textPos.Y + itemSpritePosY * zoomed);
+            countText.Scale = new Vector2f(fontSizeCorrection * zoomed, fontSizeCorrection * zoomed);
+            window.Draw(countText);
+        }
+
+        private void DrawItemIconToSlot(RenderWindow window, float zoomed, Sprite itemSprite, uint itemSpritePosX,
+            uint itemSpritePosY)
+        {
+            itemSprite.Position =
+                new Vector2f(DisplayingX + itemSpritePosX * zoomed, DisplayingY + itemSpritePosY * zoomed);
             itemSprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(itemSprite);
         }
