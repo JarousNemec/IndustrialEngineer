@@ -54,17 +54,17 @@ namespace IndustrialEnginner.Gui
         public string ClickOnGuiComponent(Vector2i mousePosition)
         {
             
-            if (IsPointInArea(mousePosition, _gui.Hotbar.SlotGrid.ClickArea.LeftUpCorner, _gui.Hotbar.SlotGrid.ClickArea.RightDownCorner))
+            if (IsPointInArea(mousePosition, _gui.Hotbar.ClickGrid.ClickArea.LeftUpCorner, _gui.Hotbar.ClickGrid.ClickArea.RightDownCorner))
             {
-                var cell = _gui.Hotbar.SlotGrid.GetCurrentCell(mousePosition);
+                var cell = _gui.Hotbar.ClickGrid.GetCurrentCell(mousePosition);
                 return cell.ToString();
-            }if (IsPointInArea(mousePosition, _gui.Inventory.SlotGrid.ClickArea.LeftUpCorner, _gui.Inventory.SlotGrid.ClickArea.RightDownCorner))
+            }if (IsPointInArea(mousePosition, _gui.Inventory.ClickGrid.ClickArea.LeftUpCorner, _gui.Inventory.ClickGrid.ClickArea.RightDownCorner))
             {
-                var cell = _gui.Inventory.SlotGrid.GetCurrentCell(mousePosition);
+                var cell = _gui.Inventory.ClickGrid.GetCurrentCell(mousePosition);
                 return cell.ToString();
                 //_gui.Inventory.OnClick(mousePosition);
                 //return "inventory";
-            }if (IsPointInArea(mousePosition, _gui.Crafting.SlotGrid.ClickArea.LeftUpCorner, _gui.Crafting.SlotGrid.ClickArea.RightDownCorner))
+            }if (IsPointInArea(mousePosition, _gui.Crafting.ClickGrid.ClickArea.LeftUpCorner, _gui.Crafting.ClickGrid.ClickArea.RightDownCorner))
             {
                 //_gui.Crafting.OnClick(mousePosition);
                 return "crafting";

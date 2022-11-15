@@ -5,9 +5,9 @@ using SFML.System;
 
 namespace IndustrialEnginner.Gui
 {
-    public class SlotGrid
+    public class ClickGrid
     {
-        public Area ClickArea { get;set; }
+        public Area ClickArea { get; set; }
         public int Rows { get; set; }
         public int Columns { get; set; }
 
@@ -19,9 +19,9 @@ namespace IndustrialEnginner.Gui
             {
                 var slotSizeX = ClickArea.GetWidth() / Columns;
                 var slotSizeY = ClickArea.GetHeight() / Rows;
-                int clickedSlotX = mouseXPosition / slotSizeX;
-                int clickedSlotY = mouseYPosition / slotSizeY;
-                return new Vector2i(clickedSlotX, clickedSlotY);
+                int column = mouseXPosition / (slotSizeX);
+                int row = mouseYPosition / (slotSizeY);
+                return new Vector2i(column>Columns?Columns:column, row>Rows?Rows:row);
             }
 
             return new Vector2i(0, 0);

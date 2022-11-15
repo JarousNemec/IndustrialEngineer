@@ -5,8 +5,10 @@ namespace IndustrialEnginner.Gui
 {
     public class Crafting : GuiComponent
     {
-        public Crafting(Sprite sprite, int rows, int columns) : base(sprite, rows, columns)
+        public ClickGrid ClickGrid { get; set; }
+        public Crafting(Sprite sprite) : base(sprite)
         {
+            ClickGrid = new ClickGrid();
         }
     }
 }

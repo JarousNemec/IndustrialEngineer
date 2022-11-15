@@ -1,26 +1,26 @@
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using IndustrialEnginner.Components;
+using IndustrialEnginner.Interfaces;
 using SFML.Graphics;
 using SFML.System;
 
 namespace IndustrialEnginner.Gui
 {
-    public class GuiComponent
+    public class GuiComponent : IGuiComponent
     {
-
         public Sprite Sprite { get; set; }
         public float DisplayingX { get; set; }
         public float DisplayingY { get; set; }
-        public SlotGrid SlotGrid { get; set; }
-        
+
         public int ComponentPosInWindowX { get; set; }
         public int ComponentPosInWindowY { get; set; }
-        public GuiComponent(Sprite sprite, int rows, int columns)
+        public List<GuiComponent> _childComponents;
+
+        public GuiComponent(Sprite sprite)
         {
+            _childComponents = new List<GuiComponent>();
             Sprite = sprite;
-            SlotGrid = new SlotGrid();
-            SlotGrid.Rows = rows;
-            SlotGrid.Columns = columns;
         }
 
         public void SetPosInWindow(int x, int y)
@@ -28,17 +28,22 @@ namespace IndustrialEnginner.Gui
             ComponentPosInWindowX = x;
             ComponentPosInWindowY = y;
         }
-        public virtual void ActualizeDisplayingCords(float newX, float newY, float zoomed)
+
+        public void ActualizeDisplayingCords(float newX, float newY)
         {
             DisplayingX = newX;
             DisplayingY = newY;
         }
-        
+
         public virtual void Draw(RenderWindow window, float zoomed)
         {
             Sprite.Position = new Vector2f(DisplayingX, DisplayingY);
             Sprite.Scale = new Vector2f(zoomed, zoomed);
             window.Draw(Sprite);
+            foreach (var childComponent in _childComponents)
+            {
+                childComponent.Draw(window, zoomed);
+            }
         }
     }
 }
