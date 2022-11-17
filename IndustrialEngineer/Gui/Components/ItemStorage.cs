@@ -1,4 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
+using IndustrialEnginner.DataModels;
 using SFML.Graphics;
 using SFML.System;
 
@@ -31,16 +32,16 @@ namespace IndustrialEnginner.Gui
             Storage[2, 0].IsSelected = true;
         }
 
-        public override void Draw(RenderWindow window, float zoomed)
+        public override void Draw(RenderWindow window, Zoom zoom)
         {
-            base.Draw(window, zoomed);
+            base.Draw(window, zoom);
             foreach (var itemSlot in Storage)
             {
-                itemSlot.Draw(window, zoomed);
+                itemSlot.Draw(window, zoom);
             }
         }
 
-        public void ActualizeDisplayingCords(float newX, float newY, float zoomed, float marginX = 0,
+        public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, float marginX = 0,
             float marginY = 0, float marginBetween = 0)
         {
             base.ActualizeDisplayingCords(newX, newY);
@@ -50,8 +51,8 @@ namespace IndustrialEnginner.Gui
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
                     Storage[i, j].ActualizeDisplayingCords(
-                        (zoomed * i * _itemSlotSize.X) + newX + marginX * zoomed + i * marginBetween * zoomed,
-                        (zoomed * j * _itemSlotSize.Y) + newY + marginY * zoomed + j * marginBetween * zoomed, zoomed);
+                        (zoom.FlippedZoomed * i * _itemSlotSize.X) + newX + marginX * zoom.FlippedZoomed + i * marginBetween * zoom.FlippedZoomed,
+                        (zoom.FlippedZoomed * j * _itemSlotSize.Y) + newY + marginY * zoom.FlippedZoomed + j * marginBetween * zoom.FlippedZoomed, zoom,_itemSlotSize);
                 }
             }
         }

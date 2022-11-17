@@ -1,4 +1,5 @@
 using IndustrialEnginner.Components;
+using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Items;
 using SFML.Graphics;
 using SFML.System;
@@ -10,11 +11,13 @@ namespace IndustrialEnginner.Gui
     {
         private Gui _gui;
         private GuiState _state;
+        private ItemRegistry _registry;
 
-        public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, Window window, int defaultZoom)
+        public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, Window window, Zoom zoom)
         {
+            _registry = itemRegistry;
             _state = GuiState.GamePlay;
-            _gui = new Gui(gameData, window, defaultZoom);
+            _gui = new Gui(gameData, window, zoom);
             _gui.Inventory.Storage[0, 0].AddItem(itemRegistry.Log.Copy());
         }
 
@@ -24,14 +27,21 @@ namespace IndustrialEnginner.Gui
         }
 
         
-        public void UpdatePosition(View view, float zoomed)
+        public void UpdatePosition(View view, Zoom zoom)
         {
-            _gui.ActualizeComponentsPositions(view, zoomed);
+            _gui.ActualizeComponentsPositions(view, zoom);
         }
 
-        public void DrawGui(RenderWindow window, float zoomed)
+        // private int i = 0;
+        public void DrawGui(RenderWindow window, Zoom zoom)
         {
-            _gui.DrawComponents(window, zoomed, _state);
+            // i++;
+            //     if (i > 1)
+            //     {
+            //         i = 0;
+            //         _gui.Inventory.Storage[0, 0].AddItem(_registry.Log.Copy());
+            //     }
+            _gui.DrawComponents(window, zoom, _state);
         }
 
         public void OpenOrClosePlayerInventory()

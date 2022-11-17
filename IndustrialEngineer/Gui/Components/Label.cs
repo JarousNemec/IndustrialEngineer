@@ -1,3 +1,4 @@
+using IndustrialEnginner.DataModels;
 using SFML.Graphics;
 using SFML.System;
 using Font = System.Drawing.Font;
@@ -7,20 +8,37 @@ namespace IndustrialEnginner.Gui
     public class Label : GuiComponent
     {
         public Text Text { get; set; }
+        private uint _fontSize = 12;
+        private uint _criticalFontSize = 12;
+        private float _textScale = 1;
 
-        public Label(Sprite sprite) : base(sprite)
+        public Label(Sprite sprite, uint fontSize, string text, SFML.Graphics.Font font) : base(sprite)
         {
+            Text = new Text(text, font, CalculateFontSize(fontSize));
+            Text.Color = Color.Black;
         }
 
-        private static uint fontSize = 16;
-        private static float requiredFontSize = 8;
-        private static float fontSizeCorrection = requiredFontSize / fontSize;
-        private float minfontCellSize = fontSize / 2 * fontSizeCorrection;
+        public uint CalculateFontSize(uint size)
+        {
+            if (size < _criticalFontSize)
+            {
+                uint output = size;
+                do
+                {
+                    output *= 2;
+                    _textScale /= 2;
+                } while (output < _criticalFontSize);
+                return output;
+            }
 
-        public override void Draw(RenderWindow window, float zoomed)
+            return size;
+        }
+
+
+        public override void Draw(RenderWindow window, Zoom zoom)
         {
             Text.Position = new Vector2f(DisplayingX, DisplayingY);
-            Text.Scale = new Vector2f(fontSizeCorrection * zoomed, fontSizeCorrection * zoomed);
+            Text.Scale = new Vector2f(_textScale * zoom.FlippedZoomed, _textScale * zoom.FlippedZoomed);
             window.Draw(Text);
         }
     }

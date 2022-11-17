@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using IndustrialEnginner.Components;
+using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Interfaces;
 using SFML.Graphics;
 using SFML.System;
@@ -29,20 +30,20 @@ namespace IndustrialEnginner.Gui
             ComponentPosInWindowY = y;
         }
 
-        public void ActualizeDisplayingCords(float newX, float newY)
+        public virtual void ActualizeDisplayingCords(float newX, float newY)
         {
             DisplayingX = newX;
             DisplayingY = newY;
         }
 
-        public virtual void Draw(RenderWindow window, float zoomed)
+        public virtual void Draw(RenderWindow window, Zoom zoom)
         {
             Sprite.Position = new Vector2f(DisplayingX, DisplayingY);
-            Sprite.Scale = new Vector2f(zoomed, zoomed);
+            Sprite.Scale = new Vector2f(zoom.FlippedZoomed, zoom.FlippedZoomed);
             window.Draw(Sprite);
             foreach (var childComponent in _childComponents)
             {
-                childComponent.Draw(window, zoomed);
+                childComponent.Draw(window, zoom);
             }
         }
     }

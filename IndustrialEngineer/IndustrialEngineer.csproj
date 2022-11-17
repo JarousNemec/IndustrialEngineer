@@ -96,6 +96,7 @@
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Blocks\Workbench.cs" />
         <Compile Include="Components\Area.cs" />
+        <Compile Include="DataModels\Zoom.cs" />
         <Compile Include="Entities\Cursor.cs" />
         <Compile Include="Entities\Entity.cs" />
         <Compile Include="Entities\Player.cs" />
@@ -111,7 +112,6 @@
         <Compile Include="GameLoop\GameTime.cs" />
         <Compile Include="Game\DebugUtil.cs" />
         <Compile Include="Game\Direction.cs" />
-        <Compile Include="Game\FastNoiseLite.cs" />
         <Compile Include="Game\Game.cs" />
         <Compile Include="Game\GameData.cs" />
         <Compile Include="Game\KeyBoard.cs" />
@@ -137,6 +137,7 @@
         <Compile Include="Items\Item.cs" />
         <Compile Include="Items\ItemRegistry.cs" />
         <Compile Include="Items\Log.cs" />
+        <Compile Include="Libraries\FastNoiseLite.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

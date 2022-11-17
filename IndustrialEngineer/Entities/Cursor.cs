@@ -23,7 +23,7 @@ namespace IndustrialEnginner.GameEntities
             return pos.ToString();
         }
 
-        public Vector2i GetPosition(RenderWindow window, View view, int tileSize, float zoomed, float minzoom,
+        public Vector2i GetPosition(RenderWindow window, View view, int tileSize, float flippedZoomed, float maxZoom,
             Vector2i mouse)
         {
             // half of both window dimensions
@@ -31,7 +31,7 @@ namespace IndustrialEnginner.GameEntities
             int halfWindowY = (int)(window.Size.Y / 2);
             
             // inverted value of zoom for calculate resolution of displayed blocks
-            float invertedZoomed = minzoom - zoomed;
+            float invertedZoomed = maxZoom - flippedZoomed;
             
             // calculate resolution of the blocks with current zoom
             float resolution = CalculateResolution(16, invertedZoomed);
@@ -63,14 +63,14 @@ namespace IndustrialEnginner.GameEntities
             return new Vector2i(px, py);
         }
 
-        public Vector2i GetWorldPosition(RenderWindow window, View view, int tileSize, float zoomed, float minzoom,
+        public Vector2i GetWorldPosition(RenderWindow window, View view, int tileSize, float flippedZoomed, float maxZoom,
             Vector2i mouse,
             MapLoader mapLoader,
             int chunkSize)
         {
             int chunkCorrectionX = (mapLoader.middleXChunk - 1) * chunkSize;
             int chunkCorrectionY = (mapLoader.middleYChunk - 1) * chunkSize;
-            var drawPos = GetPosition(window, view, tileSize, zoomed, minzoom, mouse);
+            var drawPos = GetPosition(window, view, tileSize, flippedZoomed, maxZoom, mouse);
             
             // add chunk corrections to get the position of the block in map array
             int px = drawPos.X / tileSize + chunkCorrectionX;
