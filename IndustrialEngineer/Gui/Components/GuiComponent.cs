@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using IndustrialEngineer.Enums;
 using IndustrialEnginner.Components;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Interfaces;
@@ -16,11 +18,13 @@ namespace IndustrialEnginner.Gui
 
         public int ComponentPosInWindowX { get; set; }
         public int ComponentPosInWindowY { get; set; }
-        public List<GuiComponent> _childComponents;
+        public List<GuiComponent> _childComponentsToDraw;
+        public ComponentType Type { get; set; }
 
-        public GuiComponent(Sprite sprite)
+        public GuiComponent(Sprite sprite, ComponentType type)
         {
-            _childComponents = new List<GuiComponent>();
+            Type = type;
+            _childComponentsToDraw = new List<GuiComponent>();
             Sprite = sprite;
         }
 
@@ -41,7 +45,7 @@ namespace IndustrialEnginner.Gui
             Sprite.Position = new Vector2f(DisplayingX, DisplayingY);
             Sprite.Scale = new Vector2f(zoom.FlippedZoomed, zoom.FlippedZoomed);
             window.Draw(Sprite);
-            foreach (var childComponent in _childComponents)
+            foreach (var childComponent in _childComponentsToDraw)
             {
                 childComponent.Draw(window, zoom);
             }

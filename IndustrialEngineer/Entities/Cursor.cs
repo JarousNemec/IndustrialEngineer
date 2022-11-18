@@ -1,3 +1,6 @@
+using IndustrialEnginner.DataModels;
+using IndustrialEnginner.Gui;
+using IndustrialEnginner.Items;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -8,19 +11,42 @@ namespace IndustrialEnginner.GameEntities
     {
         public Player Player { get; set; }
         public ProgressBar _progressBar;
-
+        public PictureBox ActiveItem { get; set; }
         public Cursor(Sprite sprite, Player player, Sprite[] progressBarStates) : base(sprite)
         {
             Player = player;
             _progressBar = new ProgressBar(progressBarStates);
         }
 
-        public string Draw(RenderWindow window, Vector2i pos)
+        public void Draw(RenderWindow window, Vector2i pos, Zoom zoom)
+        {
+            // DrawBuildCursor(window, pos);
+            if (ActiveItem != null)
+            {
+                DrawActiveItemOnCursor(window, pos, zoom);    
+            }
+            
+        }
+
+        private void DrawBuildCursor(RenderWindow window, Vector2i pos)
         {
             Sprite.Position = new Vector2f(pos.X, pos.Y);
             Sprite.Scale = new Vector2f(1, 1);
             window.Draw(Sprite);
-            return pos.ToString();
+        }
+
+        public void SetActiveItem(Item item)
+        {
+            ActiveItem = new PictureBox(item.Sprite);
+        }
+        public void RemoveActiveItem()
+        {
+            ActiveItem = null;
+        }
+        private void DrawActiveItemOnCursor(RenderWindow window, Vector2i pos, Zoom zoom)
+        {
+            ActiveItem.ActualizeDisplayingCords(pos.X/zoom.FlippedZoomed, pos.Y/zoom.FlippedZoomed);
+            ActiveItem.Draw(window, zoom);
         }
 
         public Vector2i GetPosition(RenderWindow window, View view, int tileSize, float flippedZoomed, float maxZoom,

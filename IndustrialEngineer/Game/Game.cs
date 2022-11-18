@@ -28,7 +28,7 @@ namespace IndustrialEnginner
         private GuiController _guiController;
         private float step = 80;
 
-        
+
         public static int chunkSize = 40;
         public int mapSize = chunkSize * 27;
         public int tileSize = 32;
@@ -114,17 +114,17 @@ namespace IndustrialEnginner
                     {
                         SetupMining();
                     }
-                    else if (_guiController.GetGuiState() == GuiState.OpenPlayerInventory)
-                    {
-                        msg = _guiController.ClickOnGuiComponent(Mouse.GetPosition(Window));
-                    }
-
                     break;
                 case Mouse.Button.Middle:
                     break;
                 case Mouse.Button.Right:
-                    Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom, Mouse.GetPosition(Window),
-                        _mapLoader, chunkSize), _blockRegistry.Bridge.Copy());
+                    if (_guiController.GetGuiState() == GuiState.GamePlay)
+                    {
+                        Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
+                            Mouse.GetPosition(Window),
+                            _mapLoader, chunkSize), _blockRegistry.Bridge.Copy());
+                    }
+
                     break;
             }
         }
@@ -135,7 +135,7 @@ namespace IndustrialEnginner
             {
                 ZoomIn();
             }
-            
+
             if (e.Delta == -1 && _zoom.Zoomed > _zoom.MinZoom)
             {
                 ZoomOut();
@@ -143,7 +143,7 @@ namespace IndustrialEnginner
 
             FlipZoomed();
         }
-        
+
         private void ZoomOut()
         {
             view_height *= _zoom.ZoomStep;
@@ -168,28 +168,29 @@ namespace IndustrialEnginner
             do
             {
                 steps += 1;
-            } while (CalculateSequence(steps)!= _zoom.Zoomed);
+            } while (CalculateSequence(steps) != _zoom.Zoomed);
 
             _zoom.FlippedZoomed = CalculateSequence(steps, true);
         }
 
-        private float CalculateSequence(int steps, bool reverted=false)
+        private float CalculateSequence(int steps, bool reverted = false)
         {
             float revert;
             if (reverted)
             {
-                revert = _zoom.MaxZoom*2;
+                revert = _zoom.MaxZoom * 2;
                 for (int i = 0; i < steps; i++)
                 {
-                    revert /=_zoom.ZoomStep ;
+                    revert /= _zoom.ZoomStep;
                 }
 
                 return revert;
             }
-            revert = _zoom.MinZoom/2;
+
+            revert = _zoom.MinZoom / 2;
             for (int i = 0; i < steps; i++)
             {
-                revert *=_zoom.ZoomStep ;
+                revert *= _zoom.ZoomStep;
             }
 
             return revert;
@@ -198,7 +199,7 @@ namespace IndustrialEnginner
         #endregion
 
         private Zoom _zoom;
-        
+
         public override void LoadContent()
         {
             DebugUtil.LoadContent();
@@ -250,8 +251,6 @@ namespace IndustrialEnginner
             return direction && _level[_futurex, _futurey]
                 .CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
-
-       
 
 
         private void SetupMining()
@@ -315,6 +314,7 @@ namespace IndustrialEnginner
             map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea,
                 (uint)renderArea);
         }
+
         private Block[,] _level;
         private Block[,] _renderedPart;
         private int _lastStandXChunk = 1;
@@ -334,7 +334,8 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiController = new GuiController(GameData, View, _itemRegistry, Window, _zoom);
+            _guiController = new GuiController(GameData, View, _itemRegistry, Window, _zoom, _cursor);
+            _player.Storage = _guiController.GetGui().Inventory.Storage;
         }
 
         private void InitializeGame()
@@ -400,7 +401,8 @@ namespace IndustrialEnginner
             _cursorWorldPos = _cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
                 Mouse.GetPosition(Window),
                 _mapLoader, chunkSize);
-            _cursorPos = _cursor.GetPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom, Mouse.GetPosition(Window));
+            _cursorPos = _cursor.GetPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
+                Mouse.GetPosition(Window));
 
             if (_lastStandXChunk != _mapLoader.middleXChunk || _lastStandYChunk != _mapLoader.middleYChunk)
             {
@@ -455,14 +457,14 @@ namespace IndustrialEnginner
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-            _cursor.Draw(Window, _cursorPos);
+            
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiController.DrawGui(Window, _zoom);
-            
-            
+
+            _cursor.Draw(Window, _cursorPos, _zoom);
             msg2 = _zoom.Zoomed.ToString();
-            msg = _zoom.FlippedZoomed.ToString();
+            // msg = _zoom.FlippedZoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = _zoomed.ToString();
@@ -470,7 +472,7 @@ namespace IndustrialEnginner
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
             //msg = View.Size.ToString();
             //msg2 = Mouse.GetPosition(Window).ToString();
-            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2,_zoom.FlippedZoomed);
+            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
         }
     }
 }

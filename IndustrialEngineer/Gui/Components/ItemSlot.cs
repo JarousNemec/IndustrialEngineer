@@ -1,3 +1,4 @@
+using IndustrialEngineer.Enums;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Items;
 using SFML.Graphics;
@@ -7,71 +8,71 @@ namespace IndustrialEnginner.Gui
 {
     public class ItemSlot : GuiComponent
     {
-        public Item Item { get; set; }
-        public int Count { get; set; }
+        public StorageItem StorageItem { get; set; }
         public bool IsSelected { get; set; }
 
         private Sprite _selectedSprite;
 
         private Label _label;
+        private PictureBox _pictureBox;
+        private GameData _gameData;
 
-        public ItemSlot(Sprite sprite, Sprite selectedSprite) : base(sprite)
+        public ItemSlot(Sprite sprite, Sprite selectedSprite, GameData gameData, ComponentType type) : base(sprite, type)
         {
-            _label = new Label(null,8,"",GameData.Font);
-            _childComponents.Add(_label);
+            _gameData = gameData;
+            _pictureBox = new PictureBox(gameData.GetSprites()["Unknown"]);
+            _label = new Label(null, 8, "", GameData.Font);
             _selectedSprite = selectedSprite;
-            Item = null;
-            Count = 0;
+            StorageItem = null;
             IsSelected = false;
         }
 
-        public bool AddItem(Item item, int count = 1)
+        public bool AddItem(StorageItem storageItem)
         {
-            if (Item == null)
+            if (StorageItem == null)
             {
-                Item = item;
-                Count = count;
-                _label.Text.DisplayedString = Count.ToString();
+                StorageItem = storageItem;
+
+                _pictureBox.Sprite = StorageItem.Item.Sprite;
+                _childComponentsToDraw.Add(_pictureBox);
+                _childComponentsToDraw.Add(_label);
+
+                _label.Text.DisplayedString = StorageItem.Count.ToString();
                 return true;
             }
 
-            if (Item.Id == item.Id)
+            if (StorageItem.Item.Id == storageItem.Item.Id)
             {
-                Count += count;
-
-                _label.Text.DisplayedString = Count.ToString();
+                StorageItem.Count += storageItem.Count;
+                _label.Text.DisplayedString = StorageItem.Count.ToString();
                 return true;
             }
 
             return false;
         }
 
-        public ItemTransportPacket RemoveItem()
+        public void RemoveItem()
         {
-            var packet = new ItemTransportPacket(Count, Item);
-            Item = null;
-            Count = 0;
-            return packet;
+            // var packet = new ItemTransportPacket(Count, Item);
+            StorageItem = null;
+            _childComponentsToDraw.Clear();
+            // return packet;
         }
 
         public override void Draw(RenderWindow window, Zoom zoom)
         {
-            if (!IsSelected)
-            {
-                base.Draw(window, zoom);
-            }
-            else
+            base.Draw(window, zoom);
+            if (IsSelected)
             {
                 _selectedSprite.Position = new Vector2f(base.DisplayingX, base.DisplayingY);
                 _selectedSprite.Scale = new Vector2f(zoom.FlippedZoomed, zoom.FlippedZoomed);
                 window.Draw(_selectedSprite);
             }
 
-
-            if (Item == null)
+            if (StorageItem == null)
                 return;
 
-            foreach (var child in _childComponents)
+            foreach (var child in _childComponentsToDraw)
             {
                 child.Draw(window, zoom);
             }
@@ -80,17 +81,28 @@ namespace IndustrialEnginner.Gui
         public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, Vector2u slotSize)
         {
             base.ActualizeDisplayingCords(newX, newY);
+            if (StorageItem == null)
+                return;
             
             var textPosX = CalculateTextPosition(zoom, slotSize, out var textPosY);
-
             _label.ActualizeDisplayingCords(textPosX, textPosY);
+
+            var picturePosX = CalculatePicturePosition(newX, newY, zoom, out var picturePosY);
+            _pictureBox.ActualizeDisplayingCords(picturePosX, picturePosY);
+        }
+
+        private static float CalculatePicturePosition(float newX, float newY, Zoom zoom, out float picturePosY)
+        {
+            var picturePosX = newX + 6 * zoom.FlippedZoomed;
+            picturePosY = newY + 6 * zoom.FlippedZoomed;
+            return picturePosX;
         }
 
         private float CalculateTextPosition(Zoom zoom, Vector2u slotSize, out float textPosY)
         {
-            int textPosInSlotX = (int)(slotSize.X + 13 - (_label.Text.DisplayedString.Length - 1) * 8);
-            int textPosInSlotY = (int)(slotSize.Y + 6);
-            float textPosX = (DisplayingX + textPosInSlotX / zoom.Zoomed);
+            var textPosInSlotX = (int)(slotSize.X + 13 - (_label.Text.DisplayedString.Length - 1) * 8);
+            var textPosInSlotY = (int)(slotSize.Y + 6);
+            var textPosX = (DisplayingX + textPosInSlotX / zoom.Zoomed);
             textPosY = (DisplayingY + textPosInSlotY / zoom.Zoomed);
             return textPosX;
         }

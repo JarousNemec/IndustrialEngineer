@@ -1,3 +1,4 @@
+using IndustrialEngineer.Enums;
 using IndustrialEnginner.DataModels;
 using SFML.Graphics;
 using SFML.System;
@@ -12,7 +13,7 @@ namespace IndustrialEnginner.Gui
         private uint _criticalFontSize = 12;
         private float _textScale = 1;
 
-        public Label(Sprite sprite, uint fontSize, string text, SFML.Graphics.Font font) : base(sprite)
+        public Label(Sprite sprite, uint fontSize, string text, SFML.Graphics.Font font) : base(sprite, ComponentType.Info)
         {
             Text = new Text(text, font, CalculateFontSize(fontSize));
             Text.Color = Color.Black;

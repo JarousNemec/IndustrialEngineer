@@ -21,7 +21,7 @@ namespace IndustrialEnginner.Gui
                 var slotSizeY = ClickArea.GetHeight() / Rows;
                 int column = mouseXPosition / (slotSizeX);
                 int row = mouseYPosition / (slotSizeY);
-                return new Vector2i(column>Columns?Columns:column, row>Rows?Rows:row);
+                return new Vector2i(column>=Columns?Columns-1:column, row>=Rows?Rows-1:row);
             }
 
             return new Vector2i(0, 0);

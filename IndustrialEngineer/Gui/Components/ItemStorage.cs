@@ -1,4 +1,5 @@
 using System.Security.Cryptography.X509Certificates;
+using IndustrialEngineer.Enums;
 using IndustrialEnginner.DataModels;
 using SFML.Graphics;
 using SFML.System;
@@ -12,7 +13,7 @@ namespace IndustrialEnginner.Gui
         public ClickGrid ClickGrid { get; set; }
 
         public ItemStorage(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, int rows,
-            int columns) : base(sprite)
+            int columns, GameData gameData) : base(sprite, ComponentType.Storage)
         {
             _itemSlotSize = itemSlotSprite.Texture.Size;
 
@@ -25,7 +26,7 @@ namespace IndustrialEnginner.Gui
             {
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
-                    Storage[i, j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite);
+                    Storage[i, j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData, ComponentType.StorageSlot);
                 }
             }
 

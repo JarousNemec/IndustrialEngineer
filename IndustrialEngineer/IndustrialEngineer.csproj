@@ -102,6 +102,7 @@
         <Compile Include="Entities\Player.cs" />
         <Compile Include="Entities\ProgressBar.cs" />
         <Compile Include="Enums\BlockType.cs" />
+        <Compile Include="Enums\ComponentType.cs" />
         <Compile Include="Enums\GuiState.cs" />
         <Compile Include="Enums\MiningLevel.cs" />
         <Compile Include="Enums\TextAlign.cs" />
@@ -128,9 +129,11 @@
         <Compile Include="Gui\Components\ItemStorage.cs" />
         <Compile Include="Gui\Components\Label.cs" />
         <Compile Include="Gui\Components\ClickGrid.cs" />
+        <Compile Include="Gui\Components\PictureBox.cs" />
         <Compile Include="Gui\Gui.cs" />
         <Compile Include="Gui\GuiController.cs" />
         <Compile Include="Gui\ItemTransportPacket.cs" />
+        <Compile Include="Gui\StorageItem.cs" />
         <Compile Include="Interfaces\IBlock.cs" />
         <Compile Include="Interfaces\IGuiComponent.cs" />
         <Compile Include="Interfaces\IItem.cs" />

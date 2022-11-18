@@ -14,7 +14,7 @@ namespace IndustrialEnginner.Gui
 
         public Vector2i Center { get; set; }
 
-        public Gui(GameData gameData, Window window, Zoom zoom)
+        public Gui(GameData gameData, RenderWindow window, Zoom zoom)
         {
             InitializeComponents(gameData);
             CalculateComponentsClickAreas(window, zoom);
@@ -23,14 +23,15 @@ namespace IndustrialEnginner.Gui
         private void InitializeComponents(GameData gameData)
         {
             Hotbar = new Hotbar(gameData.GetSprites()["hotbar"], gameData.GetSprites()["itemslot"],
-                gameData.GetSprites()["itemslot_selected"], 1, 9);
+                gameData.GetSprites()["itemslot_selected"], 1, 9, gameData);
             Inventory = new Inventory(gameData.GetSprites()["inventory"], gameData.GetSprites()["itemslot"],
-                gameData.GetSprites()["itemslot_selected"], 4, 8);
+                gameData.GetSprites()["itemslot_selected"], 4, 8, gameData);
+            
             Crafting = new Crafting(gameData.GetSprites()["crafting"]);
         }
 
 
-        private void CalculateComponentsClickAreas(Window window, Zoom zoom)
+        private void CalculateComponentsClickAreas(RenderWindow window, Zoom zoom)
         {
             CalculateComponentsPositionsInWindow(window, zoom);
 

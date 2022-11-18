@@ -28,6 +28,7 @@ namespace IndustrialEnginner
             Window.MouseWheelScrolled += OnMouseScrolled;
             Window.MouseButtonPressed += OnMousePressed;
             Window.MouseButtonReleased += OnMouseReleased;
+            
         }
 
         public abstract void OnMouseReleased(object sender, MouseButtonEventArgs e);

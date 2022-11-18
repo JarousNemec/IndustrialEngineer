@@ -1,4 +1,5 @@
 using System.Drawing;
+using IndustrialEnginner.Gui;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
@@ -7,6 +8,7 @@ namespace IndustrialEnginner.GameEntities
 {
     public class Player : Entity
     {
+        public ItemSlot[,] Storage { get; set; }
         public Player(Sprite sprite):base(sprite)
         {
         }
