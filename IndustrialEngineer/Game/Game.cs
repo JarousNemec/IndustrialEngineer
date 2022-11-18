@@ -114,6 +114,7 @@ namespace IndustrialEnginner
                     {
                         SetupMining();
                     }
+
                     break;
                 case Mouse.Button.Middle:
                     break;
@@ -277,6 +278,7 @@ namespace IndustrialEnginner
             {
                 _level[pos.X, pos.Y] = block;
                 UpdateMap();
+                
             }
         }
 
@@ -420,7 +422,6 @@ namespace IndustrialEnginner
             {
                 Mine(_cursorWorldPos, 4);
             }
-
             _guiController.UpdatePosition(View, _zoom);
         }
 
@@ -457,20 +458,20 @@ namespace IndustrialEnginner
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-            
+
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiController.DrawGui(Window, _zoom);
 
-            _cursor.Draw(Window, _cursorPos, _zoom);
+            _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
             msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
             //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = _zoomed.ToString();
-            //msg2 = Mouse.GetPosition(Window).ToString();
+            //msg = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
-            //msg = View.Size.ToString();
+            msg = View.Size.ToString();
             //msg2 = Mouse.GetPosition(Window).ToString();
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
         }

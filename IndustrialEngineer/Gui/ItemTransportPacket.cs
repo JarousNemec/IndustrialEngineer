@@ -13,5 +13,7 @@ namespace IndustrialEnginner.Gui
         public Vector2i DestinationSlotPos { get; set; }
         public ItemStorage DestinationComponent { get; set; }
         public StorageItem StorageItem { get; set; }
+
+        public bool DragHalf { get; set; } = false;
     }
 }

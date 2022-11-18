@@ -18,17 +18,18 @@ namespace IndustrialEnginner.Gui
         private ItemTransportPacket _packet;
         private Cursor _cursor;
 
-        public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, RenderWindow window, Zoom zoom, Cursor cursor)
+        public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, RenderWindow window, Zoom zoom,
+            Cursor cursor)
         {
             _cursor = cursor;
             _packet = new ItemTransportPacket();
             _registry = itemRegistry;
             _state = GuiState.GamePlay;
             _gui = new Gui(gameData, window, zoom);
-            
-            _gui.Inventory.Storage[0, 0].AddItem(new StorageItem(){Item = itemRegistry.Log.Copy()});
-            _gui.Hotbar.Storage[0,0].AddItem(new StorageItem(){Item = itemRegistry.Log.Copy()});
-            
+
+            _gui.Inventory.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
+            _gui.Hotbar.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
+
             window.MouseButtonPressed += OnMousePressed;
             window.MouseButtonReleased += OnMouseReleased;
         }
@@ -42,10 +43,15 @@ namespace IndustrialEnginner.Gui
                     {
                         DropItem(new Vector2i(e.X, e.Y));
                     }
+
                     break;
                 case Mouse.Button.Middle:
                     break;
                 case Mouse.Button.Right:
+                    if (_state == GuiState.OpenPlayerInventory)
+                    {
+                        DropItem(new Vector2i(e.X, e.Y));
+                    }
                     break;
             }
         }
@@ -57,53 +63,112 @@ namespace IndustrialEnginner.Gui
                 case Mouse.Button.Left:
                     if (_state == GuiState.OpenPlayerInventory)
                     {
-                        DragItem(new Vector2i(e.X, e.Y));
+                        DragItems(new Vector2i(e.X, e.Y));
                     }
+
                     break;
                 case Mouse.Button.Middle:
                     break;
                 case Mouse.Button.Right:
+                    if (_state == GuiState.OpenPlayerInventory)
+                    {
+                        DragHalfItems(new Vector2i(e.X, e.Y));
+                    }
+
                     break;
             }
         }
 
-        public void DragItem(Vector2i mousePosition)
+        public void DragItems(Vector2i mousePosition)
         {
             var triggeredComponent = GetClickedComponent(mousePosition);
-            if(triggeredComponent == null)
+            if (triggeredComponent == null)
                 return;
             if (triggeredComponent.Type != ComponentType.Storage &&
                 triggeredComponent.Type != ComponentType.StorageSlot)
             {
                 return;
             }
+
             _packet.SourceComponent = (ItemStorage)triggeredComponent;
             _packet.SourceSlotPos = GetSlotInStorage(_packet.SourceComponent, mousePosition);
-            _packet.StorageItem = _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
+            
+            var storageItem = _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .StorageItem;
-            if(_packet.StorageItem==null)
+            if (storageItem == null)
                 return;
+            _packet.StorageItem = new StorageItem(){Item = storageItem.Item, Count = storageItem.Count};
             _cursor.SetActiveItem(_packet.StorageItem.Item);
+        }
+
+        public void DragHalfItems(Vector2i mousePosition)
+        {
+            DragItems(mousePosition);
+            _packet.DragHalf = true;
         }
 
         public void DropItem(Vector2i mousePosition)
         {
             var triggeredComponent = GetClickedComponent(mousePosition);
-            if(triggeredComponent == null)
+            if (triggeredComponent == null)
+            {
+                if (_packet.StorageItem != null)
+                    _cursor.RemoveActiveItem();
                 return;
+            }
+
             if (triggeredComponent.Type != ComponentType.Storage &&
                 triggeredComponent.Type != ComponentType.StorageSlot)
             {
+                if (_packet.StorageItem != null)
+                    _cursor.RemoveActiveItem();
                 return;
             }
-            if(_packet.StorageItem==null)
+
+            if (_packet.StorageItem == null)
                 return;
             _packet.DestinationComponent = (ItemStorage)triggeredComponent;
             _packet.DestinationSlotPos = GetSlotInStorage(_packet.DestinationComponent, mousePosition);
-            _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y].RemoveItem();
-            _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
-                .AddItem(_packet.StorageItem);
+            if (!_packet.DragHalf)
+            {
+                Drop();
+            }
+            else
+            {
+                if ((_packet.StorageItem.Count / 2)<1)
+                { 
+                    Drop();
+                }
+                else
+                {
+                    DropHalf();
+                }
+            }
+
             _cursor.RemoveActiveItem();
+        }
+
+        private void DropHalf()
+        {
+            _packet.DragHalf = false;
+            int count = _packet.StorageItem.Count / 2;
+            if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
+                .RemoveItem(count < 1 ? 1 : count))
+            {
+                _packet.StorageItem.Count = count;
+                _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
+                    .AddItem(_packet.StorageItem);
+            }
+        }
+
+        private void Drop()
+        {
+            if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
+                .RemoveItem(_packet.StorageItem.Count))
+            {
+                _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
+                    .AddItem(_packet.StorageItem);
+            }
         }
 
         public Gui GetGui()
@@ -117,15 +182,17 @@ namespace IndustrialEnginner.Gui
             _gui.ActualizeComponentsPositions(view, zoom);
         }
 
-        // private int i = 0;
+        private int i = 0;
+
         public void DrawGui(RenderWindow window, Zoom zoom)
         {
-            // i++;
-            //     if (i > 1)
-            //     {
-            //         i = 0;
-            //         _gui.Inventory.Storage[0, 0].AddItem(_registry.Log.Copy());
-            //     }
+            i++;
+            if (i > 59)
+            {
+                i = 0;
+                _gui.Inventory.Storage[0, 0].AddItem(new StorageItem() { Item = _registry.Log.Copy() });
+            }
+
             _gui.DrawComponents(window, zoom, _state);
         }
 

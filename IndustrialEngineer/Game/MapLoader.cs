@@ -21,6 +21,12 @@ namespace IndustrialEnginner
                 for (int x = 0 + (middleYChunk - 1) * chunkSize; x < renderArea + (middleYChunk - 1) * chunkSize; x++)
                 {
                     currentChunks[y - (middleXChunk - 1) * chunkSize, x - (middleYChunk - 1) * chunkSize] = map[y, x];
+                    // System.IndexOutOfRangeException: Index was outside the bounds of the array.
+                    //     at IndustrialEnginner.MapLoader.GetCurrentChunks(Block[,] map, Int32 mapSize, Int32 renderArea, Player player, Int32 chunkSize) in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Game\MapLoader.cs:line 23
+                    // at IndustrialEnginner.Game.UpdateMap() in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Game\Game.cs:line 320
+                    // at IndustrialEnginner.Game.Update(GameTime gameTime) in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Game\Game.cs:line 416
+                    // at IndustrialEnginner.GameLoop.Run() in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\GameLoop\GameLoop.cs:line 72
+                    // at IndustrialEnginner.Program.Main(String[] args) in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Program.cs:line 10
                 }
             }
 

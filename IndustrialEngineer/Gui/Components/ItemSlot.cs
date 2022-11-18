@@ -17,7 +17,8 @@ namespace IndustrialEnginner.Gui
         private PictureBox _pictureBox;
         private GameData _gameData;
 
-        public ItemSlot(Sprite sprite, Sprite selectedSprite, GameData gameData, ComponentType type) : base(sprite, type)
+        public ItemSlot(Sprite sprite, Sprite selectedSprite, GameData gameData, ComponentType type) : base(sprite,
+            type)
         {
             _gameData = gameData;
             _pictureBox = new PictureBox(gameData.GetSprites()["Unknown"]);
@@ -51,12 +52,27 @@ namespace IndustrialEnginner.Gui
             return false;
         }
 
-        public void RemoveItem()
+        public bool RemoveItem(int count)
         {
-            // var packet = new ItemTransportPacket(Count, Item);
-            StorageItem = null;
-            _childComponentsToDraw.Clear();
-            // return packet;
+            if (StorageItem == null)
+            {
+                return false;
+            }
+            if (count == StorageItem.Count)
+            {
+                StorageItem = null;
+                _childComponentsToDraw.Clear();
+                return true;
+            }
+
+            if (count < StorageItem.Count)
+            {
+                StorageItem.Count -= count;
+                _label.Text.DisplayedString = StorageItem.Count.ToString();
+                return true;
+            }
+
+            return false;
         }
 
         public override void Draw(RenderWindow window, Zoom zoom)
@@ -83,7 +99,7 @@ namespace IndustrialEnginner.Gui
             base.ActualizeDisplayingCords(newX, newY);
             if (StorageItem == null)
                 return;
-            
+
             var textPosX = CalculateTextPosition(zoom, slotSize, out var textPosY);
             _label.ActualizeDisplayingCords(textPosX, textPosY);
 
