@@ -26,9 +26,9 @@ namespace IndustrialEnginner.Gui
             _registry = itemRegistry;
             _state = GuiState.GamePlay;
             _gui = new Gui(gameData, window, zoom);
-
-            _gui.Inventory.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
-            _gui.Hotbar.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
+            //
+            // _gui.Inventory.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
+            // _gui.Hotbar.Storage[0, 0].AddItem(new StorageItem() { Item = itemRegistry.Log.Copy() });
 
             window.MouseButtonPressed += OnMousePressed;
             window.MouseButtonReleased += OnMouseReleased;
@@ -79,7 +79,7 @@ namespace IndustrialEnginner.Gui
             }
         }
 
-        public void DragItems(Vector2i mousePosition)
+        private void DragItems(Vector2i mousePosition)
         {
             var triggeredComponent = GetClickedComponent(mousePosition);
             if (triggeredComponent == null)
@@ -101,13 +101,13 @@ namespace IndustrialEnginner.Gui
             _cursor.SetActiveItem(_packet.StorageItem.Item);
         }
 
-        public void DragHalfItems(Vector2i mousePosition)
+        private void DragHalfItems(Vector2i mousePosition)
         {
             DragItems(mousePosition);
             _packet.DragHalf = true;
         }
 
-        public void DropItem(Vector2i mousePosition)
+        private void DropItem(Vector2i mousePosition)
         {
             var triggeredComponent = GetClickedComponent(mousePosition);
             if (triggeredComponent == null)
@@ -155,9 +155,7 @@ namespace IndustrialEnginner.Gui
             if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .RemoveItem(count < 1 ? 1 : count))
             {
-                _packet.StorageItem.Count = count;
-                _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
-                    .AddItem(_packet.StorageItem);
+                AddItemToDestinationSlot(count);
             }
         }
 
@@ -166,9 +164,39 @@ namespace IndustrialEnginner.Gui
             if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .RemoveItem(_packet.StorageItem.Count))
             {
-                _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
-                    .AddItem(_packet.StorageItem);
+                AddItemToDestinationSlot(_packet.StorageItem.Count);
             }
+        }
+
+        private bool AddItemToDestinationSlot(int count)
+        {
+            _packet.StorageItem.Count = count;
+            var addingSlot =
+                _packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y];
+            repeat:
+            if (addingSlot.StorageItem == null)
+            {
+                addingSlot.AddItem(_packet.StorageItem);
+                return true;
+            }
+
+            if (addingSlot.StorageItem.Item.Id == _packet.StorageItem.Item.Id)
+            {
+                if (addingSlot.StorageItem.Item.MaxStackCount>= _packet.StorageItem.Count+addingSlot.StorageItem.Count)
+                {
+                    addingSlot.AddItem(_packet.StorageItem);
+                    return true;
+                }
+
+                int leftToAdd = _packet.StorageItem.Count+addingSlot.StorageItem.Count-addingSlot.StorageItem.Item.MaxStackCount;
+                addingSlot.AddItem(new StorageItem() { Item = _packet.StorageItem.Item, Count = _packet.StorageItem.Count-leftToAdd });
+                _packet.StorageItem.Count -= _packet.StorageItem.Count-leftToAdd;
+                _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
+                    .AddItem(_packet.StorageItem);
+                return true;
+            }
+
+            return false;
         }
 
         public Gui GetGui()
@@ -182,16 +210,16 @@ namespace IndustrialEnginner.Gui
             _gui.ActualizeComponentsPositions(view, zoom);
         }
 
-        private int i = 0;
+        // private int i = 0;
 
         public void DrawGui(RenderWindow window, Zoom zoom)
         {
-            i++;
-            if (i > 59)
-            {
-                i = 0;
-                _gui.Inventory.Storage[0, 0].AddItem(new StorageItem() { Item = _registry.Log.Copy() });
-            }
+            // i++;
+            // if (i > 30)
+            // {
+            //     i = 0;
+            //     _gui.Inventory.AddItem(new StorageItem() { Item = _registry.Log.Copy(), Count = 20});
+            // }
 
             _gui.DrawComponents(window, zoom, _state);
         }
@@ -218,8 +246,6 @@ namespace IndustrialEnginner.Gui
             if (IsPointInArea(mousePosition, _gui.Hotbar.ClickGrid.ClickArea.LeftUpCorner,
                     _gui.Hotbar.ClickGrid.ClickArea.RightDownCorner))
             {
-                var cell = _gui.Hotbar.ClickGrid.GetCurrentCell(mousePosition);
-                var packet = EncapsuleSourceOfItemTransportPacket(cell, _gui.Hotbar);
                 return _gui.Hotbar;
             }
 
@@ -241,14 +267,6 @@ namespace IndustrialEnginner.Gui
         public Vector2i GetSlotInStorage(ItemStorage component, Vector2i mousePosition)
         {
             return component.ClickGrid.GetCurrentCell(mousePosition);
-        }
-
-        private ItemTransportPacket EncapsuleSourceOfItemTransportPacket(Vector2i cell, GuiComponent guiComponent)
-        {
-            ItemTransportPacket packet = new ItemTransportPacket();
-            // packet.SourceComponent = guiComponent;
-            packet.SourceSlotPos = cell;
-            return packet;
         }
 
         private bool IsPointInArea(Vector2i point, Vector2i leftUpCorner, Vector2i rightDownCorner)

@@ -42,7 +42,7 @@ namespace IndustrialEnginner.Gui
                 return true;
             }
 
-            if (StorageItem.Item.Id == storageItem.Item.Id)
+            if (StorageItem.Item.Id == storageItem.Item.Id && StorageItem.Item.MaxStackCount >= StorageItem.Count+storageItem.Count)
             {
                 StorageItem.Count += storageItem.Count;
                 _label.Text.DisplayedString = StorageItem.Count.ToString();

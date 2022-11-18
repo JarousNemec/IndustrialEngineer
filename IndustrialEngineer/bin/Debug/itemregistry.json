@@ -1,6 +1,7 @@
 [
     {
       "name": "Log",
-      "id": 0
+      "id": 0,
+      "maxStackCount" : 1
     }
   ]

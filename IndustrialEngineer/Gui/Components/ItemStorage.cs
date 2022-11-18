@@ -1,6 +1,8 @@
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Permissions;
 using IndustrialEngineer.Enums;
 using IndustrialEnginner.DataModels;
+using IndustrialEnginner.Items;
 using SFML.Graphics;
 using SFML.System;
 
@@ -26,7 +28,8 @@ namespace IndustrialEnginner.Gui
             {
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
-                    Storage[i, j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData, ComponentType.StorageSlot);
+                    Storage[i, j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData,
+                        ComponentType.StorageSlot);
                 }
             }
 
@@ -52,10 +55,76 @@ namespace IndustrialEnginner.Gui
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
                     Storage[i, j].ActualizeDisplayingCords(
-                        (zoom.FlippedZoomed * i * _itemSlotSize.X) + newX + marginX * zoom.FlippedZoomed + i * marginBetween * zoom.FlippedZoomed,
-                        (zoom.FlippedZoomed * j * _itemSlotSize.Y) + newY + marginY * zoom.FlippedZoomed + j * marginBetween * zoom.FlippedZoomed, zoom,_itemSlotSize);
+                        (zoom.FlippedZoomed * i * _itemSlotSize.X) + newX + marginX * zoom.FlippedZoomed +
+                        i * marginBetween * zoom.FlippedZoomed,
+                        (zoom.FlippedZoomed * j * _itemSlotSize.Y) + newY + marginY * zoom.FlippedZoomed +
+                        j * marginBetween * zoom.FlippedZoomed, zoom, _itemSlotSize);
                 }
             }
+        }
+
+        public StorageItem AddItem(StorageItem storageItem)
+        {
+            repeat:
+            ItemSlot slotEnableToAddItem = FindEmptyOrWithSameItem(Storage, storageItem.Item);
+            if (slotEnableToAddItem == null)
+                return storageItem;
+
+            int canMaxAdd = 1;
+            if (slotEnableToAddItem.StorageItem == null)
+            {
+                canMaxAdd = storageItem.Item.MaxStackCount;
+                if (canMaxAdd >= storageItem.Count)
+                {
+                    if (slotEnableToAddItem.AddItem(storageItem))
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return storageItem;
+                    }
+                }
+
+                slotEnableToAddItem.AddItem(new StorageItem() { Item = storageItem.Item, Count = canMaxAdd });
+                storageItem.Count -= canMaxAdd;
+                goto repeat;
+            }
+
+            canMaxAdd = slotEnableToAddItem.StorageItem.Item.MaxStackCount - slotEnableToAddItem.StorageItem.Count;
+            if (canMaxAdd >= storageItem.Count)
+            {
+                if (slotEnableToAddItem.AddItem(storageItem))
+                {
+                    return null;
+                }
+                else
+                {
+                    return storageItem;
+                }
+            }
+
+            slotEnableToAddItem.AddItem(new StorageItem() { Item = storageItem.Item, Count = canMaxAdd });
+            storageItem.Count -= canMaxAdd;
+            goto repeat;
+        }
+
+        private ItemSlot FindEmptyOrWithSameItem(ItemSlot[,] storage, Item item)
+        {
+            for (int x = 0; x < storage.GetLength(1); x++)
+            {
+                for (int y = 0; y < storage.GetLength(0); y++)
+                {
+                    if (storage[y, x].StorageItem == null)
+                        return storage[y, x];
+
+                    var storageItem = storage[y, x].StorageItem;
+                    if (storageItem.Item.Id == item.Id && storageItem.Count < storageItem.Item.MaxStackCount)
+                        return storage[y, x];
+                }
+            }
+
+            return null;
         }
     }
 }

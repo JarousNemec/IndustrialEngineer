@@ -13,10 +13,10 @@ namespace GameEngine_druhypokus.Factories
         {
             ItemRegistry itemRegistry = new ItemRegistry();
             var presets = LoadJson(path);
-            
+
             itemRegistry.Log = Log.Setup(ItemSetup(presets, "Log", gameData));
             itemRegistry.Registry.Add(itemRegistry.Log);
-            
+
             return itemRegistry;
         }
 
@@ -35,12 +35,14 @@ namespace GameEngine_druhypokus.Factories
         private static Item ItemSetup(List<ItemPreset> presets, string name, GameData gameData)
         {
             var preset = presets.Find(x => x.name == name);
-            return new Item(preset.id, preset.name, gameData.GetSprites()[name]);
+            return new Item(preset.id, preset.name, gameData.GetSprites()[name], preset.maxStackCount);
         }
     }
+
     public class ItemPreset
     {
         public string name { get; set; }
         public int id { get; set; }
+        public int maxStackCount { get; set; }
     }
 }

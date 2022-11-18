@@ -293,20 +293,31 @@ namespace IndustrialEnginner
             _mining.ActualProgress += _mining.speed * GameTime.DeltaTime;
             if (_mining.ActualProgress > _mining.FinishValue)
             {
+                StorageItem itemToAdd = new StorageItem()
+                {
+                    Item =
+                        _itemRegistry.Registry.Find(x => x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId),
+                    Count = _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount
+                };
+                StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                if (returnedStorageItem == null)
+                {
+                    
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount =
+                        _level[_cursorWorldPos.X, _cursorWorldPos.Y].OriginalDropCount;
+                    if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
+                    {
+                        _level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
+                            x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
+                        UpdateMap();
+                    }
+                }
+                else
+                {
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount = returnedStorageItem.Count;
+                }
                 _mining.IsMining = false;
-                _level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
-
-                if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId == _itemRegistry.Log.Id)
-                {
-                    LogCount += _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount;
-                }
-
-                if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
-                {
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
-                        x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
-                    UpdateMap();
-                }
             }
         }
 
@@ -337,7 +348,7 @@ namespace IndustrialEnginner
         private void InitializeGui()
         {
             _guiController = new GuiController(GameData, View, _itemRegistry, Window, _zoom, _cursor);
-            _player.Storage = _guiController.GetGui().Inventory.Storage;
+            _player.Inventory = _guiController.GetGui().Inventory;
         }
 
         private void InitializeGame()

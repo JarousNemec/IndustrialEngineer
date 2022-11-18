@@ -8,7 +8,7 @@ namespace IndustrialEnginner.GameEntities
 {
     public class Player : Entity
     {
-        public ItemSlot[,] Storage { get; set; }
+        public Inventory Inventory { get; set; }
         public Player(Sprite sprite):base(sprite)
         {
         }
