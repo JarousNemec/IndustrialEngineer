@@ -469,11 +469,11 @@ namespace IndustrialEnginner
         {
             Window.Draw(map);
             _player.Draw(Window, View);
-
+            
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
             _guiController.DrawGui(Window, _zoom);
-
+            
             _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
             msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();

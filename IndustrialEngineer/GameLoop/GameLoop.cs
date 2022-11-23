@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using SFML.Graphics;
@@ -10,7 +11,7 @@ namespace IndustrialEnginner
     public abstract class GameLoop
     {
         public const int TARGET_FPS = 60;
-        public const float TIME_UNTIL_UPDATE = 1f / TARGET_FPS;
+        public const float MINIMAL_TIME_BETWEEN_FRAMES = 1f / TARGET_FPS;
         public RenderWindow Window { get; protected set; }
 
         public GameTime GameTime { get; protected set; }
@@ -28,7 +29,6 @@ namespace IndustrialEnginner
             Window.MouseWheelScrolled += OnMouseScrolled;
             Window.MouseButtonPressed += OnMousePressed;
             Window.MouseButtonReleased += OnMouseReleased;
-            
         }
 
         public abstract void OnMouseReleased(object sender, MouseButtonEventArgs e);
@@ -46,26 +46,25 @@ namespace IndustrialEnginner
             LoadContent();
             Initialize();
 
-            float totalTimeBeforeUpdate = 0f;
-            float previousTimeElapsed = 0f;
-            float deltaTime = 0f;
-            float totalTimeElapsed = 0f;
-
-            Clock clock = new Clock();
-
+            double actualTime = 0;
+            double previousTime = 0;
+            double deltaTime = 0;
+            double totalDeltaTime = 0;
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             while (Window.IsOpen)
             {
+                actualTime =  SecondsFromStart(stopwatch);
+                deltaTime = actualTime - previousTime;
+                previousTime = actualTime;
+                totalDeltaTime += deltaTime;
+                
                 Window.DispatchEvents();
-                totalTimeElapsed = clock.ElapsedTime.AsSeconds();
-                deltaTime = totalTimeElapsed - previousTimeElapsed;
-                previousTimeElapsed = totalTimeElapsed;
 
-                totalTimeBeforeUpdate += deltaTime;
-
-                if (totalTimeBeforeUpdate >= TIME_UNTIL_UPDATE)
+                if (totalDeltaTime >= MINIMAL_TIME_BETWEEN_FRAMES)
                 {
-                    GameTime.Update(totalTimeBeforeUpdate, clock.ElapsedTime.AsSeconds());
-                    totalTimeBeforeUpdate = 0f;
+                    GameTime.Update((float)totalDeltaTime, (float)SecondsFromStart(stopwatch));
+                    totalDeltaTime = 0;
                     Update(GameTime);
 
                     Window.Clear(WindowClearColor);
@@ -73,7 +72,14 @@ namespace IndustrialEnginner
                     Window.Display();
                 }
             }
+            stopwatch.Stop();
         }
+
+        private double SecondsFromStart(Stopwatch stopwatch)
+        {
+            return (double)stopwatch.ElapsedTicks / TimeSpan.TicksPerSecond;
+        }
+
         public abstract void KeyPressed(object o, KeyEventArgs k);
         public abstract void KeyReleased(object o, KeyEventArgs k);
         public abstract void LoadContent();

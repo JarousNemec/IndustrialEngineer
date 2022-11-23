@@ -32,8 +32,6 @@ namespace IndustrialEnginner.Gui
                         ComponentType.StorageSlot);
                 }
             }
-
-            Storage[2, 0].IsSelected = true;
         }
 
         public override void Draw(RenderWindow window, Zoom zoom)
@@ -80,10 +78,8 @@ namespace IndustrialEnginner.Gui
                     {
                         return null;
                     }
-                    else
-                    {
-                        return storageItem;
-                    }
+
+                    return storageItem;
                 }
 
                 slotEnableToAddItem.AddItem(new StorageItem() { Item = storageItem.Item, Count = canMaxAdd });
@@ -98,10 +94,8 @@ namespace IndustrialEnginner.Gui
                 {
                     return null;
                 }
-                else
-                {
-                    return storageItem;
-                }
+
+                return storageItem;
             }
 
             slotEnableToAddItem.AddItem(new StorageItem() { Item = storageItem.Item, Count = canMaxAdd });
