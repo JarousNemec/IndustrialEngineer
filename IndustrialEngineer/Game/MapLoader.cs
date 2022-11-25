@@ -5,22 +5,31 @@ namespace IndustrialEnginner
 {
     public class MapLoader
     {
-        public int middleXChunk = 1;
-        public int middleYChunk = 1;
+        private int _chunksAroundMiddleChunk;
+        private int _defaultMiddleChunk;
+        public int middleXChunk;
+        public int middleYChunk;
 
-        public Block[,] GetCurrentChunks(Block[,] map, int mapSize, int renderArea, Player player, int chunkSize)
+        public MapLoader(int defaultMiddleChunk, int chunksAroundMiddleChunk)
         {
-            if (mapSize < renderArea)
+            _defaultMiddleChunk = defaultMiddleChunk;
+            _chunksAroundMiddleChunk = chunksAroundMiddleChunk;
+            middleXChunk = defaultMiddleChunk;
+            middleYChunk = defaultMiddleChunk;
+        }
+        public Block[,] GetCurrentChunks(Block[,] map, int mapSize, int renderArea, int chunkSize, int chunksInLineCount, int renderChunks)
+        {
+            if (chunksInLineCount < renderChunks)
                 return map;
             Block[,] currentChunks = new Block[renderArea, renderArea];
 
-            CheckBorders(mapSize, ref middleXChunk, ref middleYChunk);
+            CheckBorders(chunksInLineCount, ref middleXChunk, ref middleYChunk);
 
-            for (int y = 0 + (middleXChunk - 1) * chunkSize; y < renderArea + (middleXChunk - 1) * chunkSize; y++)
+            for (int y = 0 + (middleXChunk - _chunksAroundMiddleChunk) * chunkSize; y < renderArea + (middleXChunk - _chunksAroundMiddleChunk) * chunkSize; y++)
             {
-                for (int x = 0 + (middleYChunk - 1) * chunkSize; x < renderArea + (middleYChunk - 1) * chunkSize; x++)
+                for (int x = 0 + (middleYChunk - _chunksAroundMiddleChunk) * chunkSize; x < renderArea + (middleYChunk - _chunksAroundMiddleChunk) * chunkSize; x++)
                 {
-                    currentChunks[y - (middleXChunk - 1) * chunkSize, x - (middleYChunk - 1) * chunkSize] = map[y, x];
+                    currentChunks[y - (middleXChunk - _chunksAroundMiddleChunk) * chunkSize, x - (middleYChunk - _chunksAroundMiddleChunk) * chunkSize] = map[y, x];
                     // System.IndexOutOfRangeException: Index was outside the bounds of the array.
                     //     at IndustrialEnginner.MapLoader.GetCurrentChunks(Block[,] map, Int32 mapSize, Int32 renderArea, Player player, Int32 chunkSize) in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Game\MapLoader.cs:line 23
                     // at IndustrialEnginner.Game.UpdateMap() in C:\Users\mortar\RiderProjects\IndustrialEngineer\IndustrialEngineer\Game\Game.cs:line 320
@@ -37,34 +46,34 @@ namespace IndustrialEnginner
         {
             middleXChunk = (int)(player.GetX() / chunkSize);
             middleYChunk = (int)(player.GetY() / chunkSize);
-            if (middleXChunk < 1)
-                middleXChunk = 1;
-            if (middleYChunk < 1)
+            if (middleXChunk < _defaultMiddleChunk)
+                middleXChunk = _defaultMiddleChunk;
+            if (middleYChunk < _defaultMiddleChunk)
             {
-                middleYChunk = 1;
+                middleYChunk = _defaultMiddleChunk;
             }
         }
 
-        private static void CheckBorders(int mapSize, ref int middleXChunk, ref int middleYChunk)
+        private void CheckBorders(int chunksInLineCount, ref int middleXChunk, ref int middleYChunk)
         {
-            if (middleXChunk < 1)
+            if (middleXChunk < _defaultMiddleChunk)
             {
-                middleXChunk = 1;
+                middleXChunk = _defaultMiddleChunk;
             }
 
-            if (middleYChunk < 1)
+            if (middleYChunk < _defaultMiddleChunk)
             {
-                middleYChunk = 1;
+                middleYChunk = _defaultMiddleChunk;
             }
 
-            if (middleXChunk > mapSize - 2)
+            if (middleXChunk > chunksInLineCount - _chunksAroundMiddleChunk)
             {
-                middleXChunk = mapSize - 2;
+                middleXChunk = chunksInLineCount - _chunksAroundMiddleChunk;
             }
 
-            if (middleYChunk > mapSize - 2)
+            if (middleYChunk > chunksInLineCount - _chunksAroundMiddleChunk)
             {
-                middleYChunk = mapSize - 2;
+                middleYChunk = chunksInLineCount - _chunksAroundMiddleChunk;
             }
         }
     }

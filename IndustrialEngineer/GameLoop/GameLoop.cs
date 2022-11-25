@@ -11,7 +11,7 @@ namespace IndustrialEnginner
     public abstract class GameLoop
     {
         public const int TARGET_FPS = 60;
-        public const float MINIMAL_TIME_BETWEEN_FRAMES = 1f / TARGET_FPS;
+        public const long MINIMAL_TIME_BETWEEN_FRAMES = TimeSpan.TicksPerSecond / TARGET_FPS;
         public RenderWindow Window { get; protected set; }
 
         public GameTime GameTime { get; protected set; }
@@ -46,38 +46,36 @@ namespace IndustrialEnginner
             LoadContent();
             Initialize();
 
-            double actualTime = 0;
-            double previousTime = 0;
-            double deltaTime = 0;
-            double totalDeltaTime = 0;
+            long actualTime;
+            long previousTime = 0;
+            long deltaTime;
+            long totalDeltaTime = 0;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             while (Window.IsOpen)
             {
-                actualTime =  SecondsFromStart(stopwatch);
+                actualTime =  stopwatch.ElapsedTicks;
                 deltaTime = actualTime - previousTime;
                 previousTime = actualTime;
                 totalDeltaTime += deltaTime;
                 
                 Window.DispatchEvents();
 
-                if (totalDeltaTime >= MINIMAL_TIME_BETWEEN_FRAMES)
-                {
-                    GameTime.Update((float)totalDeltaTime, (float)SecondsFromStart(stopwatch));
-                    totalDeltaTime = 0;
-                    Update(GameTime);
+                if (totalDeltaTime < MINIMAL_TIME_BETWEEN_FRAMES) continue;
+                GameTime.Update(SecondsFromTicks(totalDeltaTime), SecondsFromTicks(stopwatch.ElapsedTicks));
+                totalDeltaTime = 0;
+                Update(GameTime);
 
-                    Window.Clear(WindowClearColor);
-                    Draw(GameTime);
-                    Window.Display();
-                }
+                Window.Clear(WindowClearColor);
+                Draw(GameTime);
+                Window.Display();
             }
             stopwatch.Stop();
         }
 
-        private double SecondsFromStart(Stopwatch stopwatch)
+        private float SecondsFromTicks(long ticks)
         {
-            return (double)stopwatch.ElapsedTicks / TimeSpan.TicksPerSecond;
+            return (float)ticks / TimeSpan.TicksPerSecond;
         }
 
         public abstract void KeyPressed(object o, KeyEventArgs k);

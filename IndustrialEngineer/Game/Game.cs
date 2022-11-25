@@ -15,8 +15,8 @@ namespace IndustrialEnginner
 {
     public class Game : GameLoop
     {
-        public const uint DEFAULT_WIN_WIDTH = 1200;
-        public const uint DEFAULT_WIN_HEIGHT = 900;
+        public const uint DEFAULT_WIN_WIDTH = 1900;
+        public const uint DEFAULT_WIN_HEIGHT = 1200;
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "Game";
@@ -30,9 +30,12 @@ namespace IndustrialEnginner
 
 
         public static int chunkSize = 40;
-        public int mapSize = chunkSize * 27;
+        public static int chunksInLineCount = 27;
+        public int mapSize = chunkSize * chunksInLineCount;
         public int tileSize = 32;
-        public int renderArea = chunkSize * 3;
+        public static int renderChunks = 5;
+        public int renderArea = chunkSize * renderChunks;
+        public static int chunksAroundMiddleChunks = (renderChunks - renderChunks % 2) / 2;
 
 
         private Moving _moving;
@@ -123,7 +126,7 @@ namespace IndustrialEnginner
                     {
                         Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
                             Mouse.GetPosition(Window),
-                            _mapLoader, chunkSize), _blockRegistry.Bridge.Copy());
+                            _mapLoader, chunkSize, chunksAroundMiddleChunks), _blockRegistry.Bridge.Copy());
                     }
 
                     break;
@@ -323,7 +326,7 @@ namespace IndustrialEnginner
 
         private void UpdateMap()
         {
-            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, _player, chunkSize);
+            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, chunkSize, chunksInLineCount, renderChunks);
             map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea,
                 (uint)renderArea);
         }
@@ -395,7 +398,7 @@ namespace IndustrialEnginner
         {
             Random r = new Random();
             var generator = new MapGenerator(_blockRegistry);
-            _mapLoader = new MapLoader();
+            _mapLoader = new MapLoader(chunksAroundMiddleChunks, chunksAroundMiddleChunks);
             if (renderArea > mapSize)
             {
                 renderArea = mapSize;
@@ -404,7 +407,7 @@ namespace IndustrialEnginner
             _lastStandXChunk = _mapLoader.middleXChunk;
             _lastStandYChunk = _mapLoader.middleYChunk;
             _level = generator.Generate(mapSize, r.Next(1, 99999999));
-            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, _player, chunkSize);
+            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, chunkSize, chunksInLineCount, renderChunks);
         }
 
         #endregion
@@ -413,7 +416,7 @@ namespace IndustrialEnginner
         {
             _cursorWorldPos = _cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
                 Mouse.GetPosition(Window),
-                _mapLoader, chunkSize);
+                _mapLoader, chunkSize, chunksAroundMiddleChunks);
             _cursorPos = _cursor.GetPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
                 Mouse.GetPosition(Window));
 

@@ -101,10 +101,10 @@ namespace IndustrialEnginner.GameEntities
             float maxZoom,
             Vector2i mouse,
             MapLoader mapLoader,
-            int chunkSize)
+            int chunkSize, int chunksAroundMiddleChunk)
         {
-            int chunkCorrectionX = (mapLoader.middleXChunk - 1) * chunkSize;
-            int chunkCorrectionY = (mapLoader.middleYChunk - 1) * chunkSize;
+            int chunkCorrectionX = (mapLoader.middleXChunk - chunksAroundMiddleChunk) * chunkSize;
+            int chunkCorrectionY = (mapLoader.middleYChunk - chunksAroundMiddleChunk) * chunkSize;
             var drawPos = GetPosition(window, view, tileSize, flippedZoomed, maxZoom, mouse);
 
             // add chunk corrections to get the position of the block in map array
