@@ -263,7 +263,7 @@ namespace IndustrialEnginner
                 _cursorWorldPos.Y > mapSize)
                 return;
 
-            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable)
+            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable && _level[_cursorWorldPos.X, _cursorWorldPos.Y].MiningLevel <= _mining.Level)
             {
                 _mining.IsMining = true;
                 _mining.MiningCoords = _cursorWorldPos;

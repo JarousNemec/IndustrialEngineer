@@ -90,8 +90,10 @@
         <Compile Include="Blocks\Emerald.cs" />
         <Compile Include="Blocks\Gold.cs" />
         <Compile Include="Blocks\Grass.cs" />
+        <Compile Include="Blocks\Calculus.cs" />
+        <Compile Include="Blocks\IronOre.cs" />
         <Compile Include="Blocks\Sand.cs" />
-        <Compile Include="Blocks\Stone.cs" />
+        <Compile Include="Blocks\Rock.cs" />
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Blocks\Workbench.cs" />
@@ -140,6 +142,8 @@
         <Compile Include="Items\Item.cs" />
         <Compile Include="Items\ItemRegistry.cs" />
         <Compile Include="Items\Log.cs" />
+        <Compile Include="Items\RawIron.cs" />
+        <Compile Include="Items\Stone.cs" />
         <Compile Include="Libraries\FastNoiseLite.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

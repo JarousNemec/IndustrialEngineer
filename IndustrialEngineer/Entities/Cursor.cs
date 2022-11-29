@@ -40,12 +40,12 @@ namespace IndustrialEnginner.GameEntities
             window.Draw(Sprite);
         }
 
-        public void SetActiveItem(Item item)
+        public void SetActiveItemIcon(Item item)
         {
             ActiveItem = new PictureBox(item.Sprite);
         }
 
-        public void RemoveActiveItem()
+        public void RemoveActiveItemIcon()
         {
             ActiveItem = null;
         }

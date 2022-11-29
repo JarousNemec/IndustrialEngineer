@@ -39,12 +39,13 @@
     "blockType": 1,
     "foundationId": 0,
     "richness": 1,
+    "miningLevel":0,
     "dropId":0,
     "dropCount":3,
     "canPlaceOn": "-1"
   },
   {
-    "name": "Stone",
+    "name": "Rock",
     "id": 3,
     "tileId": 3,
     "canStepOn": true,
@@ -54,8 +55,8 @@
     "foundationId": 0,
     "richness": 1,
     "miningLevel":0,
-    "dropId":8,
-    "dropCount":1,
+    "dropId":1,
+    "dropCount":3,
     "canPlaceOn": "-1"
   },
   {
@@ -151,7 +152,7 @@
   {
     "name": "Bridge",
     "id": 10,
-    "tileId": 12,
+    "tileId": 10,
     "canStepOn": true,
     "harvestable": true,
     "harvestTime": 2,
@@ -175,6 +176,36 @@
     "richness": 1,
     "miningLevel":1,
     "dropId":8,
+    "dropCount":1,
+    "canPlaceOn": "-1"
+  },
+  {
+    "name": "Calculus",
+    "id": 12,
+    "tileId": 12,
+    "canStepOn": true,
+    "harvestable": true,
+    "harvestTime": 4,
+    "blockType": 0,
+    "foundationId": 0,
+    "richness": 1,
+    "miningLevel":0,
+    "dropId":1,
+    "dropCount":1,
+    "canPlaceOn": "-1"
+  },
+  {
+    "name": "IronOre",
+    "id": 13,
+    "tileId": 13,
+    "canStepOn": true,
+    "harvestable": true,
+    "harvestTime": 4,
+    "blockType": 0,
+    "foundationId": 0,
+    "richness": 200,
+    "miningLevel":1,
+    "dropId":2,
     "dropCount":1,
     "canPlaceOn": "-1"
   }

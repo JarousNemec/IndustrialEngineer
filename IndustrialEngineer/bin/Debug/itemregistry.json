@@ -2,6 +2,16 @@
     {
       "name": "Log",
       "id": 0,
-      "maxStackCount" : 1
+      "maxStackCount" : 128
+    },
+    {
+      "name": "Stone",
+      "id": 1,
+      "maxStackCount" : 128
+    },
+    {
+      "name": "RawIron",
+      "id": 2,
+      "maxStackCount" : 128
     }
   ]

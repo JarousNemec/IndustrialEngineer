@@ -36,8 +36,8 @@ namespace IndustrialEnginner.Blocks
             blockRegistry.Sand = Sand.Setup(BlockSetup(presets, "Sand"));
             blockRegistry.Registry.Add(blockRegistry.Sand);
 
-            blockRegistry.Stone = Stone.Setup(BlockSetup(presets, "Stone"));
-            blockRegistry.Registry.Add(blockRegistry.Stone);
+            blockRegistry.Rock = Rock.Setup(BlockSetup(presets, "Rock"));
+            blockRegistry.Registry.Add(blockRegistry.Rock);
 
             blockRegistry.Tree = Tree.Setup(BlockSetup(presets, "Tree"));
             blockRegistry.Registry.Add(blockRegistry.Tree);
@@ -48,6 +48,12 @@ namespace IndustrialEnginner.Blocks
             blockRegistry.Workbench = Workbench.Setup(BlockSetup(presets, "Workbench"));
             blockRegistry.Registry.Add(blockRegistry.Workbench);
 
+            blockRegistry.Calculus = Calculus.Setup(BlockSetup(presets, "Calculus"));
+            blockRegistry.Registry.Add(blockRegistry.Calculus);
+
+            blockRegistry.IronOre = IronOre.Setup(BlockSetup(presets, "IronOre"));
+            blockRegistry.Registry.Add(blockRegistry.IronOre);
+            
             return blockRegistry;
         }
 
@@ -80,7 +86,8 @@ namespace IndustrialEnginner.Blocks
             }
 
             var temp = new Block(preset.id, preset.tileId, blockCanPlacedOn.ToArray(), preset.name, preset.miningLevel,
-                preset.richness, preset.foundationId, preset.blockType, preset.harvestTime, preset.harvestable,preset.dropId, preset.dropCount,
+                preset.richness, preset.foundationId, preset.blockType, preset.harvestTime, preset.harvestable,
+                preset.dropId, preset.dropCount,
                 preset.canPlaceOn != "-1",
                 preset.canStepOn);
             return temp;
@@ -99,9 +106,7 @@ namespace IndustrialEnginner.Blocks
         public int foundationId { get; set; }
         public int richness { get; set; }
         public int miningLevel { get; set; }
-
         public int dropId { get; set; }
-
         public int dropCount { get; set; }
         public string canPlaceOn { get; set; }
     }

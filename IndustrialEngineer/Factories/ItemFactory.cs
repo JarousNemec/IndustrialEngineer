@@ -16,7 +16,13 @@ namespace GameEngine_druhypokus.Factories
 
             itemRegistry.Log = Log.Setup(ItemSetup(presets, "Log", gameData));
             itemRegistry.Registry.Add(itemRegistry.Log);
+            
+            itemRegistry.Stone = Stone.Setup(ItemSetup(presets, "Stone", gameData));
+            itemRegistry.Registry.Add(itemRegistry.Stone);
 
+            itemRegistry.RawIron = RawIron.Setup(ItemSetup(presets, "RawIron", gameData));
+            itemRegistry.Registry.Add(itemRegistry.RawIron);
+            
             return itemRegistry;
         }
 

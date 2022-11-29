@@ -52,6 +52,7 @@ namespace IndustrialEnginner.Gui
                     {
                         DropItem(new Vector2i(e.X, e.Y));
                     }
+
                     break;
             }
         }
@@ -92,13 +93,13 @@ namespace IndustrialEnginner.Gui
 
             _packet.SourceComponent = (ItemStorage)triggeredComponent;
             _packet.SourceSlotPos = GetSlotInStorage(_packet.SourceComponent, mousePosition);
-            
+
             var storageItem = _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .StorageItem;
             if (storageItem == null)
                 return;
-            _packet.StorageItem = new StorageItem(){Item = storageItem.Item, Count = storageItem.Count};
-            _cursor.SetActiveItem(_packet.StorageItem.Item);
+            _packet.StorageItem = new StorageItem() { Item = storageItem.Item, Count = storageItem.Count };
+            _cursor.SetActiveItemIcon(_packet.StorageItem.Item);
         }
 
         private void DragHalfItems(Vector2i mousePosition)
@@ -113,7 +114,7 @@ namespace IndustrialEnginner.Gui
             if (triggeredComponent == null)
             {
                 if (_packet.StorageItem != null)
-                    _cursor.RemoveActiveItem();
+                    _cursor.RemoveActiveItemIcon();
                 return;
             }
 
@@ -121,7 +122,7 @@ namespace IndustrialEnginner.Gui
                 triggeredComponent.Type != ComponentType.StorageSlot)
             {
                 if (_packet.StorageItem != null)
-                    _cursor.RemoveActiveItem();
+                    _cursor.RemoveActiveItemIcon();
                 return;
             }
 
@@ -129,14 +130,16 @@ namespace IndustrialEnginner.Gui
                 return;
             _packet.DestinationComponent = (ItemStorage)triggeredComponent;
             _packet.DestinationSlotPos = GetSlotInStorage(_packet.DestinationComponent, mousePosition);
+
+
             if (!_packet.DragHalf)
             {
                 Drop();
             }
             else
             {
-                if ((_packet.StorageItem.Count / 2)<1)
-                { 
+                if ((_packet.StorageItem.Count / 2) < 1)
+                {
                     Drop();
                 }
                 else
@@ -145,7 +148,7 @@ namespace IndustrialEnginner.Gui
                 }
             }
 
-            _cursor.RemoveActiveItem();
+            _cursor.RemoveActiveItemIcon();
         }
 
         private void DropHalf()
@@ -161,6 +164,17 @@ namespace IndustrialEnginner.Gui
 
         private void Drop()
         {
+            if (_packet.DestinationComponent.Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y]
+                    .StorageItem != null)
+            {
+                if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y].StorageItem.Item
+                        .Id != _packet.DestinationComponent
+                        .Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y].StorageItem.Item.Id)
+                {
+                    return;
+                }
+            }
+
             if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .RemoveItem(_packet.StorageItem.Count))
             {
@@ -168,7 +182,7 @@ namespace IndustrialEnginner.Gui
             }
         }
 
-        private bool AddItemToDestinationSlot(int count)
+        private void AddItemToDestinationSlot(int count)
         {
             _packet.StorageItem.Count = count;
             var addingSlot =
@@ -177,26 +191,29 @@ namespace IndustrialEnginner.Gui
             if (addingSlot.StorageItem == null)
             {
                 addingSlot.AddItem(_packet.StorageItem);
-                return true;
+                return;
             }
 
             if (addingSlot.StorageItem.Item.Id == _packet.StorageItem.Item.Id)
             {
-                if (addingSlot.StorageItem.Item.MaxStackCount>= _packet.StorageItem.Count+addingSlot.StorageItem.Count)
+                if (addingSlot.StorageItem.Item.MaxStackCount >=
+                    _packet.StorageItem.Count + addingSlot.StorageItem.Count)
                 {
                     addingSlot.AddItem(_packet.StorageItem);
-                    return true;
+                    return;
                 }
 
-                int leftToAdd = _packet.StorageItem.Count+addingSlot.StorageItem.Count-addingSlot.StorageItem.Item.MaxStackCount;
-                addingSlot.AddItem(new StorageItem() { Item = _packet.StorageItem.Item, Count = _packet.StorageItem.Count-leftToAdd });
-                _packet.StorageItem.Count -= _packet.StorageItem.Count-leftToAdd;
+                int leftToAdd = _packet.StorageItem.Count + addingSlot.StorageItem.Count -
+                                addingSlot.StorageItem.Item.MaxStackCount;
+                addingSlot.AddItem(new StorageItem()
+                    { Item = _packet.StorageItem.Item, Count = _packet.StorageItem.Count - leftToAdd });
+                _packet.StorageItem.Count -= _packet.StorageItem.Count - leftToAdd;
                 _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                     .AddItem(_packet.StorageItem);
-                return true;
+                return;
             }
 
-            return false;
+            return;
         }
 
         public Gui GetGui()
