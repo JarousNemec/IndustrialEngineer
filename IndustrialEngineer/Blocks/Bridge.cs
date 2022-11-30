@@ -1,6 +1,6 @@
 using IndustrialEnginner.Interfaces;
 
-namespace IndustrialEnginner.Blocks
+namespace IndustrialEngineer.Blocks
 {
     public class Bridge: Block,IBlock
     {

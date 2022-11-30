@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace IndustrialEnginner.Blocks
+namespace IndustrialEngineer.Blocks
 {
     public class BlockRegistry
     {
@@ -21,8 +21,6 @@ namespace IndustrialEnginner.Blocks
         public Emerald Emerald { get; set; }
 
         public Sand Sand { get; set; }
-
-        public Workbench Workbench { get; set; }
 
         public Bridge Bridge { get; set; }
 

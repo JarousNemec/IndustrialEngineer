@@ -81,6 +81,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="Blocks\ActiveBlocks\ActiveBlock.cs" />
+        <Compile Include="Blocks\ActiveBlocks\SteamDrill.cs" />
+        <Compile Include="Blocks\ActiveBlocks\StoneFurnace.cs" />
         <Compile Include="Blocks\Block.cs" />
         <Compile Include="Blocks\BlockRegistry.cs" />
         <Compile Include="Blocks\Bridge.cs" />
@@ -96,7 +99,6 @@
         <Compile Include="Blocks\Rock.cs" />
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
-        <Compile Include="Blocks\Workbench.cs" />
         <Compile Include="Components\Area.cs" />
         <Compile Include="DataModels\Zoom.cs" />
         <Compile Include="Entities\Cursor.cs" />
@@ -123,15 +125,15 @@
         <Compile Include="Game\Mining.cs" />
         <Compile Include="Game\Moving.cs" />
         <Compile Include="Game\Tilemap.cs" />
-        <Compile Include="Gui\Components\Crafting.cs" />
-        <Compile Include="Gui\Components\GuiComponent.cs" />
-        <Compile Include="Gui\Components\Hotbar.cs" />
-        <Compile Include="Gui\Components\Inventory.cs" />
-        <Compile Include="Gui\Components\ItemSlot.cs" />
-        <Compile Include="Gui\Components\ItemStorage.cs" />
-        <Compile Include="Gui\Components\Label.cs" />
-        <Compile Include="Gui\Components\ClickGrid.cs" />
-        <Compile Include="Gui\Components\PictureBox.cs" />
+        <Compile Include="Gui\Components\Childs\ClickGrid.cs" />
+        <Compile Include="Gui\Components\Childs\GuiComponent.cs" />
+        <Compile Include="Gui\Components\Childs\ItemSlot.cs" />
+        <Compile Include="Gui\Components\Childs\ItemStorage.cs" />
+        <Compile Include="Gui\Components\Childs\Label.cs" />
+        <Compile Include="Gui\Components\Childs\PictureBox.cs" />
+        <Compile Include="Gui\Components\Parents\Crafting.cs" />
+        <Compile Include="Gui\Components\Parents\Hotbar.cs" />
+        <Compile Include="Gui\Components\Parents\Inventory.cs" />
         <Compile Include="Gui\Gui.cs" />
         <Compile Include="Gui\GuiController.cs" />
         <Compile Include="Gui\ItemTransportPacket.cs" />

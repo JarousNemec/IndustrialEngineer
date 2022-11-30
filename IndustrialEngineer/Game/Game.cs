@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GameEngine_druhypokus.Factories;
+using IndustrialEngineer.Blocks;
 using IndustrialEnginner.Blocks;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.GameEntities;
@@ -15,8 +16,8 @@ namespace IndustrialEnginner
 {
     public class Game : GameLoop
     {
-        public const uint DEFAULT_WIN_WIDTH = 1900;
-        public const uint DEFAULT_WIN_HEIGHT = 1200;
+        public const uint DEFAULT_WIN_WIDTH = 1200;
+        public const uint DEFAULT_WIN_HEIGHT = 900;
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "Game";

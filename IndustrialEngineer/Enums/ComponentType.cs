@@ -6,6 +6,6 @@ namespace IndustrialEngineer.Enums
         Storage = 1,
         Menu = 2,
         StorageSlot = 3,
-        
+        Interface = 4,
     }
 }

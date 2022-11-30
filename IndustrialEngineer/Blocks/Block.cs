@@ -1,4 +1,4 @@
-namespace IndustrialEnginner.Blocks
+namespace IndustrialEngineer.Blocks
 {
     public class Block
     {

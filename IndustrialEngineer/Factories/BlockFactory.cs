@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using IndustrialEngineer.Blocks;
 using SFML.Audio;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -44,9 +45,6 @@ namespace IndustrialEnginner.Blocks
 
             blockRegistry.Water = Water.Setup(BlockSetup(presets, "Water"));
             blockRegistry.Registry.Add(blockRegistry.Water);
-
-            blockRegistry.Workbench = Workbench.Setup(BlockSetup(presets, "Workbench"));
-            blockRegistry.Registry.Add(blockRegistry.Workbench);
 
             blockRegistry.Calculus = Calculus.Setup(BlockSetup(presets, "Calculus"));
             blockRegistry.Registry.Add(blockRegistry.Calculus);
@@ -109,5 +107,7 @@ namespace IndustrialEnginner.Blocks
         public int dropId { get; set; }
         public int dropCount { get; set; }
         public string canPlaceOn { get; set; }
+        public int[] stateTilesIds { get; set; }
+        public int[] animationTilesIds { get; set; }
     }
 }
