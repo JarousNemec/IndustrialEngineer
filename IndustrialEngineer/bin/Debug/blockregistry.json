@@ -207,12 +207,13 @@
     "miningLevel":1,
     "dropId":2,
     "dropCount":1,
-    "canPlaceOn": "-1"
+    "canPlaceOn": "-1",
+    "stateTilesIds": [13,14]
   },
   {
     "name": "SteamDrill",
     "id": 14,
-    "tileId": 14,
+    "tileId": 15,
     "canStepOn": true,
     "harvestable": true,
     "harvestTime": 4,
@@ -222,6 +223,7 @@
     "miningLevel":1,
     "dropId":2,
     "dropCount":1,
-    "canPlaceOn": "-1"
+    "canPlaceOn": "-1",
+    "stateTilesIds": [15,16]
   }
 ]
