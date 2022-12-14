@@ -277,7 +277,6 @@ namespace IndustrialEnginner
         {
             if (pos.X < 0 || pos.Y < 0 || pos.X > mapSize || pos.Y > mapSize)
                 return;
-
             if (_level[pos.X, pos.Y].CanPlaceOn && _level[pos.X, pos.Y].BlocksCanPlaceOn.Contains(block.Id))
             {
                 _level[pos.X, pos.Y] = block;

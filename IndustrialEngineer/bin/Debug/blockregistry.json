@@ -27,7 +27,7 @@
     "miningLevel":7,
     "dropId":8,
     "dropCount":1,
-    "canPlaceOn": "10"
+    "canPlaceOn": "9"
   },
   {
     "name": "Tree",
