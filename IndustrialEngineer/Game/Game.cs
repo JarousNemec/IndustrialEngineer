@@ -125,9 +125,9 @@ namespace IndustrialEnginner
                 case Mouse.Button.Right:
                     if (_guiController.GetGuiState() == GuiState.GamePlay)
                     {
-                        Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
-                            Mouse.GetPosition(Window),
-                            _mapLoader, chunkSize, chunksAroundMiddleChunks), _blockRegistry.Bridge.Copy());
+                        // Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
+                        //     Mouse.GetPosition(Window),
+                        //     _mapLoader, chunkSize, chunksAroundMiddleChunks), _blockRegistry.Bridge.Copy());
                     }
 
                     break;
@@ -254,7 +254,7 @@ namespace IndustrialEnginner
             _futurex = (int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize);
             _futurey = (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize);
             return direction && _level[_futurex, _futurey]
-                .CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
+                .Properties.CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
 
 
@@ -264,11 +264,11 @@ namespace IndustrialEnginner
                 _cursorWorldPos.Y > mapSize)
                 return;
 
-            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Harvestable && _level[_cursorWorldPos.X, _cursorWorldPos.Y].MiningLevel <= _mining.Level)
+            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable && _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
             {
                 _mining.IsMining = true;
                 _mining.MiningCoords = _cursorWorldPos;
-                _mining.FinishValue = _level[_cursorWorldPos.X, _cursorWorldPos.Y].HarvestTime;
+                _mining.FinishValue = _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.HarvestTime;
                 _mining.ActualProgress = 0.01f;
             }
         }
@@ -277,7 +277,7 @@ namespace IndustrialEnginner
         {
             if (pos.X < 0 || pos.Y < 0 || pos.X > mapSize || pos.Y > mapSize)
                 return;
-            if (_level[pos.X, pos.Y].CanPlaceOn && _level[pos.X, pos.Y].BlocksCanPlaceOn.Contains(block.Id))
+            if (_level[pos.X, pos.Y].Properties.CanPlaceOn && _level[pos.X, pos.Y].Properties.BlocksCanPlaceOn.Contains(block.Properties.Id))
             {
                 _level[pos.X, pos.Y] = block;
                 UpdateMap();
@@ -299,26 +299,26 @@ namespace IndustrialEnginner
                 StorageItem itemToAdd = new StorageItem()
                 {
                     Item =
-                        _itemRegistry.Registry.Find(x => x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropId),
-                    Count = _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount
+                        _itemRegistry.Registry.Find(x => x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropId),
+                    Count = _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount
                 };
                 StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
                 if (returnedStorageItem == null)
                 {
                     
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness--;
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount =
-                        _level[_cursorWorldPos.X, _cursorWorldPos.Y].OriginalDropCount;
-                    if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Richness == 0)
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness--;
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount =
+                        _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.OriginalDropCount;
+                    if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness <= 0)
                     {
                         _level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
-                            x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].FoundationId);
+                            x.Properties.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.FoundationId);
                         UpdateMap();
                     }
                 }
                 else
                 {
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].DropCount = returnedStorageItem.Count;
+                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount = returnedStorageItem.Count;
                 }
                 _mining.IsMining = false;
             }

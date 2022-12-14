@@ -25,7 +25,7 @@ namespace IndustrialEnginner
                 {
                     // get the current tile number
                     //int tileNumber = tiles[i + j * width];
-                    int tileNumber = tiles[i, j].TileId;
+                    int tileNumber = tiles[i, j].Properties.Id;
                     // find its position in the tileset texture
                     long tu = tileNumber % (m_tileset.Size.X / tileSize.X);
                     long tv = tileNumber / (m_tileset.Size.X / tileSize.X);

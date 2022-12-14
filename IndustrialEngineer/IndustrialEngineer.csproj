@@ -81,12 +81,9 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Blocks\ActiveBlocks\ActiveBlock.cs" />
-        <Compile Include="Blocks\ActiveBlocks\SteamDrill.cs" />
-        <Compile Include="Blocks\ActiveBlocks\StoneFurnace.cs" />
         <Compile Include="Blocks\Block.cs" />
+        <Compile Include="Blocks\BlockProperties.cs" />
         <Compile Include="Blocks\BlockRegistry.cs" />
-        <Compile Include="Blocks\Bridge.cs" />
         <Compile Include="Blocks\Coal.cs" />
         <Compile Include="Blocks\Copper.cs" />
         <Compile Include="Blocks\Diamond.cs" />

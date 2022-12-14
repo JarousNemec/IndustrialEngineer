@@ -140,7 +140,7 @@ namespace IndustrialEnginner
                 for (int x = 0; x < noiseData.GetLength(1); x++)
                 {
                     var temp = (int)Math.Abs(Math.Round(noiseData[y, x], 1) * 10);
-                    if (temp > 1 && map[y, x].Id == 0)
+                    if (temp > 1 && map[y, x].Properties.Id == 0)
                     {
                         map[y, x] = _blockRegistry.Tree.Copy();
                     }
@@ -159,7 +159,7 @@ namespace IndustrialEnginner
                 {
                     var temp = (int)Math.Abs(Math.Round(noiseData[y, x], 1) * 10);
                     
-                    if (temp > 4 && map[y, x].Id == 0)
+                    if (temp > 4 && map[y, x].Properties.Id == 0)
                     {
                         map[y, x] = _blockRegistry.IronOre.Copy();
                     }

@@ -11,103 +11,57 @@ namespace IndustrialEnginner.Blocks
         public static BlockRegistry LoadBlocks(string path)
         {
             BlockRegistry blockRegistry = new BlockRegistry();
-            var presets = LoadJson(path);
+            var properties = LoadJson(path);
 
-            blockRegistry.Bridge = Bridge.Setup(BlockSetup(presets, "Bridge"));
-            blockRegistry.Registry.Add(blockRegistry.Bridge);
-
-            blockRegistry.Coal = Coal.Setup(BlockSetup(presets, "Coal"));
+            blockRegistry.Coal = new Coal(properties.Find(x => x.Name == "Coal"));
             blockRegistry.Registry.Add(blockRegistry.Coal);
 
-            blockRegistry.Copper = Copper.Setup(BlockSetup(presets, "Copper"));
+            blockRegistry.Copper = new Copper(properties.Find(x => x.Name == "Copper"));
             blockRegistry.Registry.Add(blockRegistry.Copper);
 
-            blockRegistry.Diamond = Diamond.Setup(BlockSetup(presets, "Diamond"));
+            blockRegistry.Diamond = new Diamond(properties.Find(x => x.Name == "Diamond"));
             blockRegistry.Registry.Add(blockRegistry.Diamond);
 
-            blockRegistry.Emerald = Emerald.Setup(BlockSetup(presets, "Emerald"));
+            blockRegistry.Emerald = new Emerald(properties.Find(x => x.Name == "Emerald"));
             blockRegistry.Registry.Add(blockRegistry.Emerald);
 
-            blockRegistry.Gold = Gold.Setup(BlockSetup(presets, "Gold"));
+            blockRegistry.Gold = new Gold(properties.Find(x => x.Name == "Gold"));
             blockRegistry.Registry.Add(blockRegistry.Gold);
 
-            blockRegistry.Grass = Grass.Setup(BlockSetup(presets, "Grass"));
+            blockRegistry.Grass = new Grass(properties.Find(x => x.Name == "Grass"));
             blockRegistry.Registry.Add(blockRegistry.Grass);
 
-            blockRegistry.Sand = Sand.Setup(BlockSetup(presets, "Sand"));
+            blockRegistry.Sand = new Sand(properties.Find(x => x.Name == "Sand"));
             blockRegistry.Registry.Add(blockRegistry.Sand);
 
-            blockRegistry.Rock = Rock.Setup(BlockSetup(presets, "Rock"));
+            blockRegistry.Rock = new Rock(properties.Find(x => x.Name == "Rock"));
             blockRegistry.Registry.Add(blockRegistry.Rock);
 
-            blockRegistry.Tree = Tree.Setup(BlockSetup(presets, "Tree"));
+            blockRegistry.Tree = new Tree(properties.Find(x => x.Name == "Tree"));
             blockRegistry.Registry.Add(blockRegistry.Tree);
 
-            blockRegistry.Water = Water.Setup(BlockSetup(presets, "Water"));
+            blockRegistry.Water = new Water(properties.Find(x => x.Name == "Water"));
             blockRegistry.Registry.Add(blockRegistry.Water);
 
-            blockRegistry.Calculus = Calculus.Setup(BlockSetup(presets, "Calculus"));
+            blockRegistry.Calculus = new Calculus(properties.Find(x => x.Name == "Calculus"));
             blockRegistry.Registry.Add(blockRegistry.Calculus);
 
-            blockRegistry.IronOre = IronOre.Setup(BlockSetup(presets, "IronOre"));
+            blockRegistry.IronOre = new IronOre(properties.Find(x => x.Name == "IronOre"));
             blockRegistry.Registry.Add(blockRegistry.IronOre);
-            
+
             return blockRegistry;
         }
 
-        private static List<BlockPreset> LoadJson(string path)
+        private static List<BlockProperties> LoadJson(string path)
         {
-            List<BlockPreset> presets;
+            List<BlockProperties> propertiesList;
             using (StreamReader r = new StreamReader(path))
             {
                 string json = r.ReadToEnd();
-                presets = JsonSerializer.Deserialize<List<BlockPreset>>(json);
+                propertiesList = JsonSerializer.Deserialize<List<BlockProperties>>(json);
             }
 
-            return presets;
+            return propertiesList;
         }
-
-        private static Block BlockSetup(List<BlockPreset> presets, string name)
-        {
-            var preset = presets.Find(x => x.name == name);
-            var blockCanPlacedOn = new List<int>();
-            if (preset.canPlaceOn != "-1")
-            {
-                var ids = preset.canPlaceOn.Split(';');
-                foreach (var id in ids)
-                {
-                    if (int.TryParse(id, out int parsed))
-                    {
-                        blockCanPlacedOn.Add(parsed);
-                    }
-                }
-            }
-
-            var temp = new Block(preset.id, preset.tileId, blockCanPlacedOn.ToArray(), preset.name, preset.miningLevel,
-                preset.richness, preset.foundationId, preset.blockType, preset.harvestTime, preset.harvestable,
-                preset.dropId, preset.dropCount,
-                preset.canPlaceOn != "-1",
-                preset.canStepOn);
-            return temp;
-        }
-    }
-
-    public class BlockPreset
-    {
-        public string name { get; set; }
-        public int id { get; set; }
-        public int tileId { get; set; }
-        public bool canStepOn { get; set; }
-        public bool harvestable { get; set; }
-        public int harvestTime { get; set; }
-        public int blockType { get; set; }
-        public int foundationId { get; set; }
-        public int richness { get; set; }
-        public int miningLevel { get; set; }
-        public int dropId { get; set; }
-        public int dropCount { get; set; }
-        public string canPlaceOn { get; set; }
-        public int[] stateTilesIds { get; set; }
-        public int[] animationTilesIds { get; set; }
     }
 }

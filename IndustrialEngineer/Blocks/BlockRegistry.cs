@@ -22,8 +22,6 @@ namespace IndustrialEngineer.Blocks
 
         public Sand Sand { get; set; }
 
-        public Bridge Bridge { get; set; }
-
         public Coal Coal { get; set; }
         
         public Calculus Calculus { get; set; }

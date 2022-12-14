@@ -6,5 +6,6 @@ namespace IndustrialEnginner.Interfaces
     public interface IBlock
     {
         Block Copy();
+        // Block Setup(BlockProperties properties);
     }
 }
