@@ -1,0 +1,16 @@
+[
+    {
+      "Name": "Furnace",
+      "Id": 0,
+      "Sprite": "Furnace",
+      "States": ["Furnace","Furnace_active"],
+      "CanBePlacedOn" : [0,8]
+    },
+    {
+        "Name": "Drill",
+        "Id": 1,
+        "Sprite": "Drill",
+        "States": ["Drill","Drill_active"],
+        "CanBePlacedOn" : [12]
+      }
+]

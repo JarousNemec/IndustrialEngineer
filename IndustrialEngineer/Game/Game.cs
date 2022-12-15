@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using GameEngine_druhypokus.Factories;
 using IndustrialEngineer.Blocks;
+using IndustrialEngineer.Factories;
 using IndustrialEnginner.Blocks;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.GameEntities;
@@ -24,6 +25,7 @@ namespace IndustrialEnginner
         public GameData GameData;
         private BlockRegistry _blockRegistry;
         private ItemRegistry _itemRegistry;
+        private PlaceableEntityRegistry _placeableEntityRegistry;
         private MapLoader _mapLoader;
         private Tilemap map;
         private GuiController _guiController;
@@ -251,8 +253,8 @@ namespace IndustrialEnginner
 
         private bool CanStepOn(bool direction, float stepX, float stepY)
         {
-            _futurex = (int)(_player.GetX() + stepX * GameTime.DeltaTime / tileSize);
-            _futurey = (int)(_player.GetY() + stepY * GameTime.DeltaTime / tileSize);
+            _futurex = (int)(_player.Properties.X + stepX * GameTime.DeltaTime / tileSize);
+            _futurey = (int)(_player.Properties.Y + stepY * GameTime.DeltaTime / tileSize);
             return direction && _level[_futurex, _futurey]
                 .Properties.CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
         }
@@ -363,11 +365,12 @@ namespace IndustrialEnginner
             GameData = new GameData();
             _blockRegistry = BlockFactory.LoadBlocks("blockregistry.json");
             _itemRegistry = ItemFactory.LoadItems("itemregistry.json", GameData);
+            _placeableEntityRegistry = EntityFactory.LoadBlocks("placeableEntitiesRegistry.json", GameData);
         }
 
         private void InitializeEntities()
         {
-            _player = new Player(GameData.GetSprites()["Chuck"]);
+            _player = new Player(new GraphicsEntityProperties(GameData.GetSprites()["Chuck"], null));
             Sprite[] progressBarStates =
             {
                 GameData.GetSprites()["progressbar0"], GameData.GetSprites()["progressbar1"],
@@ -377,7 +380,7 @@ namespace IndustrialEnginner
                 GameData.GetSprites()["progressbar8"], GameData.GetSprites()["progressbar9"],
                 GameData.GetSprites()["progressbar10"]
             };
-            _cursor = new Cursor(GameData.GetSprites()["selector"], _player, progressBarStates);
+            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprites()["selector"],null),new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
             _player.SetPosition(renderArea / 2, renderArea / 2);
         }
 

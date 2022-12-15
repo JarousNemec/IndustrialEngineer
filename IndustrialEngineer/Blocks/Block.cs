@@ -13,7 +13,7 @@ namespace IndustrialEngineer.Blocks
 
         public Block Copy()
         {
-            return new Block(Properties);
+            return new Block(Properties.Copy());
         }
     }
 }

@@ -38,5 +38,11 @@ namespace IndustrialEngineer.Blocks
             DropCount = dropCount;
             OriginalDropCount = dropCount;
         }
+        
+        public BlockProperties Copy()
+        {
+            return new BlockProperties(Id, TileId, BlocksCanPlaceOn, Name, MiningLevel, Richness, FoundationId,
+                BlockType, HarvestTime, Harvestable, DropId, DropCount, CanPlaceOn, CanStepOn);
+        }
     }
 }

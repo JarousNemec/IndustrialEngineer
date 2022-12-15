@@ -45,8 +45,8 @@ namespace IndustrialEnginner
 
         public void Update(Player player, int chunkSize)
         {
-            middleXChunk = (int)(player.GetX() / chunkSize);
-            middleYChunk = (int)(player.GetY() / chunkSize);
+            middleXChunk = (int)(player.Properties.X / chunkSize);
+            middleYChunk = (int)(player.Properties.Y / chunkSize);
             if (middleXChunk < _defaultMiddleChunk)
                 middleXChunk = _defaultMiddleChunk;
             if (middleYChunk < _defaultMiddleChunk)

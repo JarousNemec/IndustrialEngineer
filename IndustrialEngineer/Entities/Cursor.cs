@@ -8,16 +8,16 @@ using SFML.Window;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class Cursor : Entity
+    public class Cursor : GraphicsEntity
     {
         public Player Player { get; set; }
         public ProgressBar _progressBar;
         public PictureBox ActiveItem { get; set; }
 
-        public Cursor(Sprite sprite, Player player, Sprite[] progressBarStates) : base(sprite)
+        public Cursor(GraphicsEntityProperties cursorEntityProperties,GraphicsEntityProperties progressBarEntityProperties, Player player) : base(cursorEntityProperties)
         {
             Player = player;
-            _progressBar = new ProgressBar(progressBarStates);
+            _progressBar = new ProgressBar(progressBarEntityProperties);
         }
 
         public void Draw(RenderWindow window, Vector2i pos, Zoom zoom, View view, GuiState state)
@@ -35,9 +35,9 @@ namespace IndustrialEnginner.GameEntities
 
         private void DrawSelectCursor(RenderWindow window, Vector2i pos)
         {
-            Sprite.Position = new Vector2f(pos.X, pos.Y);
-            Sprite.Scale = new Vector2f(1, 1);
-            window.Draw(Sprite);
+            Properties.Sprite.Position = new Vector2f(pos.X, pos.Y);
+            Properties.Sprite.Scale = new Vector2f(1, 1);
+            window.Draw(Properties.Sprite);
         }
 
         public void SetActiveItemIcon(Item item)
@@ -71,8 +71,8 @@ namespace IndustrialEnginner.GameEntities
             float resolution = CalculateResolution(16, invertedZoomed);
 
             // get player coordinates
-            int px = (int)Player.GetX();
-            int py = (int)Player.GetY();
+            int px = (int)Player.Properties.X;
+            int py = (int)Player.Properties.Y;
 
             // calculate how many pixels stands player from the upper left corner of the block he stands
             int oversizeX = (int)(px * resolution - view.Center.X / tileSize * resolution);
