@@ -6,6 +6,7 @@ using IndustrialEngineer.Blocks;
 using IndustrialEngineer.Factories;
 using IndustrialEnginner.Blocks;
 using IndustrialEnginner.DataModels;
+using IndustrialEnginner.Enums;
 using IndustrialEnginner.GameEntities;
 using IndustrialEnginner.Gui;
 using IndustrialEnginner.Items;
@@ -21,31 +22,21 @@ namespace IndustrialEnginner
         public const uint DEFAULT_WIN_HEIGHT = 900;
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
-        public const string WINDOW_TITLE = "Game";
+        public const string WINDOW_TITLE = "IndustrialEnginner";
         public GameData GameData;
         private BlockRegistry _blockRegistry;
         private ItemRegistry _itemRegistry;
         private PlaceableEntityRegistry _placeableEntityRegistry;
-        private MapLoader _mapLoader;
-        private Tilemap map;
         private GuiController _guiController;
-        private float step = 80;
 
+        private World _world;
+        private WorldManager _worldManager;
 
-        public static int chunkSize = 40;
-        public static int chunksInLineCount = 27;
-        public int mapSize = chunkSize * chunksInLineCount;
-        public int tileSize = 32;
-        public static int renderChunks = 5;
-        public int renderArea = chunkSize * renderChunks;
-        public static int chunksAroundMiddleChunks = (renderChunks - renderChunks % 2) / 2;
-
-
+        private Zoom _zoom;
         private Moving _moving;
         private Mining _mining;
         private Vector2i _cursorWorldPos;
         private Vector2i _cursorPos;
-        private int LogCount = 0;
         private View View;
         private Player _player;
         private Cursor _cursor;
@@ -61,16 +52,16 @@ namespace IndustrialEnginner
             switch (k.Code)
             {
                 case Keyboard.Key.A:
-                    _moving.left = true;
+                    _moving.Left = true;
                     break;
                 case Keyboard.Key.W:
-                    _moving.up = true;
+                    _moving.Up = true;
                     break;
                 case Keyboard.Key.S:
-                    _moving.down = true;
+                    _moving.Down = true;
                     break;
                 case Keyboard.Key.D:
-                    _moving.right = true;
+                    _moving.Right = true;
                     break;
                 case Keyboard.Key.E:
                     _guiController.OpenOrClosePlayerInventory();
@@ -83,16 +74,16 @@ namespace IndustrialEnginner
             switch (k.Code)
             {
                 case Keyboard.Key.A:
-                    _moving.left = false;
+                    _moving.Left = false;
                     break;
                 case Keyboard.Key.W:
-                    _moving.up = false;
+                    _moving.Up = false;
                     break;
                 case Keyboard.Key.S:
-                    _moving.down = false;
+                    _moving.Down = false;
                     break;
                 case Keyboard.Key.D:
-                    _moving.right = false;
+                    _moving.Right = false;
                     break;
             }
         }
@@ -127,9 +118,11 @@ namespace IndustrialEnginner
                 case Mouse.Button.Right:
                     if (_guiController.GetGuiState() == GuiState.GamePlay)
                     {
-                        // Build(_cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
-                        //     Mouse.GetPosition(Window),
-                        //     _mapLoader, chunkSize, chunksAroundMiddleChunks), _blockRegistry.Bridge.Copy());
+                        Build(_cursor.GetWorldPosition(Window, View, _world.TileSize, _zoom.FlippedZoomed,
+                                _zoom.MaxZoom,
+                                Mouse.GetPosition(Window),
+                                _worldManager.MapLoader, _world.ChunkSize, _world.ChunksAroundMiddleChunks),
+                            _placeableEntityRegistry.Drill.Copy());
                     }
 
                     break;
@@ -205,7 +198,6 @@ namespace IndustrialEnginner
 
         #endregion
 
-        private Zoom _zoom;
 
         public override void LoadContent()
         {
@@ -217,73 +209,79 @@ namespace IndustrialEnginner
 
         public void Move()
         {
-            if (CanStepOn(_moving.left, -step, 0))
+            if (CanStepOn(_moving.Left, -_moving.Step, 0))
             {
-                View.Move(new Vector2f(-step * GameTime.DeltaTime, 0));
-                _player.Move((-step * GameTime.DeltaTime) / tileSize, 0);
+                View.Move(new Vector2f(-_moving.Step * GameTime.DeltaTime, 0));
+                _player.Move((-_moving.Step * GameTime.DeltaTime) / _world.TileSize, 0);
                 Window.SetView(View);
             }
 
-            if (CanStepOn(_moving.up, 0, -step))
+            if (CanStepOn(_moving.Up, 0, -_moving.Step))
             {
-                View.Move(new Vector2f(0, -step * GameTime.DeltaTime));
-                _player.Move(0, (-step * GameTime.DeltaTime) / tileSize);
+                View.Move(new Vector2f(0, -_moving.Step * GameTime.DeltaTime));
+                _player.Move(0, (-_moving.Step * GameTime.DeltaTime) / _world.TileSize);
                 Window.SetView(View);
             }
 
-            if (CanStepOn(_moving.down, 0, step))
+            if (CanStepOn(_moving.Down, 0, _moving.Step))
             {
-                View.Move(new Vector2f(0, step * GameTime.DeltaTime));
-                _player.Move(0, (step * GameTime.DeltaTime) / tileSize);
+                View.Move(new Vector2f(0, _moving.Step * GameTime.DeltaTime));
+                _player.Move(0, (_moving.Step * GameTime.DeltaTime) / _world.TileSize);
                 Window.SetView(View);
             }
 
-            if (CanStepOn(_moving.right, step, 0))
+            if (CanStepOn(_moving.Right, _moving.Step, 0))
             {
-                View.Move(new Vector2f(step * GameTime.DeltaTime, 0));
-                _player.Move((step * GameTime.DeltaTime) / tileSize, 0);
+                View.Move(new Vector2f(_moving.Step * GameTime.DeltaTime, 0));
+                _player.Move((_moving.Step * GameTime.DeltaTime) / _world.TileSize, 0);
                 Window.SetView(View);
             }
 
-            _mapLoader.Update(_player, chunkSize);
+            _worldManager.MapLoader.Update(_player, _world.ChunkSize);
         }
 
-        private int _futurex = 0;
-        private int _futurey = 0;
 
         private bool CanStepOn(bool direction, float stepX, float stepY)
         {
-            _futurex = (int)(_player.Properties.X + stepX * GameTime.DeltaTime / tileSize);
-            _futurey = (int)(_player.Properties.Y + stepY * GameTime.DeltaTime / tileSize);
-            return direction && _level[_futurex, _futurey]
-                .Properties.CanStepOn && _futurex > 0 && _futurex < mapSize - 1 && _futurey > 0 && _futurey < mapSize - 1;
+            int futurex = (int)(_player.Properties.X + stepX * GameTime.DeltaTime / _world.TileSize);
+            int futurey = (int)(_player.Properties.Y + stepY * GameTime.DeltaTime / _world.TileSize);
+            return direction && _world.Map[futurex, futurey]
+                       .Properties.CanStepOn && futurex > 0 && futurex < _world.MapSize - 1 && futurey > 0 &&
+                   futurey < _world.MapSize - 1;
         }
 
 
         private void SetupMining()
         {
-            if (_cursorWorldPos.X < 0 || _cursorWorldPos.Y < 0 || _cursorWorldPos.X > mapSize ||
-                _cursorWorldPos.Y > mapSize)
+            if (_cursorWorldPos.X < 0 || _cursorWorldPos.Y < 0 || _cursorWorldPos.X > _world.MapSize ||
+                _cursorWorldPos.Y > _world.MapSize)
                 return;
 
-            if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable && _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
+            if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable &&
+                _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
             {
                 _mining.IsMining = true;
                 _mining.MiningCoords = _cursorWorldPos;
-                _mining.FinishValue = _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.HarvestTime;
+                _mining.FinishValue = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.HarvestTime;
                 _mining.ActualProgress = 0.01f;
             }
         }
 
-        private void Build(Vector2i pos, Block block)
+        private void Build(Vector2i pos, PlaceableEntity entity)
         {
-            if (pos.X < 0 || pos.Y < 0 || pos.X > mapSize || pos.Y > mapSize)
+            if (pos.X < 0 || pos.Y < 0 || pos.X > _world.MapSize || pos.Y > _world.MapSize)
                 return;
-            if (_level[pos.X, pos.Y].Properties.CanPlaceOn && _level[pos.X, pos.Y].Properties.BlocksCanPlaceOn.Contains(block.Properties.Id))
+            var selectedBlock = _world.Map[pos.X, pos.Y];
+            if (selectedBlock.Properties.PlacedEntity != null)
             {
-                _level[pos.X, pos.Y] = block;
-                UpdateMap();
-                
+                return;
+            }
+            if (selectedBlock.Properties.CanPlaceOn &&
+                entity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType)
+            {
+                selectedBlock.Properties.PlacedEntity = entity;
+                entity.SetPosition(pos);
+                _worldManager.UpdateMap();
             }
         }
 
@@ -301,42 +299,32 @@ namespace IndustrialEnginner
                 StorageItem itemToAdd = new StorageItem()
                 {
                     Item =
-                        _itemRegistry.Registry.Find(x => x.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropId),
-                    Count = _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount
+                        _itemRegistry.Registry.Find(x =>
+                            x.Id == _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropId),
+                    Count = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount
                 };
                 StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
                 if (returnedStorageItem == null)
                 {
-                    
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness--;
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount =
-                        _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.OriginalDropCount;
-                    if (_level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness <= 0)
+                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness--;
+                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount =
+                        _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.OriginalDropCount;
+                    if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness <= 0)
                     {
-                        _level[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
-                            x.Properties.Id == _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.FoundationId);
-                        UpdateMap();
+                        _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
+                            x.Properties.Id ==
+                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.FoundationId);
+                        _worldManager.UpdateMap();
                     }
                 }
                 else
                 {
-                    _level[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount = returnedStorageItem.Count;
+                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount = returnedStorageItem.Count;
                 }
+
                 _mining.IsMining = false;
             }
         }
-
-        private void UpdateMap()
-        {
-            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, chunkSize, chunksInLineCount, renderChunks);
-            map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea,
-                (uint)renderArea);
-        }
-
-        private Block[,] _level;
-        private Block[,] _renderedPart;
-        private int _lastStandXChunk = 1;
-        private int _lastStandYChunk = 1;
 
         #region Initialization
 
@@ -344,7 +332,6 @@ namespace IndustrialEnginner
         {
             InitializeGame();
             InitializeWorld();
-            InitializeTilemap();
             InitializeView();
             InitializeEntities();
             InitializeGui();
@@ -360,12 +347,12 @@ namespace IndustrialEnginner
         {
             _zoom = new Zoom(2, 1, 2, 4, 0.5f);
             Window.SetMouseCursorVisible(true);
-            _moving = new Moving();
+            _moving = new Moving(80);
             _mining = new Mining();
             GameData = new GameData();
             _blockRegistry = BlockFactory.LoadBlocks("blockregistry.json");
             _itemRegistry = ItemFactory.LoadItems("itemregistry.json", GameData);
-            _placeableEntityRegistry = EntityFactory.LoadBlocks("placeableEntitiesRegistry.json", GameData);
+            _placeableEntityRegistry = EntityFactory.LoadEntities("placeableEntitiesRegistry.json", GameData);
         }
 
         private void InitializeEntities()
@@ -380,54 +367,43 @@ namespace IndustrialEnginner
                 GameData.GetSprites()["progressbar8"], GameData.GetSprites()["progressbar9"],
                 GameData.GetSprites()["progressbar10"]
             };
-            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprites()["selector"],null),new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
-            _player.SetPosition(renderArea / 2, renderArea / 2);
+            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprites()["selector"], null),
+                new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
+            _player.SetPosition(_world.RenderArea / 2, _world.RenderArea / 2);
         }
 
         private void InitializeView()
         {
             View = new View(new FloatRect(0, 0, view_width, view_height));
-            View.Center = new Vector2f((renderArea / 2) * tileSize, (renderArea / 2) * tileSize);
+            View.Center = new Vector2f((_world.RenderArea / 2) * _world.TileSize,
+                (_world.RenderArea / 2) * _world.TileSize);
             Window.SetView(View);
-        }
-
-        private void InitializeTilemap()
-        {
-            map = new Tilemap();
-            map.load(new Vector2u((uint)tileSize, (uint)tileSize), _renderedPart, (uint)renderArea, (uint)renderArea);
         }
 
         private void InitializeWorld()
         {
-            Random r = new Random();
-            var generator = new MapGenerator(_blockRegistry);
-            _mapLoader = new MapLoader(chunksAroundMiddleChunks, chunksAroundMiddleChunks);
-            if (renderArea > mapSize)
-            {
-                renderArea = mapSize;
-            }
-
-            _lastStandXChunk = _mapLoader.middleXChunk;
-            _lastStandYChunk = _mapLoader.middleYChunk;
-            _level = generator.Generate(mapSize, r.Next(1, 99999999));
-            _renderedPart = _mapLoader.GetCurrentChunks(_level, mapSize, renderArea, chunkSize, chunksInLineCount, renderChunks);
+            _world = new World(40, 27, 32, 5);
+            _worldManager = new WorldManager(_world, _blockRegistry);
+            _worldManager.Initialize();
         }
 
         #endregion
 
         public override void Update(GameTime gameTime)
         {
-            _cursorWorldPos = _cursor.GetWorldPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
+            _cursorWorldPos = _cursor.GetWorldPosition(Window, View, _world.TileSize, _zoom.FlippedZoomed,
+                _zoom.MaxZoom,
                 Mouse.GetPosition(Window),
-                _mapLoader, chunkSize, chunksAroundMiddleChunks);
-            _cursorPos = _cursor.GetPosition(Window, View, tileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
+                _worldManager.MapLoader, _world.ChunkSize, _world.ChunksAroundMiddleChunks);
+            _cursorPos = _cursor.GetPosition(Window, View, _world.TileSize, _zoom.FlippedZoomed, _zoom.MaxZoom,
                 Mouse.GetPosition(Window));
 
-            if (_lastStandXChunk != _mapLoader.middleXChunk || _lastStandYChunk != _mapLoader.middleYChunk)
+            if (_world.LastStandXChunk != _worldManager.MapLoader.middleXChunk ||
+                _world.LastStandYChunk != _worldManager.MapLoader.middleYChunk)
             {
-                UpdateMap();
+                _worldManager.UpdateMap();
                 MoveCameraAfterLoadNewWorldPart();
-                ActualizeLastStandedChunksValues();
+                _worldManager.ActualizeLastStandedChunksValues();
             }
 
             if (_moving.IsMoving())
@@ -439,33 +415,29 @@ namespace IndustrialEnginner
             {
                 Mine(_cursorWorldPos, 4);
             }
+
             _guiController.UpdatePosition(View, _zoom);
         }
 
-        private void ActualizeLastStandedChunksValues()
-        {
-            _lastStandXChunk = _mapLoader.middleXChunk;
-            _lastStandYChunk = _mapLoader.middleYChunk;
-        }
 
         private void MoveCameraAfterLoadNewWorldPart()
         {
-            if (_lastStandXChunk > _mapLoader.middleXChunk)
+            if (_world.LastStandXChunk > _worldManager.MapLoader.middleXChunk)
             {
-                View.Move(new Vector2f(chunkSize * tileSize, 0));
+                View.Move(new Vector2f(_world.ChunkSize * _world.TileSize, 0));
             }
-            else if (_lastStandXChunk < _mapLoader.middleXChunk)
+            else if (_world.LastStandXChunk < _worldManager.MapLoader.middleXChunk)
             {
-                View.Move(new Vector2f(-chunkSize * tileSize, 0));
+                View.Move(new Vector2f(-_world.ChunkSize * _world.TileSize, 0));
             }
 
-            if (_lastStandYChunk > _mapLoader.middleYChunk)
+            if (_world.LastStandYChunk > _worldManager.MapLoader.middleYChunk)
             {
-                View.Move(new Vector2f(0, chunkSize * tileSize));
+                View.Move(new Vector2f(0, _world.ChunkSize * _world.TileSize));
             }
-            else if (_lastStandYChunk < _mapLoader.middleYChunk)
+            else if (_world.LastStandYChunk < _worldManager.MapLoader.middleYChunk)
             {
-                View.Move(new Vector2f(0, -chunkSize * tileSize));
+                View.Move(new Vector2f(0, -_world.ChunkSize * _world.TileSize));
             }
 
             Window.SetView(View);
@@ -473,22 +445,23 @@ namespace IndustrialEnginner
 
         public override void Draw(GameTime gameTime)
         {
-            Window.Draw(map);
+            Window.Draw(_world.RenderedTiles);
+            _worldManager.DrawEntities(Window);
             _player.Draw(Window, View);
-            
+
             if (_mining.IsMining)
-                _cursor._progressBar.Draw(Window, _cursorPos, tileSize, _mining.FinishValue, _mining.ActualProgress);
+                _cursor._progressBar.Draw(Window, _cursorPos, _world.TileSize, _mining.FinishValue,
+                    _mining.ActualProgress);
             _guiController.DrawGui(Window, _zoom);
-            
+
             _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
-            msg2 = _zoom.Zoomed.ToString();
+            // msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
-            //msg = LogCount.ToString() + " Logs";
             //msg = _mining.IsMining.ToString();
             //msg2 = _zoomed.ToString();
-            //msg = Mouse.GetPosition(Window).ToString();
+            // msg = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
-            msg = View.Size.ToString();
+            // msg = View.Size.ToString();
             //msg2 = Mouse.GetPosition(Window).ToString();
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
         }

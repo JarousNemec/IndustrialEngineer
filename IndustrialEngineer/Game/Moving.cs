@@ -2,14 +2,20 @@ namespace IndustrialEnginner
 {
     public class Moving
     {
-        public bool left { get; set; }
-        public bool right { get; set; }
-        public bool up { get; set; }
-        public bool down { get; set; }
+        public float Step { get; set; }
+        public bool Left { get; set; }
+        public bool Right { get; set; }
+        public bool Up { get; set; }
+        public bool Down { get; set; }
+
+        public Moving(float step)
+        {
+            Step = step;
+        }
 
         public bool IsMoving()
         {
-            return left || right || up || down;
+            return Left || Right || Up || Down;
         }
     }
 }

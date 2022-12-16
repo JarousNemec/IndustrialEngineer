@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 using IndustrialEngineer.Blocks;
 using IndustrialEnginner;
+using IndustrialEnginner.Enums;
 using IndustrialEnginner.GameEntities;
 using SFML.Graphics;
 
@@ -10,7 +11,7 @@ namespace IndustrialEngineer.Factories
 {
     public class EntityFactory
     {
-        public static PlaceableEntityRegistry LoadBlocks(string path, GameData data)
+        public static PlaceableEntityRegistry LoadEntities(string path, GameData data)
         {
             var presets = LoadJson(path);
             var properties = MakePropertiesList(data, presets);
@@ -35,7 +36,7 @@ namespace IndustrialEngineer.Factories
                 {
                     states.Add(data.GetSprites()[state]);
                 }
-                propertiesList.Add(new PlaceableEntityProperties(data.GetSprites()[preset.Sprite],states.ToArray(),preset.Name, preset.Id, preset.CanBePlacedOn));
+                propertiesList.Add(new PlaceableEntityProperties(data.GetSprites()[preset.Sprite],states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType));
             }
             return propertiesList;
         }
@@ -58,7 +59,7 @@ namespace IndustrialEngineer.Factories
             public string[] States { get; set; }
             public short Id { get; set; }
             public string Name { get; set; }
-            public int[] CanBePlacedOn { get; set; }
+            public int CanBePlacedOnType { get; set; }
         }
     }
 }

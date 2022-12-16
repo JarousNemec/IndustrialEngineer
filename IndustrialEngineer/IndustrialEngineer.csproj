@@ -123,12 +123,13 @@
         <Compile Include="Game\Direction.cs" />
         <Compile Include="Game\Game.cs" />
         <Compile Include="Game\GameData.cs" />
-        <Compile Include="Game\KeyBoard.cs" />
-        <Compile Include="Game\MapGenerator.cs" />
-        <Compile Include="Game\MapLoader.cs" />
+        <Compile Include="Game\GameMap\World.cs" />
+        <Compile Include="Game\GameMap\MapGenerator.cs" />
+        <Compile Include="Game\GameMap\MapLoader.cs" />
+        <Compile Include="Game\GameMap\WorldManager.cs" />
+        <Compile Include="Game\GameMap\Tilemap.cs" />
         <Compile Include="Game\Mining.cs" />
         <Compile Include="Game\Moving.cs" />
-        <Compile Include="Game\Tilemap.cs" />
         <Compile Include="Gui\Components\Parents\ClickGrid.cs" />
         <Compile Include="Gui\Components\Parents\GuiComponent.cs" />
         <Compile Include="Gui\Components\Parents\ItemSlot.cs" />

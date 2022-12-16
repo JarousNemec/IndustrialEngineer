@@ -1,3 +1,6 @@
+using IndustrialEnginner.Enums;
+using IndustrialEnginner.GameEntities;
+
 namespace IndustrialEngineer.Blocks
 {
     public class BlockProperties
@@ -9,7 +12,7 @@ namespace IndustrialEngineer.Blocks
         public int[] BlocksCanPlaceOn { get; set; }
         public bool Harvestable { get; set; }
         public int HarvestTime { get; set; }
-        public int BlockType { get; set; }
+        public BlockType BlockType { get; set; }
         public int FoundationId { get; set; }
         public int Richness { get; set; }
         public int MiningLevel { get; set; }
@@ -18,8 +21,10 @@ namespace IndustrialEngineer.Blocks
         public int OriginalDropCount { get; set; }
         public bool CanPlaceOn { get; set; }
 
+        public PlaceableEntity PlacedEntity { get; set; }
+
         public BlockProperties(int id, int tileId, int[] blocksCanPlaceOn, string name, int miningLevel, int richness,
-            int foundationId, int blockType, int harvestTime, bool harvestable, int dropId, int dropCount,
+            int foundationId, BlockType blockType, int harvestTime, bool harvestable, int dropId, int dropCount,
             bool canPlaceOn = true, bool canStepOn = true)
         {
             Id = id;

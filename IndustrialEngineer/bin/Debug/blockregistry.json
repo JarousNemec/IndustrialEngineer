@@ -36,7 +36,7 @@
     "CanStepOn": false,
     "Harvestable": true,
     "HarvestTime": 4,
-    "BlockType": 1,
+    "BlockType": 8,
     "FoundationId": 0,
     "Richness": 1,
     "MiningLevel":0,
