@@ -34,7 +34,7 @@ namespace IndustrialEnginner.Gui
             {
                 StorageItem = storageItem;
 
-                _pictureBox.Sprite = StorageItem.Item.Sprite;
+                _pictureBox.Sprite = StorageItem.Item.Properties.Sprite;
                 _childComponentsToDraw.Add(_pictureBox);
                 _childComponentsToDraw.Add(_label);
 
@@ -42,7 +42,7 @@ namespace IndustrialEnginner.Gui
                 return true;
             }
 
-            if (StorageItem.Item.Id == storageItem.Item.Id && StorageItem.Item.MaxStackCount >= StorageItem.Count+storageItem.Count)
+            if (StorageItem.Item.Properties.Id == storageItem.Item.Properties.Id && StorageItem.Item.Properties.MaxStackCount >= StorageItem.Count+storageItem.Count)
             {
                 StorageItem.Count += storageItem.Count;
                 _label.Text.DisplayedString = StorageItem.Count.ToString();
@@ -61,6 +61,7 @@ namespace IndustrialEnginner.Gui
             if (count == StorageItem.Count)
             {
                 StorageItem = null;
+                IsSelected = false;
                 _childComponentsToDraw.Clear();
                 return true;
             }

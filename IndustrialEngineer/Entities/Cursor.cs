@@ -42,7 +42,7 @@ namespace IndustrialEnginner.GameEntities
 
         public void SetActiveItemIcon(Item item)
         {
-            ActiveItem = new PictureBox(item.Sprite);
+            ActiveItem = new PictureBox(item.Properties.Sprite);
         }
 
         public void RemoveActiveItemIcon()

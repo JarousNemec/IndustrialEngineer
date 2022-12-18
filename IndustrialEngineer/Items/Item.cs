@@ -4,17 +4,16 @@ namespace IndustrialEnginner.Items
 {
     public class Item
     {
-        public Item(int id, string name, Sprite sprite, int maxStackCount)
+        public ItemProperties Properties { get; set; }
+        public Item(ItemProperties properties)
         {
-            Id = id;
-            Name = name;
-            Sprite = sprite;
-            MaxStackCount = maxStackCount;
+            Properties = properties;
         }
 
-        public int Id { get; private set; }
-        public int MaxStackCount { get; set; }
-        public string Name { get; private set; }
-        public Sprite Sprite { get; private set; }
+        public Item Copy()
+        {
+            return new Item(Properties.Copy());
+        }
+        
     }
 }

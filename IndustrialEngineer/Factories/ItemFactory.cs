@@ -14,15 +14,27 @@ namespace GameEngine_druhypokus.Factories
             ItemRegistry itemRegistry = new ItemRegistry();
             var presets = LoadJson(path);
 
-            itemRegistry.Log = Log.Setup(ItemSetup(presets, "Log", gameData));
+            itemRegistry.Log = new Log(ItemPropertiesSetup(presets, "Log", gameData));
             itemRegistry.Registry.Add(itemRegistry.Log);
-            
-            itemRegistry.Stone = Stone.Setup(ItemSetup(presets, "Stone", gameData));
+
+            itemRegistry.Stone = new Stone(ItemPropertiesSetup(presets, "Stone", gameData));
             itemRegistry.Registry.Add(itemRegistry.Stone);
 
-            itemRegistry.RawIron = RawIron.Setup(ItemSetup(presets, "RawIron", gameData));
+            itemRegistry.RawIron = new RawIron(ItemPropertiesSetup(presets, "RawIron", gameData));
             itemRegistry.Registry.Add(itemRegistry.RawIron);
-            
+
+            itemRegistry.IronIngot = new IronIngot(ItemPropertiesSetup(presets, "IronIngot", gameData));
+            itemRegistry.Registry.Add(itemRegistry.IronIngot);
+
+            itemRegistry.Drill = new Drill(ItemPropertiesSetup(presets, "Drill", gameData));
+            itemRegistry.Registry.Add(itemRegistry.Drill);
+
+            itemRegistry.Furnace = new Furnace(ItemPropertiesSetup(presets, "Furnace", gameData));
+            itemRegistry.Registry.Add(itemRegistry.Furnace);
+
+            itemRegistry.WoodenPlatform = new WoodenPlatform(ItemPropertiesSetup(presets, "WoodenPlatform", gameData));
+            itemRegistry.Registry.Add(itemRegistry.WoodenPlatform);
+
             return itemRegistry;
         }
 
@@ -38,17 +50,21 @@ namespace GameEngine_druhypokus.Factories
             return presets;
         }
 
-        private static Item ItemSetup(List<ItemPreset> presets, string name, GameData gameData)
+        private static ItemProperties ItemPropertiesSetup(List<ItemPreset> presets, string name, GameData gameData)
         {
-            var preset = presets.Find(x => x.name == name);
-            return new Item(preset.id, preset.name, gameData.GetSprites()[name], preset.maxStackCount);
+            var preset = presets.Find(x => x.Name == name);
+            return new ItemProperties(preset.Id, preset.Name, gameData.GetSprites()[preset.Texture],
+                preset.MaxStackCount, preset.Placeable, preset.PlacedEntityId);
         }
     }
 
     public class ItemPreset
     {
-        public string name { get; set; }
-        public int id { get; set; }
-        public int maxStackCount { get; set; }
+        public string Name { get; set; }
+        public string Texture { get; set; }
+        public int Id { get; set; }
+        public int MaxStackCount { get; set; }
+        public bool Placeable { get; set; }
+        public int PlacedEntityId { get; set; }
     }
 }

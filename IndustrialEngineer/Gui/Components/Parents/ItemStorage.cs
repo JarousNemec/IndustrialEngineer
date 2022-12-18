@@ -71,7 +71,7 @@ namespace IndustrialEnginner.Gui
             int canMaxAdd = 1;
             if (slotEnableToAddItem.StorageItem == null)
             {
-                canMaxAdd = storageItem.Item.MaxStackCount;
+                canMaxAdd = storageItem.Item.Properties.MaxStackCount;
                 if (canMaxAdd >= storageItem.Count)
                 {
                     if (slotEnableToAddItem.AddItem(storageItem))
@@ -87,7 +87,7 @@ namespace IndustrialEnginner.Gui
                 goto repeat;
             }
 
-            canMaxAdd = slotEnableToAddItem.StorageItem.Item.MaxStackCount - slotEnableToAddItem.StorageItem.Count;
+            canMaxAdd = slotEnableToAddItem.StorageItem.Item.Properties.MaxStackCount - slotEnableToAddItem.StorageItem.Count;
             if (canMaxAdd >= storageItem.Count)
             {
                 if (slotEnableToAddItem.AddItem(storageItem))
@@ -113,7 +113,7 @@ namespace IndustrialEnginner.Gui
                         return storage[y, x];
 
                     var storageItem = storage[y, x].StorageItem;
-                    if (storageItem.Item.Id == item.Id && storageItem.Count < storageItem.Item.MaxStackCount)
+                    if (storageItem.Item.Properties.Id == item.Properties.Id && storageItem.Count < storageItem.Item.Properties.MaxStackCount)
                         return storage[y, x];
                 }
             }

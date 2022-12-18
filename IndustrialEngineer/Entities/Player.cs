@@ -9,6 +9,7 @@ namespace IndustrialEnginner.GameEntities
     public class Player : GraphicsEntity
     {
         public Inventory Inventory { get; set; }
+        public Hotbar Hotbar { get; set; }
         public Player(GraphicsEntityProperties properties):base(properties)
         {
         }

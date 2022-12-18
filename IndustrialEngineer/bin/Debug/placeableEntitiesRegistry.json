@@ -2,15 +2,28 @@
     {
       "Name": "Furnace",
       "Id": 0,
-      "Sprite": "Furnace",
+      "Texture": "Furnace",
       "States": ["Furnace","Furnace_active"],
-      "CanBePlacedOnType" : 4
+      "CanBePlacedOnType" : 4,
+      "DropItemId":5,
+      "CanStepOn":false
     },
     {
       "Name": "Drill",
       "Id": 1,
-      "Sprite": "Drill",
+      "Texture": "Drill",
       "States": ["Drill","Drill_active"],
-      "CanBePlacedOnType" : 0
+      "CanBePlacedOnType" : 0,
+      "DropItemId":4,
+      "CanStepOn":false
+    },
+    {
+      "Name": "WoodenPlatform",
+      "Id": 2,
+      "Texture": "WoodenPlatform",
+      "States": ["WoodenPlatform"],
+      "CanBePlacedOnType" : 5,
+      "DropItemId":6,
+      "CanStepOn":true
     }
 ]

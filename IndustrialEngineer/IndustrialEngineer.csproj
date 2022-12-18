@@ -108,6 +108,7 @@
         <Compile Include="Entities\GraphicsEntity.cs" />
         <Compile Include="Entities\Player.cs" />
         <Compile Include="Entities\ProgressBar.cs" />
+        <Compile Include="Entities\WoodenPlatform.cs" />
         <Compile Include="Enums\BlockType.cs" />
         <Compile Include="Enums\ComponentType.cs" />
         <Compile Include="Enums\GuiState.cs" />
@@ -146,11 +147,16 @@
         <Compile Include="Interfaces\IBlock.cs" />
         <Compile Include="Interfaces\IGuiComponent.cs" />
         <Compile Include="Interfaces\IItem.cs" />
+        <Compile Include="Items\Drill.cs" />
+        <Compile Include="Items\IronIngot.cs" />
         <Compile Include="Items\Item.cs" />
+        <Compile Include="Items\ItemProperties.cs" />
         <Compile Include="Items\ItemRegistry.cs" />
         <Compile Include="Items\Log.cs" />
         <Compile Include="Items\RawIron.cs" />
         <Compile Include="Items\Stone.cs" />
+        <Compile Include="Items\Furnace.cs" />
+        <Compile Include="Items\WoodenPlatform.cs" />
         <Compile Include="Libraries\FastNoiseLite.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

@@ -67,6 +67,11 @@ namespace IndustrialEnginner.Gui
                         DragItems(new Vector2i(e.X, e.Y));
                     }
 
+                    if (_state == GuiState.GamePlay)
+                    {
+                        SetItemSlotAsActiveSourceForBuilding(new Vector2i(e.X, e.Y));
+                    }
+
                     break;
                 case Mouse.Button.Middle:
                     break;
@@ -78,6 +83,38 @@ namespace IndustrialEnginner.Gui
 
                     break;
             }
+        }
+
+        private void SetItemSlotAsActiveSourceForBuilding(Vector2i mousePosition)
+        {
+            var triggeredComponent = GetClickedComponent(mousePosition);
+            if (triggeredComponent == null)
+                return;
+            if (triggeredComponent.Type != ComponentType.Storage &&
+                triggeredComponent.Type != ComponentType.StorageSlot)
+            {
+                return;
+            }
+
+            Hotbar hotbar = (Hotbar)triggeredComponent;
+            var selectedSlotPosition = GetSlotInStorage((ItemStorage)triggeredComponent, mousePosition);
+            var itemSlot = hotbar.Storage[selectedSlotPosition.X, selectedSlotPosition.Y];
+            
+            
+            if (hotbar.SelectedItemSlot!=null && hotbar.SelectedItemSlot != itemSlot)
+            {
+                hotbar.SelectedItemSlot.IsSelected = false;
+            }
+            
+            hotbar.SelectedItemSlot = itemSlot;
+            if (itemSlot.StorageItem != null)
+            {
+                if (itemSlot.StorageItem.Item.Properties.Placeable)
+                {
+                    hotbar.SelectedItemSlot.IsSelected = !hotbar.SelectedItemSlot.IsSelected;
+                }
+            }
+            
         }
 
         private void DragItems(Vector2i mousePosition)
@@ -168,8 +205,10 @@ namespace IndustrialEnginner.Gui
                     .StorageItem != null)
             {
                 if (_packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y].StorageItem.Item
+                        .Properties
                         .Id != _packet.DestinationComponent
-                        .Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y].StorageItem.Item.Id)
+                        .Storage[_packet.DestinationSlotPos.X, _packet.DestinationSlotPos.Y].StorageItem.Item.Properties
+                        .Id)
                 {
                     return;
                 }
@@ -194,9 +233,9 @@ namespace IndustrialEnginner.Gui
                 return;
             }
 
-            if (addingSlot.StorageItem.Item.Id == _packet.StorageItem.Item.Id)
+            if (addingSlot.StorageItem.Item.Properties.Id == _packet.StorageItem.Item.Properties.Id)
             {
-                if (addingSlot.StorageItem.Item.MaxStackCount >=
+                if (addingSlot.StorageItem.Item.Properties.MaxStackCount >=
                     _packet.StorageItem.Count + addingSlot.StorageItem.Count)
                 {
                     addingSlot.AddItem(_packet.StorageItem);
@@ -204,7 +243,7 @@ namespace IndustrialEnginner.Gui
                 }
 
                 int leftToAdd = _packet.StorageItem.Count + addingSlot.StorageItem.Count -
-                                addingSlot.StorageItem.Item.MaxStackCount;
+                                addingSlot.StorageItem.Item.Properties.MaxStackCount;
                 addingSlot.AddItem(new StorageItem()
                     { Item = _packet.StorageItem.Item, Count = _packet.StorageItem.Count - leftToAdd });
                 _packet.StorageItem.Count -= _packet.StorageItem.Count - leftToAdd;
@@ -260,23 +299,37 @@ namespace IndustrialEnginner.Gui
 
         public GuiComponent GetClickedComponent(Vector2i mousePosition)
         {
-            if (IsPointInArea(mousePosition, _gui.Hotbar.ClickGrid.ClickArea.LeftUpCorner,
-                    _gui.Hotbar.ClickGrid.ClickArea.RightDownCorner))
+            if (_state == GuiState.OpenPlayerInventory)
             {
-                return _gui.Hotbar;
+                if (IsPointInArea(mousePosition, _gui.Hotbar.ClickGrid.ClickArea.LeftUpCorner,
+                        _gui.Hotbar.ClickGrid.ClickArea.RightDownCorner))
+                {
+                    return _gui.Hotbar;
+                }
+
+                if (IsPointInArea(mousePosition, _gui.Inventory.ClickGrid.ClickArea.LeftUpCorner,
+                        _gui.Inventory.ClickGrid.ClickArea.RightDownCorner))
+                {
+                    return _gui.Inventory;
+                }
+
+                if (IsPointInArea(mousePosition, _gui.Crafting.ClickGrid.ClickArea.LeftUpCorner,
+                        _gui.Crafting.ClickGrid.ClickArea.RightDownCorner))
+                {
+                    return _gui.Crafting;
+                }
             }
 
-            if (IsPointInArea(mousePosition, _gui.Inventory.ClickGrid.ClickArea.LeftUpCorner,
-                    _gui.Inventory.ClickGrid.ClickArea.RightDownCorner))
+            if (_state == GuiState.GamePlay)
             {
-                return _gui.Inventory;
+                if (IsPointInArea(mousePosition, _gui.Hotbar.ClickGrid.ClickArea.LeftUpCorner,
+                        _gui.Hotbar.ClickGrid.ClickArea.RightDownCorner))
+                {
+                    return _gui.Hotbar;
+                }
             }
+                
 
-            if (IsPointInArea(mousePosition, _gui.Crafting.ClickGrid.ClickArea.LeftUpCorner,
-                    _gui.Crafting.ClickGrid.ClickArea.RightDownCorner))
-            {
-                return _gui.Crafting;
-            }
 
             return null;
         }

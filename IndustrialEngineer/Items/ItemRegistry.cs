@@ -9,6 +9,11 @@ namespace IndustrialEnginner.Items
         public Stone Stone { get; set; }
 
         public RawIron RawIron { get; set; }
+
+        public IronIngot IronIngot { get; set; }
+        public Drill Drill { get; set; }
+        public Furnace Furnace { get; set; }
+        public WoodenPlatform WoodenPlatform { get; set; }
         public List<Item> Registry { get; set; }
 
         public ItemRegistry()

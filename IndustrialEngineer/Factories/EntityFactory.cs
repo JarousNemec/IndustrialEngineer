@@ -23,6 +23,8 @@ namespace IndustrialEngineer.Factories
             registry.Furnace = new Furnace(properties.Find(x => x.Name == "Furnace"));
             registry.Registry.Add(registry.Furnace);
             
+            registry.WoodenPlatform = new WoodenPlatform(properties.Find(x => x.Name == "WoodenPlatform"));
+            registry.Registry.Add(registry.WoodenPlatform);
             return registry;
         }
 
@@ -36,7 +38,7 @@ namespace IndustrialEngineer.Factories
                 {
                     states.Add(data.GetSprites()[state]);
                 }
-                propertiesList.Add(new PlaceableEntityProperties(data.GetSprites()[preset.Sprite],states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType));
+                propertiesList.Add(new PlaceableEntityProperties(data.GetSprites()[preset.Texture],states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType, preset.DropItemId, preset.CanStepOn));
             }
             return propertiesList;
         }
@@ -55,11 +57,13 @@ namespace IndustrialEngineer.Factories
 
         private class PlaceableEntityPreset
         {
-            public string Sprite { get; set; }
+            public string Texture { get; set; }
             public string[] States { get; set; }
             public short Id { get; set; }
             public string Name { get; set; }
             public int CanBePlacedOnType { get; set; }
+            public int DropItemId { get; set; }
+            public bool CanStepOn { get; set; }
         }
     }
 }

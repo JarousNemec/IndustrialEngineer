@@ -122,7 +122,7 @@ namespace IndustrialEnginner
                                 _zoom.MaxZoom,
                                 Mouse.GetPosition(Window),
                                 _worldManager.MapLoader, _world.ChunkSize, _world.ChunksAroundMiddleChunks),
-                            _placeableEntityRegistry.Drill.Copy());
+                            _player.Hotbar.SelectedItemSlot);
                     }
 
                     break;
@@ -257,8 +257,9 @@ namespace IndustrialEnginner
                 _cursorWorldPos.Y > _world.MapSize)
                 return;
 
-            if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable &&
-                _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
+            // if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable &&
+            //     _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
+            if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable)
             {
                 _mining.IsMining = true;
                 _mining.MiningCoords = _cursorWorldPos;
@@ -267,7 +268,7 @@ namespace IndustrialEnginner
             }
         }
 
-        private void Build(Vector2i pos, PlaceableEntity entity)
+        private void Build(Vector2i pos, ItemSlot entitySlot)
         {
             if (pos.X < 0 || pos.Y < 0 || pos.X > _world.MapSize || pos.Y > _world.MapSize)
                 return;
@@ -276,11 +277,23 @@ namespace IndustrialEnginner
             {
                 return;
             }
+            if(entitySlot == null)
+                return;
+            if(entitySlot.IsSelected == false)
+                return;
+            if(entitySlot.StorageItem == null)
+                return;
+            if(entitySlot.StorageItem.Item == null)
+                return;
+            var placingEntity = _placeableEntityRegistry.Registry.Find(x =>
+                x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId).Copy();
             if (selectedBlock.Properties.CanPlaceOn &&
-                entity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType)
+                placingEntity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType &&
+                selectedBlock.Properties.PlacedEntity == null)
             {
-                selectedBlock.Properties.PlacedEntity = entity;
-                entity.SetPosition(pos);
+                selectedBlock.PlaceEntity(placingEntity);
+                placingEntity.SetPosition(pos);
+                entitySlot.RemoveItem(1);
                 _worldManager.UpdateMap();
             }
         }
@@ -293,33 +306,54 @@ namespace IndustrialEnginner
                 return;
             }
 
+            var selectedBlock = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y];
             _mining.ActualProgress += _mining.speed * GameTime.DeltaTime;
             if (_mining.ActualProgress > _mining.FinishValue)
             {
-                StorageItem itemToAdd = new StorageItem()
+                if (selectedBlock.Properties.PlacedEntity == null)
                 {
-                    Item =
-                        _itemRegistry.Registry.Find(x =>
-                            x.Id == _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropId),
-                    Count = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount
-                };
-                StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
-                if (returnedStorageItem == null)
-                {
-                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness--;
-                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount =
-                        _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.OriginalDropCount;
-                    if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Richness <= 0)
+                    StorageItem itemToAdd = new StorageItem()
                     {
-                        _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
-                            x.Properties.Id ==
-                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.FoundationId);
-                        _worldManager.UpdateMap();
+                        Item =
+                            _itemRegistry.Registry.Find(x =>
+                                x.Properties.Id == selectedBlock.Properties.DropId),
+                        Count = selectedBlock.Properties.DropCount
+                    };
+                    StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                    if (returnedStorageItem == null)
+                    {
+                        selectedBlock.Properties.Richness--;
+                        selectedBlock.Properties.DropCount =
+                            selectedBlock.Properties.OriginalDropCount;
+                        if (selectedBlock.Properties.Richness <= 0)
+                        {
+                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
+                                x.Properties.Id ==
+                                selectedBlock.Properties.FoundationId);
+                            _worldManager.UpdateMap();
+                        }
+                    }
+                    else
+                    {
+                        selectedBlock.Properties.DropCount =
+                            returnedStorageItem.Count;
                     }
                 }
                 else
                 {
-                    _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.DropCount = returnedStorageItem.Count;
+                    StorageItem itemToAdd = new StorageItem()
+                    {
+                        Item =
+                            _itemRegistry.Registry.Find(x =>
+                                x.Properties.Id == selectedBlock.Properties.PlacedEntity.Properties.DropItemId),
+                        Count = 1
+                    };
+                    StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                    if (returnedStorageItem == null)
+                    {
+                        selectedBlock.RemoveEntity();
+                        _worldManager.UpdateMap();
+                    }
                 }
 
                 _mining.IsMining = false;
@@ -341,6 +375,10 @@ namespace IndustrialEnginner
         {
             _guiController = new GuiController(GameData, View, _itemRegistry, Window, _zoom, _cursor);
             _player.Inventory = _guiController.GetGui().Inventory;
+            _player.Hotbar = _guiController.GetGui().Hotbar;
+            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.Drill.Copy()});
+            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.Furnace.Copy()});
+            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.WoodenPlatform.Copy()});
         }
 
         private void InitializeGame()
@@ -453,8 +491,9 @@ namespace IndustrialEnginner
                 _cursor._progressBar.Draw(Window, _cursorPos, _world.TileSize, _mining.FinishValue,
                     _mining.ActualProgress);
             _guiController.DrawGui(Window, _zoom);
-
+            
             _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
+
             // msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
             //msg = _mining.IsMining.ToString();

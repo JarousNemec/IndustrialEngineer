@@ -6,6 +6,7 @@ namespace IndustrialEnginner.GameEntities
     {
         public Furnace Furnace { get; set; }
         public Drill Drill { get; set; }
+        public WoodenPlatform WoodenPlatform { get; set; }
         public List<PlaceableEntity> Registry { get; set; }
 
         public PlaceableEntityRegistry()

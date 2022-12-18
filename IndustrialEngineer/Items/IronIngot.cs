@@ -3,9 +3,9 @@ using SFML.Graphics;
 
 namespace IndustrialEnginner.Items
 {
-    public class Stone:Item,IItem
+    public class IronIngot:Item,IItem
     {
-        public Stone(ItemProperties properties) : base(properties)
+        public IronIngot(ItemProperties properties) : base(properties)
         {
         }
     }

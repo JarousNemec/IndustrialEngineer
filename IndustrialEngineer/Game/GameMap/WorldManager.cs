@@ -85,6 +85,7 @@ namespace IndustrialEnginner
             for (int i = 0; i < _renderedEntities.Count; i++)
             {
                 _renderedEntities[i].Draw(window, _renderedAreaCorrections,_world.TileSize);
+                _renderedEntities[i].Update();
             }
         }
 

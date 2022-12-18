@@ -1,17 +1,50 @@
 [
     {
-      "name": "Log",
-      "id": 0,
-      "maxStackCount" : 128
+      "Name": "Log",
+      "Texture": "item_Log",
+      "Id": 0,
+      "MaxStackCount" : 128
     },
     {
-      "name": "Stone",
-      "id": 1,
-      "maxStackCount" : 128
+      "Name": "Stone",
+      "Texture": "item_Stone",
+      "Id": 1,
+      "MaxStackCount" : 128
     },
     {
-      "name": "RawIron",
-      "id": 2,
-      "maxStackCount" : 128
+      "Name": "RawIron",
+      "Texture": "item_RawIron",
+      "Id": 2,
+      "MaxStackCount" : 128
+    },
+    {
+      "Name": "IronIngot",
+      "Texture": "item_IronIngot",
+      "Id": 3,
+      "MaxStackCount" : 128
+    },
+    {
+      "Name": "Drill",
+      "Texture": "item_Drill",
+      "Id": 4,
+      "MaxStackCount" : 128,
+      "Placeable": true,
+      "PlacedEntityId": 1
+    },
+    {
+      "Name": "Furnace",
+      "Texture": "item_Furnace",
+      "Id": 5,
+      "MaxStackCount" : 128,
+      "Placeable": true,
+      "PlacedEntityId": 0
+    },
+    {
+      "Name": "WoodenPlatform",
+      "Texture": "item_WoodenPlatform",
+      "Id": 6,
+      "MaxStackCount" : 128,
+      "Placeable": true,
+      "PlacedEntityId": 2
     }
   ]

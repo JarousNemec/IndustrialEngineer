@@ -11,18 +11,23 @@ namespace IndustrialEnginner.GameEntities
         public BlockType CanBePlacedOnType { get; set; }
         public GuiComponent Gui { get; set; }
 
+        public int DropItemId { get; set; }
+        public bool CanStepOn { get; set; }
+
         public PlaceableEntityProperties(Sprite sprite, Sprite[] states, string name, int id,
-            BlockType canBePlacedOnType, GuiComponent gui = null) : base(sprite, states)
+            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, GuiComponent gui = null) : base(sprite, states)
         {
             Name = name;
             Id = id;
             CanBePlacedOnType = canBePlacedOnType;
             Gui = gui;
+            DropItemId = dropItemId;
+            CanStepOn = canStepOn;
         }
 
         public PlaceableEntityProperties Copy()
         {
-            return new PlaceableEntityProperties(Sprite, States, Name, Id, CanBePlacedOnType, Gui);
+            return new PlaceableEntityProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Gui);
         }
     }
 }
