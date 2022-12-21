@@ -6,7 +6,7 @@ namespace IndustrialEnginner
 {
     public class GameData
     {
-        private const string TEXTURES_DIRECTORY_PATH = "./textures/";
+        private const string TEXTURES_DIRECTORY_PATH = "./assest/textures/";
         private Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
         // public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";font.psp
         public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";

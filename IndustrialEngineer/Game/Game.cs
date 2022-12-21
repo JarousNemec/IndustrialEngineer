@@ -388,9 +388,9 @@ namespace IndustrialEnginner
             _moving = new Moving(80);
             _mining = new Mining();
             GameData = new GameData();
-            _blockRegistry = BlockFactory.LoadBlocks("blockregistry.json");
-            _itemRegistry = ItemFactory.LoadItems("itemregistry.json", GameData);
-            _placeableEntityRegistry = EntityFactory.LoadEntities("placeableEntitiesRegistry.json", GameData);
+            _blockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
+            _itemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
+            _placeableEntityRegistry = EntityFactory.LoadEntities("./assest/settings/placeableEntitiesRegistry.json", GameData);
         }
 
         private void InitializeEntities()

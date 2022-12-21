@@ -35,6 +35,12 @@ namespace GameEngine_druhypokus.Factories
             itemRegistry.WoodenPlatform = new WoodenPlatform(ItemPropertiesSetup(presets, "WoodenPlatform", gameData));
             itemRegistry.Registry.Add(itemRegistry.WoodenPlatform);
 
+            itemRegistry.Energy = new Energy(ItemPropertiesSetup(presets, "Energy", gameData));
+            itemRegistry.Registry.Add(itemRegistry.Energy);
+
+            itemRegistry.Time = new Time(ItemPropertiesSetup(presets, "Time", gameData));
+            itemRegistry.Registry.Add(itemRegistry.Time);
+
             return itemRegistry;
         }
 
@@ -54,7 +60,7 @@ namespace GameEngine_druhypokus.Factories
         {
             var preset = presets.Find(x => x.Name == name);
             return new ItemProperties(preset.Id, preset.Name, gameData.GetSprites()[preset.Texture],
-                preset.MaxStackCount, preset.Placeable, preset.PlacedEntityId);
+                preset.MaxStackCount,preset.Flammable, preset.CalorificValue, preset.Placeable, preset.PlacedEntityId);
         }
     }
 
@@ -66,5 +72,7 @@ namespace GameEngine_druhypokus.Factories
         public int MaxStackCount { get; set; }
         public bool Placeable { get; set; }
         public int PlacedEntityId { get; set; }
+        public bool Flammable { get; set; }
+        public int CalorificValue { get; set; }
     }
 }

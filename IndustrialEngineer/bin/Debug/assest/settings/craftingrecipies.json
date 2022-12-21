@@ -1,0 +1,69 @@
+[
+    {
+        "Name": "Drill",
+        "Texture": "item_Drill",
+        "Id": 0,
+        "DropId": 4,
+        "DropCount": 1,
+        "RecipeType": 0,
+        "Ingredients": [
+            {
+                "Id": 0,
+                "Count": 4
+            },
+            {
+                "Id": 1,
+                "Count": 10
+            },
+            {
+                "Id": 3,
+                "Count": 20
+            }
+        ]
+    },{
+        "Name": "Furnace",
+        "Texture": "item_Furnace",
+        "Id": 1,
+        "DropId": 5,
+        "DropCount": 1,
+        "RecipeType": 0,
+        "Ingredients": [
+            {
+                "Id": 1,
+                "Count": 8
+            }
+        ]
+    },{
+        "Name": "WoodenBridge",
+        "Texture": "item_WoodenPlatform",
+        "Id": 3,
+        "DropId": 6,
+        "DropCount": 1,
+        "RecipeType": 0,
+        "Ingredients": [
+            {
+                "Id": 0,
+                "Count": 5
+            }
+        ]
+    },{
+        "Name": "IronIngot",
+        "Texture": "item_IronIngot",
+        "Id": 4,
+        "DropId": 3,
+        "DropCount": 1,
+        "RecipeType": 1,
+        "Ingredients": [
+            {
+                "Id": 0,
+                "Count": 5
+            },{
+                "Id": -1,
+                "Count": 45
+            },{
+                "Id": -2,
+                "Count": 6
+            }
+        ]
+    }
+]

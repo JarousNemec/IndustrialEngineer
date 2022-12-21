@@ -11,8 +11,10 @@ namespace IndustrialEnginner.Items
         
         public bool Placeable { get; set; }
         public int PlacedEntityId { get; set; }
+        public bool Flammable { get; set; }
+        public int CalorificValue { get; set; }
         
-        public ItemProperties(int id, string name, Sprite sprite, int maxStackCount, bool placeable = false, int placedEntityId = 0)
+        public ItemProperties(int id, string name, Sprite sprite, int maxStackCount,bool flammable, int calorificValue, bool placeable = false, int placedEntityId = 0)
         {
             Id = id;
             Name = name;
@@ -20,11 +22,13 @@ namespace IndustrialEnginner.Items
             MaxStackCount = maxStackCount;
             Placeable = placeable;
             PlacedEntityId = placedEntityId;
+            Flammable = flammable;
+            CalorificValue = calorificValue;
         }
 
         public ItemProperties Copy()
         {
-            return new ItemProperties(Id, Name, Sprite, MaxStackCount, Placeable, PlacedEntityId);
+            return new ItemProperties(Id, Name, Sprite, MaxStackCount,Flammable, CalorificValue, Placeable, PlacedEntityId);
         }
     }
 }

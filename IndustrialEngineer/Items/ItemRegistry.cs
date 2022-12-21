@@ -14,6 +14,9 @@ namespace IndustrialEnginner.Items
         public Drill Drill { get; set; }
         public Furnace Furnace { get; set; }
         public WoodenPlatform WoodenPlatform { get; set; }
+
+        public Energy Energy { get; set; }
+        public Time Time { get; set; }
         public List<Item> Registry { get; set; }
 
         public ItemRegistry()
