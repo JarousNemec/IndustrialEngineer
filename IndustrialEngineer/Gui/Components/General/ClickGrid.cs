@@ -11,11 +11,11 @@ namespace IndustrialEnginner.Gui
         public int Rows { get; set; }
         public int Columns { get; set; }
 
-        public Vector2i GetCurrentCell(Vector2i mouse)
+        public Vector2i? GetCurrentCell(Vector2i mouse)
         {
             var mouseXPosition = mouse.X - ClickArea.LeftUpCorner.X;
             var mouseYPosition = mouse.Y - ClickArea.LeftUpCorner.Y;
-            if (mouseXPosition > 0 && mouseYPosition > 0)
+            if (mouseXPosition > 0 && mouseYPosition > 0 && mouseXPosition < ClickArea.RightDownCorner.X && mouseYPosition < ClickArea.RightDownCorner.X)
             {
                 var slotSizeX = ClickArea.GetWidth() / Columns;
                 var slotSizeY = ClickArea.GetHeight() / Rows;
@@ -24,7 +24,7 @@ namespace IndustrialEnginner.Gui
                 return new Vector2i(column>=Columns?Columns-1:column, row>=Rows?Rows-1:row);
             }
 
-            return new Vector2i(0, 0);
+            return null;
         }
     }
 }

@@ -25,10 +25,7 @@ namespace IndustrialEnginner
         public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "IndustrialEnginner";
         public GameData GameData;
-        private BlockRegistry _blockRegistry;
-        private ItemRegistry _itemRegistry;
-        private PlaceableEntityRegistry _placeableEntityRegistry;
-        private RecipesRegistry _recipesRegistry;
+
         private GuiController _guiController;
 
         private World _world;
@@ -279,15 +276,16 @@ namespace IndustrialEnginner
             {
                 return;
             }
-            if(entitySlot == null)
+
+            if (entitySlot == null)
                 return;
-            if(entitySlot.IsSelected == false)
+            if (entitySlot.IsSelected == false)
                 return;
-            if(entitySlot.StorageItem == null)
+            if (entitySlot.StorageItem == null)
                 return;
-            if(entitySlot.StorageItem.Item == null)
+            if (entitySlot.StorageItem.Item == null)
                 return;
-            var placingEntity = _placeableEntityRegistry.Registry.Find(x =>
+            var placingEntity = GameData.PlaceableEntityRegistry.Registry.Find(x =>
                 x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId).Copy();
             if (selectedBlock.Properties.CanPlaceOn &&
                 placingEntity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType &&
@@ -317,11 +315,13 @@ namespace IndustrialEnginner
                     StorageItem itemToAdd = new StorageItem()
                     {
                         Item =
-                            _itemRegistry.Registry.Find(x =>
+                            GameData.ItemRegistry.Registry.Find(x =>
                                 x.Properties.Id == selectedBlock.Properties.DropId),
                         Count = selectedBlock.Properties.DropCount
                     };
                     StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                    if (returnedStorageItem != null)
+                        returnedStorageItem = _player.Hotbar.AddItem(returnedStorageItem);
                     if (returnedStorageItem == null)
                     {
                         selectedBlock.Properties.Richness--;
@@ -329,7 +329,7 @@ namespace IndustrialEnginner
                             selectedBlock.Properties.OriginalDropCount;
                         if (selectedBlock.Properties.Richness <= 0)
                         {
-                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = _blockRegistry.Registry.Find(x =>
+                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = GameData.BlockRegistry.Registry.Find(x =>
                                 x.Properties.Id ==
                                 selectedBlock.Properties.FoundationId);
                             _worldManager.UpdateMap();
@@ -346,11 +346,18 @@ namespace IndustrialEnginner
                     StorageItem itemToAdd = new StorageItem()
                     {
                         Item =
-                            _itemRegistry.Registry.Find(x =>
+                            GameData.ItemRegistry.Registry.Find(x =>
                                 x.Properties.Id == selectedBlock.Properties.PlacedEntity.Properties.DropItemId),
                         Count = 1
                     };
-                    StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                    StorageItem returnedStorageItem = _player.Hotbar.AddItem(itemToAdd);
+                    if (returnedStorageItem == null)
+                    {
+                        selectedBlock.RemoveEntity();
+                        _worldManager.UpdateMap();
+                    }
+
+                    returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
                     if (returnedStorageItem == null)
                     {
                         selectedBlock.RemoveEntity();
@@ -375,12 +382,12 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiController = new GuiController(GameData, View, _itemRegistry, Window, _zoom, _cursor);
+            _guiController = new GuiController(GameData, View, Window, _zoom, _cursor);
             _player.Inventory = _guiController.GetGui().Inventory;
             _player.Hotbar = _guiController.GetGui().Hotbar;
-            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.Drill.Copy()});
-            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.Furnace.Copy()});
-            _player.Hotbar.AddItem(new StorageItem(){Count = 3, Item = _itemRegistry.WoodenPlatform.Copy()});
+            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
+            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
+            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
         }
 
         private void InitializeGame()
@@ -390,10 +397,11 @@ namespace IndustrialEnginner
             _moving = new Moving(80);
             _mining = new Mining();
             GameData = new GameData();
-            _blockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
-            _itemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
-            _placeableEntityRegistry = EntityFactory.LoadEntities("./assest/settings/placeableEntitiesRegistry.json", GameData);
-            _recipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json", GameData);
+            GameData.BlockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
+            GameData.ItemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
+            GameData.PlaceableEntityRegistry =
+                EntityFactory.LoadEntities("./assest/settings/placeableEntitiesRegistry.json", GameData);
+            GameData.RecipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json", GameData);
         }
 
         private void InitializeEntities()
@@ -424,7 +432,7 @@ namespace IndustrialEnginner
         private void InitializeWorld()
         {
             _world = new World(40, 27, 32, 5);
-            _worldManager = new WorldManager(_world, _blockRegistry);
+            _worldManager = new WorldManager(_world, GameData.BlockRegistry);
             _worldManager.Initialize();
         }
 
@@ -488,14 +496,19 @@ namespace IndustrialEnginner
         {
             Window.Draw(_world.RenderedTiles);
             _worldManager.DrawEntities(Window);
-            _player.Draw(Window, View);
+            if (_guiController.GetGuiState() == GuiState.GamePlay)
+                _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
+            _player.Draw(Window, View, _zoom);
 
             if (_mining.IsMining)
                 _cursor._progressBar.Draw(Window, _cursorPos, _world.TileSize, _mining.FinishValue,
                     _mining.ActualProgress);
+
+
             _guiController.DrawGui(Window, _zoom);
-            
-            _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
+
+            if (_guiController.GetGuiState() == GuiState.OpenPlayerInventory)
+                _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
 
             // msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
@@ -504,7 +517,8 @@ namespace IndustrialEnginner
             // msg = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
             // msg = View.Size.ToString();
-            //msg2 = Mouse.GetPosition(Window).ToString();
+            msg2 = Mouse.GetPosition(Window).ToString();
+
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
         }
     }

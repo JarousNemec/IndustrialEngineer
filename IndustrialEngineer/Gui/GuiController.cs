@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Permissions;
 using IndustrialEngineer.Enums;
 using IndustrialEnginner.Components;
+using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.GameEntities;
 using IndustrialEnginner.Items;
@@ -13,17 +16,21 @@ namespace IndustrialEnginner.Gui
     public class GuiController
     {
         private Gui _gui;
+
         private GuiState _state;
-        private ItemRegistry _registry;
+
+        // private ItemRegistry _registry;
         private ItemTransportPacket _packet;
         private Cursor _cursor;
+        private GameData _gameData;
 
-        public GuiController(GameData gameData, View view, ItemRegistry itemRegistry, RenderWindow window, Zoom zoom,
+        public GuiController(GameData gameData, View view, RenderWindow window, Zoom zoom,
             Cursor cursor)
         {
+            _gameData = gameData;
             _cursor = cursor;
             _packet = new ItemTransportPacket();
-            _registry = itemRegistry;
+            // _registry = gameData.ItemRegistry;
             _state = GuiState.GamePlay;
             _gui = new Gui(gameData, window, zoom);
             //
@@ -65,6 +72,7 @@ namespace IndustrialEnginner.Gui
                     if (_state == GuiState.OpenPlayerInventory)
                     {
                         DragItems(new Vector2i(e.X, e.Y));
+                        ClickOnButton(new Vector2i(e.X, e.Y));
                     }
 
                     if (_state == GuiState.GamePlay)
@@ -97,15 +105,20 @@ namespace IndustrialEnginner.Gui
             }
 
             Hotbar hotbar = (Hotbar)triggeredComponent;
-            var selectedSlotPosition = GetSlotInStorage((ItemStorage)triggeredComponent, mousePosition);
-            var itemSlot = hotbar.Storage[selectedSlotPosition.X, selectedSlotPosition.Y];
-            
-            
-            if (hotbar.SelectedItemSlot!=null && hotbar.SelectedItemSlot != itemSlot)
+            var selectedSlotPosition = GetSlotInGrid((ItemStorage)triggeredComponent, mousePosition);
+            if (selectedSlotPosition == null)
+            {
+                return;
+            }
+
+            var itemSlot = hotbar.Storage[selectedSlotPosition.Value.X, selectedSlotPosition.Value.Y];
+
+
+            if (hotbar.SelectedItemSlot != null && hotbar.SelectedItemSlot != itemSlot)
             {
                 hotbar.SelectedItemSlot.IsSelected = false;
             }
-            
+
             hotbar.SelectedItemSlot = itemSlot;
             if (itemSlot.StorageItem != null)
             {
@@ -114,7 +127,125 @@ namespace IndustrialEnginner.Gui
                     hotbar.SelectedItemSlot.IsSelected = !hotbar.SelectedItemSlot.IsSelected;
                 }
             }
-            
+        }
+
+        private void ClickOnButton(Vector2i mousePosition)
+        {
+            var triggeredComponent = GetClickedComponent(mousePosition);
+            if (triggeredComponent == null)
+                return;
+            if (triggeredComponent.Type != ComponentType.Crafting &&
+                triggeredComponent.Type != ComponentType.CraftingButton)
+            {
+                return;
+            }
+
+            var crafting = (ClickableComponent)triggeredComponent;
+            var buttonSlotPosition = GetSlotInGrid(crafting, mousePosition);
+            if (buttonSlotPosition == null) return;
+            Craft(_gui.Crafting.CraftingButtons[buttonSlotPosition.Value.X, buttonSlotPosition.Value.Y].Recipe);
+        }
+
+        private void Craft(Recipe recipe)
+        {
+            List<ItemSlot>[] restSources = new List<ItemSlot>[recipe.Ingredients.Length];
+            for (int i = 0; i < restSources.Length; i++)
+            {
+                restSources[i] = new List<ItemSlot>();
+            }
+
+            for (int i = 0; i < recipe.Ingredients.Length; i++)
+            {
+                IsStorageContainingIngredient(_gui.Inventory.Storage, recipe.Ingredients[i].Id,
+                    recipe.Ingredients[i].Count,
+                    out List<ItemSlot> restInStorage);
+                restSources[i].AddRange(restInStorage);
+            }
+            for (int i = 0; i < recipe.Ingredients.Length; i++)
+            {
+                IsStorageContainingIngredient(_gui.Hotbar.Storage, recipe.Ingredients[i].Id,
+                    recipe.Ingredients[i].Count,
+                    out List<ItemSlot> restInStorage);
+                restSources[i].AddRange(restInStorage);
+            }
+
+            bool isPossibleToCraft = true;
+            for (int i = 0; i < restSources.Length; i++)
+            {
+                bool result = ContainsRestItemsEnoughIngredients(restSources[i], recipe.Ingredients[i].Count);
+                if (result == false)
+                {
+                    isPossibleToCraft = false;
+                }
+            }
+
+            if (!isPossibleToCraft) return;
+
+            var craftedItem = new StorageItem()
+            {
+                Item = _gameData.ItemRegistry.Registry.Find(x => x.Properties.Id == recipe.DropId),
+                Count = recipe.DropCount
+            };
+
+            var restFromAdding = _gui.Hotbar.AddItem(craftedItem);
+            if (restFromAdding != null)
+            {
+                _gui.Hotbar.RemoveItem(craftedItem.Item.Properties.Id, restFromAdding.Count);
+                restFromAdding = _gui.Inventory.AddItem(craftedItem);
+                if (restFromAdding != null)
+                {
+                    _gui.Inventory.RemoveItem(craftedItem.Item.Properties.Id, restFromAdding.Count);
+                    return;
+                }
+            }
+
+            for (int i = 0; i < recipe.Ingredients.Length; i++)
+            {
+                RemoveItems(recipe.Ingredients[i].Id, recipe.Ingredients[i].Count, restSources[i].ToArray());
+            }
+        }
+
+        private bool ContainsRestItemsEnoughIngredients(List<ItemSlot> restItemSlots, int requiredCount)
+        {
+            int count = 0;
+            foreach (var slot in restItemSlots)
+            {
+                count += slot.StorageItem.Count;
+            }
+
+            return count >= requiredCount;
+        }
+
+        private void RemoveItems(int id, int count, ItemSlot[] restItemsStorage)
+        {
+            for (int i = 0; i < restItemsStorage.GetLength(0); i++)
+            {
+                if (restItemsStorage[i].StorageItem.Count >= count)
+                {
+                    restItemsStorage[i].RemoveItem(count);
+                    return;
+                }
+
+                count -= restItemsStorage[i].StorageItem.Count;
+                restItemsStorage[i].RemoveItem(restItemsStorage[i].StorageItem.Count);
+            }
+        }
+
+        private bool IsStorageContainingIngredient(ItemSlot[,] storage, int id, int requiredCount,
+            out List<ItemSlot> restInStorage)
+        {
+            restInStorage = new List<ItemSlot>();
+            int count = 0;
+            foreach (var slot in storage)
+            {
+                if (slot.StorageItem?.Item.Properties.Id == id)
+                {
+                    count += slot.StorageItem.Count;
+                    restInStorage.Add(slot);
+                }
+            }
+
+            return count >= requiredCount;
         }
 
         private void DragItems(Vector2i mousePosition)
@@ -129,8 +260,13 @@ namespace IndustrialEnginner.Gui
             }
 
             _packet.SourceComponent = (ItemStorage)triggeredComponent;
-            _packet.SourceSlotPos = GetSlotInStorage(_packet.SourceComponent, mousePosition);
+            var sourceSlot = GetSlotInGrid(_packet.SourceComponent, mousePosition);
+            if (sourceSlot == null)
+            {
+                return;
+            }
 
+            _packet.SourceSlotPos = (Vector2i)sourceSlot;
             var storageItem = _packet.SourceComponent.Storage[_packet.SourceSlotPos.X, _packet.SourceSlotPos.Y]
                 .StorageItem;
             if (storageItem == null)
@@ -166,9 +302,10 @@ namespace IndustrialEnginner.Gui
             if (_packet.StorageItem == null)
                 return;
             _packet.DestinationComponent = (ItemStorage)triggeredComponent;
-            _packet.DestinationSlotPos = GetSlotInStorage(_packet.DestinationComponent, mousePosition);
-
-
+            var destinationSlot = GetSlotInGrid(_packet.DestinationComponent, mousePosition);
+            if (destinationSlot == null)
+                return;
+            _packet.DestinationSlotPos = (Vector2i)destinationSlot;
             if (!_packet.DragHalf)
             {
                 Drop();
@@ -266,17 +403,8 @@ namespace IndustrialEnginner.Gui
             _gui.ActualizeComponentsPositions(view, zoom);
         }
 
-        // private int i = 0;
-
         public void DrawGui(RenderWindow window, Zoom zoom)
         {
-            // i++;
-            // if (i > 30)
-            // {
-            //     i = 0;
-            //     _gui.Inventory.AddItem(new StorageItem() { Item = _registry.Log.Copy(), Count = 20});
-            // }
-
             _gui.DrawComponents(window, zoom, _state);
         }
 
@@ -328,13 +456,12 @@ namespace IndustrialEnginner.Gui
                     return _gui.Hotbar;
                 }
             }
-                
 
 
             return null;
         }
 
-        public Vector2i GetSlotInStorage(ItemStorage component, Vector2i mousePosition)
+        public Vector2i? GetSlotInGrid(ClickableComponent component, Vector2i mousePosition)
         {
             return component.ClickGrid.GetCurrentCell(mousePosition);
         }

@@ -1,4 +1,5 @@
 using IndustrialEngineer.Enums;
+using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Items;
 using SFML.Graphics;
@@ -8,37 +9,28 @@ namespace IndustrialEnginner.Gui
 {
     public class CraftingButton : GuiComponent
     {
-        public StorageItem StorageItem { get; set; }
-        public bool IsSelected { get; set; }
-
-        private Sprite _selectedSprite;
-
-        private Label _label;
-        private PictureBox _pictureBox;
-        private GameData _gameData;
-
-        public CraftingButton(Sprite sprite, Sprite selectedSprite, GameData gameData, ComponentType type) : base(sprite,
+        public Recipe Recipe { get; set; }
+        private readonly PictureBox _recipeIcon;
+        public CraftingButton(Sprite sprite,Recipe recipe, ComponentType type) : base(sprite,
             type)
         {
-            _gameData = gameData;
-            _pictureBox = new PictureBox(gameData.GetSprites()["Unknown"]);
-            _label = new Label(null, 8, "", GameData.Font);
-            _selectedSprite = selectedSprite;
-            StorageItem = null;
-            IsSelected = false;
+            Recipe = recipe;
+            _recipeIcon = new PictureBox(recipe.Sprite);
+            _childComponentsToDraw.Add(_recipeIcon);
+        }
+        public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, Vector2u slotSize)
+        {
+            base.ActualizeDisplayingCords(newX, newY);
+
+            var picturePosX = CalculatePicturePosition(newX, newY, zoom, out var picturePosY);
+            _recipeIcon.ActualizeDisplayingCords(picturePosX, picturePosY);
         }
 
-        public override void Draw(RenderWindow window, Zoom zoom)
+        private static float CalculatePicturePosition(float newX, float newY, Zoom zoom, out float picturePosY)
         {
-            base.Draw(window, zoom);
-
-            if (StorageItem == null)
-                return;
-
-            foreach (var child in _childComponentsToDraw)
-            {
-                child.Draw(window, zoom);
-            }
+            var picturePosX = newX + 6 * zoom.FlippedZoomed;
+            picturePosY = newY + 6 * zoom.FlippedZoomed;
+            return picturePosX;
         }
     }
 }

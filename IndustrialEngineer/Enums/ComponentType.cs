@@ -7,5 +7,7 @@ namespace IndustrialEngineer.Enums
         Menu = 2,
         StorageSlot = 3,
         Interface = 4,
+        Crafting = 5,
+        CraftingButton = 5
     }
 }

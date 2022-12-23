@@ -1,3 +1,4 @@
+using IndustrialEngineer.Enums;
 using IndustrialEnginner.Components;
 using IndustrialEnginner.DataModels;
 using SFML.Graphics;
@@ -26,8 +27,13 @@ namespace IndustrialEnginner.Gui
                 gameData.GetSprites()["itemslot_selected"], 1, 9, gameData);
             Inventory = new Inventory(gameData.GetSprites()["inventory"], gameData.GetSprites()["itemslot"],
                 gameData.GetSprites()["itemslot_selected"], 4, 8, gameData);
+
+            int columns = 4;
+            int rowsCount = gameData.RecipesRegistry.CraftingRecipes.Count / columns;
+            int rows = gameData.RecipesRegistry.CraftingRecipes.Count % columns > 0 ? rowsCount + 1 : rowsCount;
             
-            Crafting = new Crafting(gameData.GetSprites()["crafting"]);
+            Crafting = new Crafting(gameData.GetSprites()["crafting"], gameData.GetSprites()["itemslot"],
+                gameData.RecipesRegistry, ComponentType.Crafting, rows,columns);
         }
 
 
@@ -49,9 +55,11 @@ namespace IndustrialEnginner.Gui
             var rightDownCornerInventory = new Vector2i(443 + leftUpCornerInventory.X, 218 + leftUpCornerInventory.Y);
             Inventory.ClickGrid.ClickArea = new Area(leftUpCornerInventory, rightDownCornerInventory);
 
-            var leftUpCornerCrafting =
-                new Vector2i(0 + Crafting.ComponentPosInWindowX, 0 + Crafting.ComponentPosInWindowY);
-            var rightDownCornerCrafting = new Vector2i(220 + leftUpCornerCrafting.X, 320 + leftUpCornerCrafting.Y);
+            const int craftingClickAreaMarginX = 17;
+            const int craftingClickAreaMarginY = 20;
+            var leftUpCornerCrafting = new Vector2i(craftingClickAreaMarginX + Crafting.ComponentPosInWindowX,
+                craftingClickAreaMarginY + Crafting.ComponentPosInWindowY);
+            var rightDownCornerCrafting = new Vector2i(219 + leftUpCornerCrafting.X, 328 + leftUpCornerCrafting.Y);
             Crafting.ClickGrid.ClickArea = new Area(leftUpCornerCrafting, rightDownCornerCrafting);
         }
 
@@ -65,7 +73,7 @@ namespace IndustrialEnginner.Gui
                 view.Center.Y - Inventory.Sprite.Texture.Size.Y / 2 * zoom.FlippedZoomed, zoom, marginX: 6, marginY: 8, marginBetween: -4f);
             Crafting.ActualizeDisplayingCords(
                 view.Center.X - (Inventory.Sprite.Texture.Size.X + Crafting.Sprite.Texture.Size.X) / 2 * zoom.FlippedZoomed +
-                Inventory.Sprite.Texture.Size.X * zoom.FlippedZoomed, view.Center.Y - Crafting.Sprite.Texture.Size.Y / 2 * zoom.FlippedZoomed);
+                Inventory.Sprite.Texture.Size.X * zoom.FlippedZoomed, view.Center.Y - Crafting.Sprite.Texture.Size.Y / 2 * zoom.FlippedZoomed, zoom, marginX: 6, marginY: 8, marginBetween: -4f);
         }
 
         private void CalculateComponentsPositionsInWindow(Window window, Zoom zoom)
@@ -98,6 +106,7 @@ namespace IndustrialEnginner.Gui
                 Hotbar.Draw(window, zoom);
                 Inventory.Draw(window, zoom);
                 Crafting.Draw(window, zoom);
+                
             }
         }
     }

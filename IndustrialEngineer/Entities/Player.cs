@@ -1,4 +1,5 @@
 using System.Drawing;
+using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Gui;
 using SFML.Graphics;
 using SFML.System;
@@ -10,14 +11,15 @@ namespace IndustrialEnginner.GameEntities
     {
         public Inventory Inventory { get; set; }
         public Hotbar Hotbar { get; set; }
-        public Player(GraphicsEntityProperties properties):base(properties)
+
+        public Player(GraphicsEntityProperties properties) : base(properties)
         {
         }
 
-        public void Draw(RenderWindow window, View view)
+        public void Draw(RenderWindow window, View view, Zoom zoom)
         {
-            float px = view.Center.X - (Properties.Sprite.Texture.Size.X / 2);
-            float py = view.Center.Y - (Properties.Sprite.Texture.Size.Y / 2);
+            float px = view.Center.X - Properties.Sprite.Texture.Size.X / 2;
+            float py = view.Center.Y - Properties.Sprite.Texture.Size.Y + 10;
             Properties.Sprite.Position = new Vector2f(px, py);
             Properties.Sprite.Scale = new Vector2f(0.9f, 0.9f);
             window.Draw(Properties.Sprite);

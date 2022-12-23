@@ -8,38 +8,26 @@ using SFML.System;
 
 namespace IndustrialEnginner.Gui
 {
-    public class ItemStorage : GuiComponent
+    public class ItemStorage : ClickableComponent
     {
         public ItemSlot[,] Storage { get; set; }
         private Vector2u _itemSlotSize;
-        public ClickGrid ClickGrid { get; set; }
+
 
         public ItemStorage(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, int rows,
-            int columns, GameData gameData) : base(sprite, ComponentType.Storage)
+            int columns, GameData gameData) : base(sprite, ComponentType.Storage, rows, columns)
         {
             _itemSlotSize = itemSlotSprite.Texture.Size;
-
-            ClickGrid = new ClickGrid();
-            ClickGrid.Rows = rows;
-            ClickGrid.Columns = columns;
-
             Storage = new ItemSlot[columns, rows];
             for (int i = 0; i < Storage.GetLength(0); i++)
             {
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
-                    Storage[i, j] = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData,
+                    var slot = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData,
                         ComponentType.StorageSlot);
+                    Storage[i, j] = slot;
+                    _childComponentsToDraw.Add(slot);
                 }
-            }
-        }
-
-        public override void Draw(RenderWindow window, Zoom zoom)
-        {
-            base.Draw(window, zoom);
-            foreach (var itemSlot in Storage)
-            {
-                itemSlot.Draw(window, zoom);
             }
         }
 
@@ -87,7 +75,8 @@ namespace IndustrialEnginner.Gui
                 goto repeat;
             }
 
-            canMaxAdd = slotEnableToAddItem.StorageItem.Item.Properties.MaxStackCount - slotEnableToAddItem.StorageItem.Count;
+            canMaxAdd = slotEnableToAddItem.StorageItem.Item.Properties.MaxStackCount -
+                        slotEnableToAddItem.StorageItem.Count;
             if (canMaxAdd >= storageItem.Count)
             {
                 if (slotEnableToAddItem.AddItem(storageItem))
@@ -103,6 +92,25 @@ namespace IndustrialEnginner.Gui
             goto repeat;
         }
 
+        public void RemoveItem(int id, int count)
+        {
+            for (int i = 0; i < Storage.GetLength(0); i++)
+            {
+                for (int j = 0; j < Storage.GetLength(1); j++)
+                {
+                    if (Storage[i, j].StorageItem?.Item.Properties.Id != id) continue;
+                    if (Storage[i, j].StorageItem.Count >= count)
+                    {
+                        Storage[i, j].RemoveItem(count);
+                        return;
+                    }
+
+                    count -= Storage[i, j].StorageItem.Count;
+                    Storage[i, j].RemoveItem(Storage[i, j].StorageItem.Count);
+                }
+            }
+        }
+
         private ItemSlot FindEmptyOrWithSameItem(ItemSlot[,] storage, Item item)
         {
             for (int x = 0; x < storage.GetLength(1); x++)
@@ -113,7 +121,8 @@ namespace IndustrialEnginner.Gui
                         return storage[y, x];
 
                     var storageItem = storage[y, x].StorageItem;
-                    if (storageItem.Item.Properties.Id == item.Properties.Id && storageItem.Count < storageItem.Item.Properties.MaxStackCount)
+                    if (storageItem.Item.Properties.Id == item.Properties.Id &&
+                        storageItem.Count < storageItem.Item.Properties.MaxStackCount)
                         return storage[y, x];
                 }
             }

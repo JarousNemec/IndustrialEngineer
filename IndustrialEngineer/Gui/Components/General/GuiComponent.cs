@@ -15,7 +15,8 @@ namespace IndustrialEnginner.Gui
         public Sprite Sprite { get; set; }
         public float DisplayingX { get; set; }
         public float DisplayingY { get; set; }
-
+        public int GridPositionX { get; set; }
+        public int GridPositionY { get; set; }
         public int ComponentPosInWindowX { get; set; }
         public int ComponentPosInWindowY { get; set; }
         public List<GuiComponent> _childComponentsToDraw;

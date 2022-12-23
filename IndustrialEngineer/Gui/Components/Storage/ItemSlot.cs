@@ -89,10 +89,10 @@ namespace IndustrialEnginner.Gui
             if (StorageItem == null)
                 return;
 
-            foreach (var child in _childComponentsToDraw)
-            {
-                child.Draw(window, zoom);
-            }
+            // foreach (var child in _childComponentsToDraw)
+            // {
+            //     child.Draw(window, zoom);
+            // }
         }
 
         public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, Vector2u slotSize)

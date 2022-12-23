@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using GameEngine_druhypokus.Factories;
 using IndustrialEngineer.Enums;
@@ -16,7 +17,10 @@ namespace IndustrialEngineer.Factories
         {
             RecipesRegistry registry = new RecipesRegistry();
             var presets = LoadJson(path);
-            registry.Registry = RecipesRegistrySetup(presets, gameData);
+            var recipes = RecipesRegistrySetup(presets, gameData);
+
+            registry.CraftingRecipes = recipes.FindAll(x => x.RecipeType == RecipeType.Crafting);
+            registry.SmeltingRecipes = recipes.FindAll(x => x.RecipeType == RecipeType.Smelting);
             return registry;
         }
 
