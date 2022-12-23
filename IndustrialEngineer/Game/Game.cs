@@ -5,6 +5,7 @@ using GameEngine_druhypokus.Factories;
 using IndustrialEngineer.Blocks;
 using IndustrialEngineer.Factories;
 using IndustrialEnginner.Blocks;
+using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Enums;
 using IndustrialEnginner.GameEntities;
@@ -27,6 +28,7 @@ namespace IndustrialEnginner
         private BlockRegistry _blockRegistry;
         private ItemRegistry _itemRegistry;
         private PlaceableEntityRegistry _placeableEntityRegistry;
+        private RecipesRegistry _recipesRegistry;
         private GuiController _guiController;
 
         private World _world;
@@ -391,6 +393,7 @@ namespace IndustrialEnginner
             _blockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
             _itemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
             _placeableEntityRegistry = EntityFactory.LoadEntities("./assest/settings/placeableEntitiesRegistry.json", GameData);
+            _recipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json", GameData);
         }
 
         private void InitializeEntities()
