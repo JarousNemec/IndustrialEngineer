@@ -5,17 +5,18 @@ using IndustrialEngineer.Blocks;
 using IndustrialEnginner;
 using IndustrialEnginner.Enums;
 using IndustrialEnginner.GameEntities;
+using IndustrialEnginner.Gui;
 using SFML.Graphics;
 
 namespace IndustrialEngineer.Factories
 {
-    public class EntityFactory
+    public class BuildingsFactory
     {
-        public static PlaceableEntityRegistry LoadEntities(string path, GameData data)
+        public static BuildingsRegistry LoadBuildings(string path, GameData data)
         {
             var presets = LoadJson(path);
             var properties = MakePropertiesList(data, presets);
-            var registry = new PlaceableEntityRegistry();
+            var registry = new BuildingsRegistry();
 
             registry.Drill = new Drill(properties.Find(x => x.Name == "Drill"));
             registry.Registry.Add(registry.Drill);
@@ -28,17 +29,23 @@ namespace IndustrialEngineer.Factories
             return registry;
         }
 
-        private static List<PlaceableEntityProperties> MakePropertiesList(GameData data, List<PlaceableEntityPreset> presets)
+        public static void SetDialogsToMachines(GameData data)
         {
-            List<PlaceableEntityProperties> propertiesList = new List<PlaceableEntityProperties>();
+            data.BuildingsRegistry.Drill.Properties.Dialog = data.DialogsRegistry.DrillDialog;
+            data.BuildingsRegistry.Furnace.Properties.Dialog = data.DialogsRegistry.FurnaceDialog;
+        }
+
+        private static List<BuildingProperties> MakePropertiesList(GameData data, List<PlaceableEntityPreset> presets)
+        {
+            List<BuildingProperties> propertiesList = new List<BuildingProperties>();
             foreach (var preset in presets)
             {
                 List<Sprite> states = new List<Sprite>();
                 foreach (var state in preset.States)
                 {
-                    states.Add(data.GetSprites()[state]);
+                    states.Add(data.GetSprite(state));
                 }
-                propertiesList.Add(new PlaceableEntityProperties(data.GetSprites()[preset.Texture],states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType, preset.DropItemId, preset.CanStepOn));
+                propertiesList.Add(new BuildingProperties(data.GetSprite(preset.Texture),states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType, preset.DropItemId, preset.CanStepOn, null));
             }
             return propertiesList;
         }

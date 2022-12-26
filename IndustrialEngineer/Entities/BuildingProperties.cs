@@ -4,30 +4,29 @@ using SFML.Graphics;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class PlaceableEntityProperties : GraphicsEntityProperties
+    public class BuildingProperties : GraphicsEntityProperties
     {
         public string Name { get; set; }
         public int Id { get; set; }
         public BlockType CanBePlacedOnType { get; set; }
-        public GuiComponent Gui { get; set; }
-
+        public MachineDialog Dialog { get; set; }
         public int DropItemId { get; set; }
         public bool CanStepOn { get; set; }
 
-        public PlaceableEntityProperties(Sprite sprite, Sprite[] states, string name, int id,
-            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, GuiComponent gui = null) : base(sprite, states)
+        public BuildingProperties(Sprite sprite, Sprite[] states, string name, int id,
+            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog) : base(sprite, states)
         {
             Name = name;
             Id = id;
             CanBePlacedOnType = canBePlacedOnType;
-            Gui = gui;
+            Dialog = dialog;
             DropItemId = dropItemId;
             CanStepOn = canStepOn;
         }
 
-        public PlaceableEntityProperties Copy()
+        public BuildingProperties Copy()
         {
-            return new PlaceableEntityProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Gui);
+            return new BuildingProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Dialog?.Copy());
         }
     }
 }

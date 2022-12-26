@@ -21,7 +21,7 @@ namespace IndustrialEngineer.Blocks
         public int OriginalDropCount { get; set; }
         public bool CanPlaceOn { get; set; }
 
-        public PlaceableEntity PlacedEntity { get; set; }
+        public Building PlacedEntity { get; set; }
 
         public BlockProperties(int id, int tileId, int[] blocksCanPlaceOn, string name, int miningLevel, int richness,
             int foundationId, BlockType blockType, int harvestTime, bool harvestable, int dropId, int dropCount,

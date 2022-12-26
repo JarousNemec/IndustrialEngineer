@@ -11,7 +11,7 @@ namespace IndustrialEnginner.Gui
         public StorageItem StorageItem { get; set; }
         public bool IsSelected { get; set; }
 
-        private Sprite _selectedSprite;
+        public Sprite SelectedSprite{ get; set; }
 
         private Label _label;
         private PictureBox _pictureBox;
@@ -21,11 +21,19 @@ namespace IndustrialEnginner.Gui
             type)
         {
             _gameData = gameData;
-            _pictureBox = new PictureBox(gameData.GetSprites()["Unknown"]);
+            _pictureBox = new PictureBox(gameData.GetSprite("Unknown"));
             _label = new Label(null, 8, "", GameData.Font);
-            _selectedSprite = selectedSprite;
+            SelectedSprite = selectedSprite;
             StorageItem = null;
             IsSelected = false;
+        }
+
+        public ItemSlot Copy()
+        {
+            ItemSlot slot = new ItemSlot(Sprite, SelectedSprite, _gameData, ComponentType.StorageSlot);
+            slot.SetPosInWindow(ComponentPosInWindowX, ComponentPosInWindowY);
+            slot.ActualizeDisplayingCords(DisplayingX, DisplayingY);
+            return slot;
         }
 
         public bool AddItem(StorageItem storageItem)
@@ -33,7 +41,6 @@ namespace IndustrialEnginner.Gui
             if (StorageItem == null)
             {
                 StorageItem = storageItem;
-
                 _pictureBox.Sprite = StorageItem.Item.Properties.Sprite;
                 _childComponentsToDraw.Add(_pictureBox);
                 _childComponentsToDraw.Add(_label);
@@ -75,24 +82,19 @@ namespace IndustrialEnginner.Gui
 
             return false;
         }
-
         public override void Draw(RenderWindow window, Zoom zoom)
         {
             base.Draw(window, zoom);
             if (IsSelected)
             {
-                _selectedSprite.Position = new Vector2f(base.DisplayingX, base.DisplayingY);
-                _selectedSprite.Scale = new Vector2f(zoom.FlippedZoomed, zoom.FlippedZoomed);
-                window.Draw(_selectedSprite);
+                SelectedSprite.Position = new Vector2f(base.DisplayingX, base.DisplayingY);
+                SelectedSprite.Scale = new Vector2f(zoom.FlippedZoomed, zoom.FlippedZoomed);
+                window.Draw(SelectedSprite);
             }
-
-            if (StorageItem == null)
-                return;
-
-            // foreach (var child in _childComponentsToDraw)
-            // {
-            //     child.Draw(window, zoom);
-            // }
+            foreach (var childComponent in _childComponentsToDraw)
+            {
+                childComponent.Draw(window, zoom);
+            }
         }
 
         public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, Vector2u slotSize)
@@ -100,7 +102,7 @@ namespace IndustrialEnginner.Gui
             base.ActualizeDisplayingCords(newX, newY);
             if (StorageItem == null)
                 return;
-
+            
             var textPosX = CalculateTextPosition(zoom, slotSize, out var textPosY);
             _label.ActualizeDisplayingCords(textPosX, textPosY);
 
@@ -122,15 +124,6 @@ namespace IndustrialEnginner.Gui
             var textPosX = (DisplayingX + textPosInSlotX / zoom.Zoomed);
             textPosY = (DisplayingY + textPosInSlotY / zoom.Zoomed);
             return textPosX;
-        }
-
-        private void DrawItemIconToSlot(RenderWindow window, float zoomed, Sprite itemSprite, uint itemSpritePosX,
-            uint itemSpritePosY)
-        {
-            itemSprite.Position =
-                new Vector2f(DisplayingX + itemSpritePosX * zoomed, DisplayingY + itemSpritePosY * zoomed);
-            itemSprite.Scale = new Vector2f(zoomed, zoomed);
-            window.Draw(itemSprite);
         }
     }
 }

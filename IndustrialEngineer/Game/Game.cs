@@ -106,7 +106,7 @@ namespace IndustrialEnginner
             switch (e.Button)
             {
                 case Mouse.Button.Left:
-                    if (_guiController.GetGuiState() == GuiState.GamePlay)
+                    if (_guiController.Gui.State == GuiState.GamePlay)
                     {
                         SetupMining();
                     }
@@ -115,7 +115,7 @@ namespace IndustrialEnginner
                 case Mouse.Button.Middle:
                     break;
                 case Mouse.Button.Right:
-                    if (_guiController.GetGuiState() == GuiState.GamePlay)
+                    if (_guiController.Gui.State == GuiState.GamePlay)
                     {
                         Build(_cursor.GetWorldPosition(Window, View, _world.TileSize, _zoom.FlippedZoomed,
                                 _zoom.MaxZoom,
@@ -256,8 +256,6 @@ namespace IndustrialEnginner
                 _cursorWorldPos.Y > _world.MapSize)
                 return;
 
-            // if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable &&
-            //     _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.MiningLevel <= _mining.Level)
             if (_world.Map[_cursorWorldPos.X, _cursorWorldPos.Y].Properties.Harvestable)
             {
                 _mining.IsMining = true;
@@ -274,6 +272,11 @@ namespace IndustrialEnginner
             var selectedBlock = _world.Map[pos.X, pos.Y];
             if (selectedBlock.Properties.PlacedEntity != null)
             {
+                if (selectedBlock.Properties.PlacedEntity.Properties.Dialog != null)
+                {
+                    _guiController.OpenMachineDialog(selectedBlock.Properties.PlacedEntity.Properties.Dialog);
+                }
+
                 return;
             }
 
@@ -285,7 +288,7 @@ namespace IndustrialEnginner
                 return;
             if (entitySlot.StorageItem.Item == null)
                 return;
-            var placingEntity = GameData.PlaceableEntityRegistry.Registry.Find(x =>
+            var placingEntity = GameData.BuildingsRegistry.Registry.Find(x =>
                 x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId).Copy();
             if (selectedBlock.Properties.CanPlaceOn &&
                 placingEntity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType &&
@@ -308,55 +311,59 @@ namespace IndustrialEnginner
 
             var selectedBlock = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y];
             _mining.ActualProgress += _mining.speed * GameTime.DeltaTime;
-            if (_mining.ActualProgress > _mining.FinishValue)
+            if (_mining.ActualProgress < _mining.FinishValue)
             {
-                if (selectedBlock.Properties.PlacedEntity == null)
+                return;
+            }
+
+            if (selectedBlock.Properties.PlacedEntity == null)
+            {
+                StorageItem itemToAdd = new StorageItem()
                 {
-                    StorageItem itemToAdd = new StorageItem()
+                    Item =
+                        GameData.ItemRegistry.Registry.Find(x =>
+                            x.Properties.Id == selectedBlock.Properties.DropId),
+                    Count = selectedBlock.Properties.DropCount
+                };
+                StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
+                if (returnedStorageItem != null)
+                    returnedStorageItem = _player.Hotbar.AddItem(returnedStorageItem);
+                if (returnedStorageItem == null)
+                {
+                    selectedBlock.Properties.Richness--;
+                    selectedBlock.Properties.DropCount =
+                        selectedBlock.Properties.OriginalDropCount;
+                    if (selectedBlock.Properties.Richness <= 0)
                     {
-                        Item =
-                            GameData.ItemRegistry.Registry.Find(x =>
-                                x.Properties.Id == selectedBlock.Properties.DropId),
-                        Count = selectedBlock.Properties.DropCount
-                    };
-                    StorageItem returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
-                    if (returnedStorageItem != null)
-                        returnedStorageItem = _player.Hotbar.AddItem(returnedStorageItem);
-                    if (returnedStorageItem == null)
-                    {
-                        selectedBlock.Properties.Richness--;
-                        selectedBlock.Properties.DropCount =
-                            selectedBlock.Properties.OriginalDropCount;
-                        if (selectedBlock.Properties.Richness <= 0)
-                        {
-                            _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = GameData.BlockRegistry.Registry.Find(x =>
-                                x.Properties.Id ==
-                                selectedBlock.Properties.FoundationId);
-                            _worldManager.UpdateMap();
-                        }
-                    }
-                    else
-                    {
-                        selectedBlock.Properties.DropCount =
-                            returnedStorageItem.Count;
+                        _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y] = GameData.BlockRegistry.Registry.Find(x =>
+                            x.Properties.Id ==
+                            selectedBlock.Properties.FoundationId);
+                        _worldManager.UpdateMap();
                     }
                 }
                 else
                 {
-                    StorageItem itemToAdd = new StorageItem()
-                    {
-                        Item =
-                            GameData.ItemRegistry.Registry.Find(x =>
-                                x.Properties.Id == selectedBlock.Properties.PlacedEntity.Properties.DropItemId),
-                        Count = 1
-                    };
-                    StorageItem returnedStorageItem = _player.Hotbar.AddItem(itemToAdd);
-                    if (returnedStorageItem == null)
-                    {
-                        selectedBlock.RemoveEntity();
-                        _worldManager.UpdateMap();
-                    }
-
+                    selectedBlock.Properties.DropCount =
+                        returnedStorageItem.Count;
+                }
+            }
+            else
+            {
+                StorageItem itemToAdd = new StorageItem()
+                {
+                    Item =
+                        GameData.ItemRegistry.Registry.Find(x =>
+                            x.Properties.Id == selectedBlock.Properties.PlacedEntity.Properties.DropItemId),
+                    Count = 1
+                };
+                StorageItem returnedStorageItem = _player.Hotbar.AddItem(itemToAdd);
+                if (returnedStorageItem == null)
+                {
+                    selectedBlock.RemoveEntity();
+                    _worldManager.UpdateMap();
+                }
+                else
+                {
                     returnedStorageItem = _player.Inventory.AddItem(itemToAdd);
                     if (returnedStorageItem == null)
                     {
@@ -364,9 +371,9 @@ namespace IndustrialEnginner
                         _worldManager.UpdateMap();
                     }
                 }
-
-                _mining.IsMining = false;
             }
+
+            _mining.IsMining = false;
         }
 
         #region Initialization
@@ -383,11 +390,12 @@ namespace IndustrialEnginner
         private void InitializeGui()
         {
             _guiController = new GuiController(GameData, View, Window, _zoom, _cursor);
-            _player.Inventory = _guiController.GetGui().Inventory;
-            _player.Hotbar = _guiController.GetGui().Hotbar;
+            _player.Inventory = _guiController.Gui.Inventory;
+            _player.Hotbar = _guiController.Gui.Hotbar;
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
+            BuildingsFactory.SetDialogsToMachines(GameData);
         }
 
         private void InitializeGame()
@@ -399,24 +407,24 @@ namespace IndustrialEnginner
             GameData = new GameData();
             GameData.BlockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
             GameData.ItemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
-            GameData.PlaceableEntityRegistry =
-                EntityFactory.LoadEntities("./assest/settings/placeableEntitiesRegistry.json", GameData);
+            GameData.BuildingsRegistry =
+                BuildingsFactory.LoadBuildings("./assest/settings/placeableEntitiesRegistry.json", GameData);
             GameData.RecipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json", GameData);
         }
 
         private void InitializeEntities()
         {
-            _player = new Player(new GraphicsEntityProperties(GameData.GetSprites()["Chuck"], null));
+            _player = new Player(new GraphicsEntityProperties(GameData.GetSprite("Chuck"), null));
             Sprite[] progressBarStates =
             {
-                GameData.GetSprites()["progressbar0"], GameData.GetSprites()["progressbar1"],
-                GameData.GetSprites()["progressbar2"], GameData.GetSprites()["progressbar3"],
-                GameData.GetSprites()["progressbar4"], GameData.GetSprites()["progressbar5"],
-                GameData.GetSprites()["progressbar6"], GameData.GetSprites()["progressbar7"],
-                GameData.GetSprites()["progressbar8"], GameData.GetSprites()["progressbar9"],
-                GameData.GetSprites()["progressbar10"]
+                GameData.GetSprite("progressbar0"), GameData.GetSprite("progressbar1"),
+                GameData.GetSprite("progressbar2"), GameData.GetSprite("progressbar3"),
+                GameData.GetSprite("progressbar4"), GameData.GetSprite("progressbar5"),
+                GameData.GetSprite("progressbar6"), GameData.GetSprite("progressbar7"),
+                GameData.GetSprite("progressbar8"), GameData.GetSprite("progressbar9"),
+                GameData.GetSprite("progressbar10")
             };
-            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprites()["selector"], null),
+            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprite("selector"), null),
                 new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
             _player.SetPosition(_world.RenderArea / 2, _world.RenderArea / 2);
         }
@@ -496,8 +504,8 @@ namespace IndustrialEnginner
         {
             Window.Draw(_world.RenderedTiles);
             _worldManager.DrawEntities(Window);
-            if (_guiController.GetGuiState() == GuiState.GamePlay)
-                _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
+            if (_guiController.Gui.State == GuiState.GamePlay)
+                msg2 = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
             _player.Draw(Window, View, _zoom);
 
             if (_mining.IsMining)
@@ -507,9 +515,9 @@ namespace IndustrialEnginner
 
             _guiController.DrawGui(Window, _zoom);
 
-            if (_guiController.GetGuiState() == GuiState.OpenPlayerInventory)
-                _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.GetGuiState());
-
+            if (_guiController.Gui.State != GuiState.GamePlay)
+                msg2 = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
+            msg = _guiController.GetClickedComponent(Mouse.GetPosition(Window))?.ToString();
             // msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
             //msg = _mining.IsMining.ToString();
@@ -517,7 +525,7 @@ namespace IndustrialEnginner
             // msg = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
             // msg = View.Size.ToString();
-            msg2 = Mouse.GetPosition(Window).ToString();
+            // msg2 = Mouse.GetPosition().ToString();
 
             DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
         }

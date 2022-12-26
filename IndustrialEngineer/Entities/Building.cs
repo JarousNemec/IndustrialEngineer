@@ -3,17 +3,17 @@ using SFML.System;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class PlaceableEntity
+    public class Building
     {
-        public PlaceableEntityProperties Properties { get; set; }
-        public PlaceableEntity(PlaceableEntityProperties properties)
+        public BuildingProperties Properties { get; set; }
+        public Building(BuildingProperties properties)
         {
             Properties = properties;
         }
 
-        public PlaceableEntity Copy()
+        public Building Copy()
         {
-            return new PlaceableEntity(Properties.Copy());
+            return new Building(Properties.Copy());
         }
 
         public void SetPosition(Vector2i pos)

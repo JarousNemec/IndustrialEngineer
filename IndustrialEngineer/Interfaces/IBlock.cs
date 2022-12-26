@@ -7,7 +7,7 @@ namespace IndustrialEnginner.Interfaces
     public interface IBlock
     {
         Block Copy();
-        void PlaceEntity(PlaceableEntity entity);
+        void PlaceEntity(Building entity);
         void RemoveEntity();
     }
 }

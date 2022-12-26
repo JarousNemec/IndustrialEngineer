@@ -59,7 +59,7 @@ namespace GameEngine_druhypokus.Factories
         private static ItemProperties ItemPropertiesSetup(List<ItemPreset> presets, string name, GameData gameData)
         {
             var preset = presets.Find(x => x.Name == name);
-            return new ItemProperties(preset.Id, preset.Name, gameData.GetSprites()[preset.Texture],
+            return new ItemProperties(preset.Id, preset.Name, gameData.GetSprite(preset.Texture),
                 preset.MaxStackCount,preset.Flammable, preset.CalorificValue, preset.Placeable, preset.PlacedEntityId);
         }
     }

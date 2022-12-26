@@ -1,8 +1,8 @@
 namespace IndustrialEnginner.GameEntities
 {
-    public class WoodenPlatform : PlaceableEntity
+    public class WoodenPlatform : Building
     {
-        public WoodenPlatform(PlaceableEntityProperties properties) : base(properties)
+        public WoodenPlatform(BuildingProperties properties) : base(properties)
         {
         }
     }

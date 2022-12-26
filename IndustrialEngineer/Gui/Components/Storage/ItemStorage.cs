@@ -11,12 +11,13 @@ namespace IndustrialEnginner.Gui
     public class ItemStorage : ClickableComponent
     {
         public ItemSlot[,] Storage { get; set; }
-        private Vector2u _itemSlotSize;
-
+        public Vector2u _itemSlotSize;
+        private GameData _gameData;
 
         public ItemStorage(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, int rows,
             int columns, GameData gameData) : base(sprite, ComponentType.Storage, rows, columns)
         {
+            _gameData = gameData;
             _itemSlotSize = itemSlotSprite.Texture.Size;
             Storage = new ItemSlot[columns, rows];
             for (int i = 0; i < Storage.GetLength(0); i++)
@@ -29,6 +30,33 @@ namespace IndustrialEnginner.Gui
                     _childComponentsToDraw.Add(slot);
                 }
             }
+        }
+        
+        public ItemStorage(Sprite sprite,Sprite itemSlotSprite, GameData gameData, int rows, int columns) : base(sprite, ComponentType.Storage, rows, columns)
+        {
+            _gameData = gameData;
+            _itemSlotSize = itemSlotSprite.Texture.Size;
+        }
+
+        public ItemStorage Copy()
+        {
+            var newStorage = new ItemStorage(Sprite,Storage[0,0].Sprite,_gameData, Storage.GetLength(1),
+                Storage.GetLength(0))
+            {
+                ClickGrid = ClickGrid
+            };
+            newStorage.Storage = new ItemSlot[Storage.GetLength(0), Storage.GetLength(1)];
+            for (int i = 0; i < Storage.GetLength(0); i++)
+            {
+                for (int j = 0; j < Storage.GetLength(1); j++)
+                {
+                    var slot = Storage[i, j].Copy();
+                    newStorage.Storage[i, j] = slot;
+                    newStorage._childComponentsToDraw.Add(slot);
+                }
+            }
+
+            return newStorage;
         }
 
         public void ActualizeDisplayingCords(float newX, float newY, Zoom zoom, float marginX = 0,
@@ -55,7 +83,6 @@ namespace IndustrialEnginner.Gui
             ItemSlot slotEnableToAddItem = FindEmptyOrWithSameItem(Storage, storageItem.Item);
             if (slotEnableToAddItem == null)
                 return storageItem;
-
             int canMaxAdd = 1;
             if (slotEnableToAddItem.StorageItem == null)
             {

@@ -41,7 +41,7 @@ namespace IndustrialEngineer.Factories
             List<Recipe> recipes = new List<Recipe>();
             foreach (var preset in presets)
             {
-                recipes.Add(new Recipe(preset.Name, gameData.GetSprites()[preset.Texture], preset.Id, preset.DropId,
+                recipes.Add(new Recipe(preset.Name, gameData.GetSprite(preset.Texture), preset.Id, preset.DropId,
                     preset.DropCount, (RecipeType)preset.RecipeType, preset.Ingredients));
             }
 

@@ -1,8 +1,8 @@
 namespace IndustrialEnginner.GameEntities
 {
-    public class Drill : PlaceableEntity
+    public class Drill : Building
     {
-        public Drill(PlaceableEntityProperties properties) : base(properties)
+        public Drill(BuildingProperties properties) : base(properties)
         {
         }
     }

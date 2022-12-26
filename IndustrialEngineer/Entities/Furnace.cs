@@ -3,9 +3,9 @@ using SFML.Graphics;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class Furnace : PlaceableEntity
+    public class Furnace : Building
     {
-        public Furnace(PlaceableEntityProperties properties) : base(properties)
+        public Furnace(BuildingProperties properties) : base(properties)
         {
         }
     }

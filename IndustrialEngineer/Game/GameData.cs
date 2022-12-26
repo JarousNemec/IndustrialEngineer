@@ -3,6 +3,7 @@ using System.IO;
 using IndustrialEngineer.Blocks;
 using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.GameEntities;
+using IndustrialEnginner.Gui;
 using IndustrialEnginner.Items;
 using SFML.Graphics;
 
@@ -12,7 +13,9 @@ namespace IndustrialEnginner
     {
         public BlockRegistry BlockRegistry { get; set; }
         public ItemRegistry ItemRegistry { get; set; }
-        public PlaceableEntityRegistry PlaceableEntityRegistry { get; set; }
+        public BuildingsRegistry BuildingsRegistry { get; set; }
+
+        public DialogsRegistry DialogsRegistry { get; set; }
         public RecipesRegistry RecipesRegistry { get; set; }
         private const string TEXTURES_DIRECTORY_PATH = "./assest/textures/";
         private Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
@@ -26,9 +29,9 @@ namespace IndustrialEnginner
         }
         
 
-        public Dictionary<string, Sprite> GetSprites()
+        public Sprite GetSprite(string key)
         {
-            return Sprites;
+            return Sprites[key];
         }
     }
 }

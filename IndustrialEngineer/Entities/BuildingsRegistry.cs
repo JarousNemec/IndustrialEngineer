@@ -2,16 +2,16 @@ using System.Collections.Generic;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class PlaceableEntityRegistry
+    public class BuildingsRegistry
     {
         public Furnace Furnace { get; set; }
         public Drill Drill { get; set; }
         public WoodenPlatform WoodenPlatform { get; set; }
-        public List<PlaceableEntity> Registry { get; set; }
+        public List<Building> Registry { get; set; }
 
-        public PlaceableEntityRegistry()
+        public BuildingsRegistry()
         {
-            Registry = new List<PlaceableEntity>();
+            Registry = new List<Building>();
         }
     }
 }

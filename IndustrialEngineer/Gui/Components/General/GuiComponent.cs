@@ -29,7 +29,7 @@ namespace IndustrialEnginner.Gui
             Sprite = sprite;
         }
 
-        public void SetPosInWindow(int x, int y)
+        public virtual void SetPosInWindow(int x, int y)
         {
             ComponentPosInWindowX = x;
             ComponentPosInWindowY = y;

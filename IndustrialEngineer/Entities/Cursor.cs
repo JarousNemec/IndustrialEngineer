@@ -12,25 +12,26 @@ namespace IndustrialEnginner.GameEntities
     {
         public Player Player { get; set; }
         public ProgressBar _progressBar;
-        public PictureBox ActiveItem { get; set; }
+        public PictureBox ActiveItemIcon { get; set; }
 
-        public Cursor(GraphicsEntityProperties cursorEntityProperties,GraphicsEntityProperties progressBarEntityProperties, Player player) : base(cursorEntityProperties)
+        public Cursor(GraphicsEntityProperties cursorEntityProperties,
+            GraphicsEntityProperties progressBarEntityProperties, Player player) : base(cursorEntityProperties)
         {
             Player = player;
             _progressBar = new ProgressBar(progressBarEntityProperties);
         }
 
-        public void Draw(RenderWindow window, Vector2i pos, Zoom zoom, View view, GuiState state)
+        public Vector2i Draw(RenderWindow window, Vector2i pos, Zoom zoom, View view, GuiState state)
         {
             if (state == GuiState.GamePlay)
             {
                 DrawSelectCursor(window, pos);
-                return;
+                return pos;
             }
+            if (ActiveItemIcon != null)
+                DrawActiveItemOnCursor(window, Mouse.GetPosition(window), zoom, view);
 
-            if (state == GuiState.OpenPlayerInventory)
-                if (ActiveItem != null)
-                    DrawActiveItemOnCursor(window, Mouse.GetPosition(window), zoom, view);
+            return pos;
         }
 
         private void DrawSelectCursor(RenderWindow window, Vector2i pos)
@@ -42,19 +43,19 @@ namespace IndustrialEnginner.GameEntities
 
         public void SetActiveItemIcon(Item item)
         {
-            ActiveItem = new PictureBox(item.Properties.Sprite);
+            ActiveItemIcon = new PictureBox(item.Properties.Sprite);
         }
 
         public void RemoveActiveItemIcon()
         {
-            ActiveItem = null;
+            ActiveItemIcon = null;
         }
 
         private void DrawActiveItemOnCursor(RenderWindow window, Vector2i pos, Zoom zoom, View view)
         {
-            ActiveItem.ActualizeDisplayingCords(view.Center.X - view.Size.X / 2 + pos.X / zoom.Zoomed,
+            ActiveItemIcon.ActualizeDisplayingCords(view.Center.X - view.Size.X / 2 + pos.X / zoom.Zoomed,
                 view.Center.Y - view.Size.Y / 2 + pos.Y / zoom.Zoomed);
-            ActiveItem.Draw(window, zoom);
+            ActiveItemIcon.Draw(window, zoom);
         }
 
         public Vector2i GetPosition(RenderWindow window, View view, int tileSize, float flippedZoomed, float maxZoom,

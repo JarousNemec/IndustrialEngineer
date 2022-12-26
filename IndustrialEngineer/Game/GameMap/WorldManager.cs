@@ -12,14 +12,14 @@ namespace IndustrialEnginner
         public MapLoader MapLoader;
         private World _world;
         private BlockRegistry _blockRegistry;
-        private List<PlaceableEntity> _renderedEntities;
+        private List<Building> _renderedEntities;
         private Vector2i _renderedAreaCorrections;
 
         public WorldManager(World world, BlockRegistry blockRegistry)
         {
             _world = world;
             _blockRegistry = blockRegistry;
-            _renderedEntities = new List<PlaceableEntity>();
+            _renderedEntities = new List<Building>();
             _renderedAreaCorrections = new Vector2i();
         }
 

@@ -18,7 +18,7 @@ namespace IndustrialEngineer.Blocks
             return new Block(Properties.Copy());
         }
 
-        public void PlaceEntity(PlaceableEntity entity)
+        public void PlaceEntity(Building entity)
         {
             OriginalProperties = Properties;
             Properties = OriginalProperties.Copy();
