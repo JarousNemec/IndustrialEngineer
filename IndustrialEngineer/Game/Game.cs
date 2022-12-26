@@ -315,7 +315,8 @@ namespace IndustrialEnginner
             {
                 return;
             }
-
+            _mining.IsMining = false;
+            
             if (selectedBlock.Properties.PlacedEntity == null)
             {
                 StorageItem itemToAdd = new StorageItem()
@@ -373,7 +374,7 @@ namespace IndustrialEnginner
                 }
             }
 
-            _mining.IsMining = false;
+            
         }
 
         #region Initialization

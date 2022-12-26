@@ -64,7 +64,7 @@ namespace IndustrialEnginner.Gui
                 case Mouse.Button.Left:
                     if (Gui.State == GuiState.OpenPlayerInventory || Gui.State == GuiState.OpenMachineDialog)
                     {
-                        DragItems(new Vector2i(e.X, e.Y));
+                        DragItems(new Vector2i(e.X, e.Y), false);
                         ClickOnButton(new Vector2i(e.X, e.Y));
                     }
 
@@ -79,7 +79,7 @@ namespace IndustrialEnginner.Gui
                 case Mouse.Button.Right:
                     if (Gui.State == GuiState.OpenPlayerInventory || Gui.State == GuiState.OpenMachineDialog)
                     {
-                        DragHalfItems(new Vector2i(e.X, e.Y));
+                        DragItems(new Vector2i(e.X, e.Y), true);
                     }
 
                     break;
@@ -245,7 +245,7 @@ namespace IndustrialEnginner.Gui
             return count >= requiredCount;
         }
 
-        private void DragItems(Vector2i mousePosition)
+        private void DragItems(Vector2i mousePosition, bool dragHalf)
         {
             var triggeredComponent = GetClickedComponent(mousePosition);
             if (triggeredComponent == null)
@@ -271,13 +271,8 @@ namespace IndustrialEnginner.Gui
             if (storageItem.Item == null)
                 return;
             _packet.StorageItem = new StorageItem() { Item = storageItem.Item, Count = storageItem.Count };
+            _packet.DragHalf = dragHalf;
             _cursor.SetActiveItemIcon(_packet.StorageItem.Item);
-        }
-
-        private void DragHalfItems(Vector2i mousePosition)
-        {
-            DragItems(mousePosition);
-            _packet.DragHalf = true;
         }
 
         private void DropItem(Vector2i mousePosition)
@@ -285,7 +280,6 @@ namespace IndustrialEnginner.Gui
             var triggeredComponent = GetClickedComponent(mousePosition);
             if (triggeredComponent == null)
             {
-                _packet.DragHalf = false;
                 if (_packet.StorageItem != null)
                     _cursor.RemoveActiveItemIcon();
                 return;
@@ -294,7 +288,6 @@ namespace IndustrialEnginner.Gui
             if (triggeredComponent.Type != ComponentType.Storage &&
                 triggeredComponent.Type != ComponentType.StorageSlot)
             {
-                _packet.DragHalf = false;
                 if (_packet.StorageItem != null)
                     _cursor.RemoveActiveItemIcon();
                 return;
@@ -302,7 +295,6 @@ namespace IndustrialEnginner.Gui
 
             if (_packet.StorageItem == null)
             {
-                _packet.DragHalf = false;
                 return;
             }
 
@@ -310,7 +302,6 @@ namespace IndustrialEnginner.Gui
             var destinationSlot = GetSlotInGrid(_packet.DestinationComponent, mousePosition);
             if (destinationSlot == null)
             {
-                _packet.DragHalf = false;
                 return;
             }
 
