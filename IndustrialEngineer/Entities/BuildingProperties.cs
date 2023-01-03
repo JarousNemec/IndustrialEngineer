@@ -1,3 +1,4 @@
+using IndustrialEngineer.Blocks;
 using IndustrialEnginner.Enums;
 using IndustrialEnginner.Gui;
 using SFML.Graphics;
@@ -12,6 +13,8 @@ namespace IndustrialEnginner.GameEntities
         public MachineDialog Dialog { get; set; }
         public int DropItemId { get; set; }
         public bool CanStepOn { get; set; }
+
+        public Block FoundationBlock { get; set; }
 
         public BuildingProperties(Sprite sprite, Sprite[] states, string name, int id,
             BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog) : base(sprite, states)

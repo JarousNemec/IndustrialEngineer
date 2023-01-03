@@ -49,7 +49,7 @@
       "Placeable": true,
       "PlacedEntityId": 2,
       "Flammable":true,
-      "CalorificValue":15
+      "CalorificValue":30
     },
     {
       "Name": "Energy",

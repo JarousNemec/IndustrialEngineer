@@ -78,6 +78,7 @@
         <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
           <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
         </Reference>
+        <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
@@ -97,6 +98,7 @@
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Components\Area.cs" />
+        <Compile Include="Game\WorldUpdater.cs" />
         <Compile Include="Gui\Components\Dialogs\DialogsRegistry.cs" />
         <Compile Include="Gui\Components\General\ClickableComponent.cs" />
         <Compile Include="Gui\Components\Dialogs\MachineDialog.cs" />

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using IndustrialEngineer.Blocks;
 using IndustrialEnginner.GameEntities;
 using SFML.Graphics;
@@ -14,11 +15,14 @@ namespace IndustrialEnginner
         private BlockRegistry _blockRegistry;
         private List<Building> _renderedEntities;
         private Vector2i _renderedAreaCorrections;
+        private GameData _gameData;
+        private WorldUpdater _updater;
 
-        public WorldManager(World world, BlockRegistry blockRegistry)
+        public WorldManager(World world, GameData gameData)
         {
+            _gameData = gameData;
             _world = world;
-            _blockRegistry = blockRegistry;
+            _blockRegistry = gameData.BlockRegistry;
             _renderedEntities = new List<Building>();
             _renderedAreaCorrections = new Vector2i();
         }
@@ -27,9 +31,18 @@ namespace IndustrialEnginner
         {
             InitializeWorld();
             InitializeRenderedTiles();
+            InitializeAndRunUpdater();
         }
-        
-        
+
+        private void InitializeAndRunUpdater()
+        {
+            _updater = new WorldUpdater(_world, _gameData);
+            _updater.RenderedEntities = _renderedEntities;
+            Thread updater = new Thread(_updater.Run);
+            updater.Start();
+        }
+
+
         private void InitializeWorld()
         {
             Random r = new Random();
@@ -43,20 +56,25 @@ namespace IndustrialEnginner
             _world.LastStandXChunk = MapLoader.middleXChunk;
             _world.LastStandYChunk = MapLoader.middleYChunk;
             _world.Map = generator.Generate(_world.MapSize, r.Next(1, 99999999));
-            _world.RenderedMapPart = MapLoader.GetCurrentChunks(_world.Map, _world.MapSize, _world.RenderArea, _world.ChunkSize, _world.ChunksInLineCount,
+            _world.RenderedMapPart = MapLoader.GetCurrentChunks(_world.Map, _world.MapSize, _world.RenderArea,
+                _world.ChunkSize, _world.ChunksInLineCount,
                 _world.RenderChunks);
         }
+
         private void InitializeRenderedTiles()
         {
             _world.RenderedTiles = new Tilemap();
-            _world.RenderedTiles.load(new Vector2u((uint)_world.TileSize, (uint)_world.TileSize), _world.RenderedMapPart, (uint)_world.RenderArea, (uint)_world.RenderArea);
+            _world.RenderedTiles.load(new Vector2u((uint)_world.TileSize, (uint)_world.TileSize),
+                _world.RenderedMapPart, (uint)_world.RenderArea, (uint)_world.RenderArea);
         }
-        
+
         public void UpdateMap()
         {
-            _world.RenderedMapPart = MapLoader.GetCurrentChunks(_world.Map, _world.MapSize, _world.RenderArea, _world.ChunkSize, _world.ChunksInLineCount,
+            _world.RenderedMapPart = MapLoader.GetCurrentChunks(_world.Map, _world.MapSize, _world.RenderArea,
+                _world.ChunkSize, _world.ChunksInLineCount,
                 _world.RenderChunks);
-            _world.RenderedTiles.load(new Vector2u((uint)_world.TileSize, (uint)_world.TileSize), _world.RenderedMapPart, (uint)_world.RenderArea,
+            _world.RenderedTiles.load(new Vector2u((uint)_world.TileSize, (uint)_world.TileSize),
+                _world.RenderedMapPart, (uint)_world.RenderArea,
                 (uint)_world.RenderArea);
             LoadEntitiesForRender();
         }
@@ -84,10 +102,10 @@ namespace IndustrialEnginner
                                          (_world.ChunkSize * _world.TileSize);
             for (int i = 0; i < _renderedEntities.Count; i++)
             {
-                _renderedEntities[i].Draw(window, _renderedAreaCorrections,_world.TileSize);
-                _renderedEntities[i].Update();
+                _renderedEntities[i].Draw(window, _renderedAreaCorrections, _world.TileSize);
             }
         }
+
 
         public void ActualizeLastStandedChunksValues()
         {

@@ -1,6 +1,6 @@
-﻿using IndustrialEnginner.Blocks;
+﻿using IndustrialEnginner;
 
-namespace IndustrialEnginner
+namespace IndustrialEngineer
 {
     internal class Program
     {

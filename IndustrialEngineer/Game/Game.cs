@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
 using GameEngine_druhypokus.Factories;
 using IndustrialEngineer.Blocks;
 using IndustrialEngineer.Factories;
@@ -25,11 +26,13 @@ namespace IndustrialEnginner
         public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "IndustrialEnginner";
         public GameData GameData;
-
+        
         private GuiController _guiController;
 
         private World _world;
         private WorldManager _worldManager;
+
+        
 
         private Zoom _zoom;
         private Moving _moving;
@@ -296,6 +299,7 @@ namespace IndustrialEnginner
             {
                 selectedBlock.PlaceEntity(placingEntity);
                 placingEntity.SetPosition(pos);
+                placingEntity.Properties.FoundationBlock = selectedBlock;
                 entitySlot.RemoveItem(1);
                 _worldManager.UpdateMap();
             }
@@ -441,7 +445,7 @@ namespace IndustrialEnginner
         private void InitializeWorld()
         {
             _world = new World(40, 27, 32, 5);
-            _worldManager = new WorldManager(_world, GameData.BlockRegistry);
+            _worldManager = new WorldManager(_world, GameData);
             _worldManager.Initialize();
         }
 
