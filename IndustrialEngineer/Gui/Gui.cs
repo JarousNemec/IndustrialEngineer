@@ -17,50 +17,45 @@ namespace IndustrialEnginner.Gui
 
         public Vector2i Center { get; set; }
 
-        private GameData _gameData;
-
-        public Gui(GameData gameData, RenderWindow window, Zoom zoom)
+        public Gui(RenderWindow window, Zoom zoom)
         {
-            _gameData = gameData;
             InitializeComponents();
-            CalculateComponentsClickAreas(window, zoom, gameData.GetSprite("itemslot").Texture.Size);
-            ActualOpenedDialog = _gameData.DialogsRegistry.FurnaceDialog.Copy();
+            CalculateComponentsClickAreas(window, zoom, GameData.Sprites["itemslot"].Texture.Size);
+            ActualOpenedDialog = GameData.DialogsRegistry.FurnaceDialog.Copy();
         }
 
         private void InitializeComponents()
         {
-            Hotbar = new Hotbar(_gameData.GetSprite("hotbar"), _gameData.GetSprite("itemslot"),
-                _gameData.GetSprite("itemslot_selected"), 1, 9, _gameData);
-            Inventory = new Inventory(_gameData.GetSprite("inventory"), _gameData.GetSprite("itemslot"),
-                _gameData.GetSprite("itemslot_selected"), 4, 8, _gameData);
+            Hotbar = new Hotbar(GameData.Sprites["hotbar"], GameData.Sprites["itemslot"],
+                GameData.Sprites["itemslot_selected"], 1, 9);
+            Inventory = new Inventory(GameData.Sprites["inventory"], GameData.Sprites["itemslot"],
+                GameData.Sprites["itemslot_selected"], 4, 8);
 
             int columns = 4;
-            int rowsCount = _gameData.RecipesRegistry.CraftingRecipes.Count / columns;
-            int rows = _gameData.RecipesRegistry.CraftingRecipes.Count % columns > 0 ? rowsCount + 1 : rowsCount;
+            int rowsCount = GameData.RecipesRegistry.CraftingRecipes.Count / columns;
+            int rows = GameData.RecipesRegistry.CraftingRecipes.Count % columns > 0 ? rowsCount + 1 : rowsCount;
 
-            Crafting = new Crafting(_gameData.GetSprite("crafting"), _gameData.GetSprite("itemslot"),
-                _gameData.RecipesRegistry, ComponentType.Crafting, rows, columns);
+            Crafting = new Crafting(GameData.Sprites["crafting"], GameData.Sprites["itemslot"],
+                GameData.RecipesRegistry, ComponentType.Crafting, rows, columns);
 
-            _gameData.DialogsRegistry = new DialogsRegistry();
-            _gameData.DialogsRegistry.DrillDialog =
+            GameData.DialogsRegistry = new DialogsRegistry();
+            GameData.DialogsRegistry.DrillDialog =
                 new MachineDialog(
-                    new[] { _gameData.GetSprite("drill_dialog"), _gameData.GetSprite("drill_dialog_active") },
-                    _gameData,
-                    GenerateItemStoragesForDialog(2, _gameData.GetSprite("itemslot"),_gameData.GetSprite("itemslot_selected"),_gameData), new []{new Vector2i(5,57), new Vector2i(65,117)});
-            _gameData.DialogsRegistry.FurnaceDialog =
+                    new[] { GameData.Sprites["drill_dialog"], GameData.Sprites["drill_dialog_active"] },
+                    GenerateItemStoragesForDialog(2, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,57), new Vector2i(65,117)});
+            GameData.DialogsRegistry.FurnaceDialog =
                 new MachineDialog(
-                    new[] { _gameData.GetSprite("furnace_dialog"), _gameData.GetSprite("furnace_dialog_active") },
-                    _gameData, GenerateItemStoragesForDialog(3, _gameData.GetSprite("itemslot"),_gameData.GetSprite("itemslot_selected"),_gameData), new []{new Vector2i(5,89), new Vector2i(50,118),new Vector2i(93,89)});
+                    new[] { GameData.Sprites["furnace_dialog"], GameData.Sprites["furnace_dialog_active"] }, GenerateItemStoragesForDialog(3, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,89), new Vector2i(50,118),new Vector2i(93,89)});
 
             
         }
 
-        private ItemStorage[] GenerateItemStoragesForDialog(int count, Sprite itemSlot, Sprite selectedSlot, GameData gameData)
+        private ItemStorage[] GenerateItemStoragesForDialog(int count, Sprite itemSlot, Sprite selectedSlot)
         {
             ItemStorage[] storages = new ItemStorage[count];
             for (int i = 0; i < count; i++)
             {
-                storages[i] = new ItemStorage(itemSlot, itemSlot, selectedSlot, 1, 1, gameData);
+                storages[i] = new ItemStorage(itemSlot, itemSlot, selectedSlot, 1, 1);
             }
 
             return storages;
@@ -95,49 +90,49 @@ namespace IndustrialEnginner.Gui
 
             //setting clickareas for all drill itemStorages
             var drillItemStorageLeftUpCorner = new Vector2i(
-                _gameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowX,
-                _gameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowY);
+                GameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowX,
+                GameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowY);
             var drillItemStorageRightDownCorner = new Vector2i(
-                (int)(_gameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowX + slotSize.X*2),
-                (int)(_gameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowY + slotSize.Y*2));
-            _gameData.DialogsRegistry.DrillDialog.ItemStorages[0].ClickGrid.ClickArea =
+                (int)(GameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowX + slotSize.X*2),
+                (int)(GameData.DialogsRegistry.DrillDialog.ItemStorages[0].ComponentPosInWindowY + slotSize.Y*2));
+            GameData.DialogsRegistry.DrillDialog.ItemStorages[0].ClickGrid.ClickArea =
                 new Area(drillItemStorageLeftUpCorner, drillItemStorageRightDownCorner);
 
             drillItemStorageLeftUpCorner = new Vector2i(
-                _gameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowX,
-                _gameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowY);
+                GameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowX,
+                GameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowY);
             drillItemStorageRightDownCorner = new Vector2i(
-                (int)(_gameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowX + slotSize.X*2),
-                (int)(_gameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowY + slotSize.Y*2));
-            _gameData.DialogsRegistry.DrillDialog.ItemStorages[1].ClickGrid.ClickArea =
+                (int)(GameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowX + slotSize.X*2),
+                (int)(GameData.DialogsRegistry.DrillDialog.ItemStorages[1].ComponentPosInWindowY + slotSize.Y*2));
+            GameData.DialogsRegistry.DrillDialog.ItemStorages[1].ClickGrid.ClickArea =
                 new Area(drillItemStorageLeftUpCorner, drillItemStorageRightDownCorner);
 
             //setting clickareas for all furnace itemStorages
             var furnaceItemStorageLeftUpCorner = new Vector2i(
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowX,
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowY);
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowX,
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowY);
             var furnaceItemStorageRightDownCorner = new Vector2i(
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowX + slotSize.X*2),
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowY + slotSize.Y*2));
-            _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ClickGrid.ClickArea =
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowX + slotSize.X*2),
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ComponentPosInWindowY + slotSize.Y*2));
+            GameData.DialogsRegistry.FurnaceDialog.ItemStorages[0].ClickGrid.ClickArea =
                 new Area(furnaceItemStorageLeftUpCorner, furnaceItemStorageRightDownCorner);
 
             furnaceItemStorageLeftUpCorner = new Vector2i(
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowX,
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowY);
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowX,
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowY);
             furnaceItemStorageRightDownCorner = new Vector2i(
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowX + slotSize.X*2),
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowY + slotSize.Y*2));
-            _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ClickGrid.ClickArea =
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowX + slotSize.X*2),
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ComponentPosInWindowY + slotSize.Y*2));
+            GameData.DialogsRegistry.FurnaceDialog.ItemStorages[1].ClickGrid.ClickArea =
                 new Area(furnaceItemStorageLeftUpCorner, furnaceItemStorageRightDownCorner);
 
             furnaceItemStorageLeftUpCorner = new Vector2i(
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowX,
-                _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowY);
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowX,
+                GameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowY);
             furnaceItemStorageRightDownCorner = new Vector2i(
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowX + slotSize.X*2),
-                (int)(_gameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowY + slotSize.Y*2));
-            _gameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ClickGrid.ClickArea =
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowX + slotSize.X*2),
+                (int)(GameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ComponentPosInWindowY + slotSize.Y*2));
+            GameData.DialogsRegistry.FurnaceDialog.ItemStorages[2].ClickGrid.ClickArea =
                 new Area(furnaceItemStorageLeftUpCorner, furnaceItemStorageRightDownCorner);
         }
 
@@ -180,9 +175,9 @@ namespace IndustrialEnginner.Gui
             int leftDialogPosY = (int)(Center.Y - Crafting.Sprite.Texture.Size.Y / 2 * zoom.FlippedZoomed);
             Crafting.SetPosInWindow(leftDialogPosX, leftDialogPosY);
 
-            _gameData.DialogsRegistry.DrillDialog.SetPosInWindow(leftDialogPosX, leftDialogPosY,zoom);
+            GameData.DialogsRegistry.DrillDialog.SetPosInWindow(leftDialogPosX, leftDialogPosY,zoom);
             
-            _gameData.DialogsRegistry.FurnaceDialog.SetPosInWindow(leftDialogPosX, leftDialogPosY,zoom);
+            GameData.DialogsRegistry.FurnaceDialog.SetPosInWindow(leftDialogPosX, leftDialogPosY,zoom);
         }
 
         private void CalculateCenter(Window window)

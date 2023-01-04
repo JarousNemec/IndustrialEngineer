@@ -12,17 +12,13 @@ namespace IndustrialEnginner
     {
         public MapLoader MapLoader;
         private World _world;
-        private BlockRegistry _blockRegistry;
         private List<Building> _renderedEntities;
         private Vector2i _renderedAreaCorrections;
-        private GameData _gameData;
         private WorldUpdater _updater;
 
-        public WorldManager(World world, GameData gameData)
+        public WorldManager(World world)
         {
-            _gameData = gameData;
             _world = world;
-            _blockRegistry = gameData.BlockRegistry;
             _renderedEntities = new List<Building>();
             _renderedAreaCorrections = new Vector2i();
         }
@@ -36,7 +32,7 @@ namespace IndustrialEnginner
 
         private void InitializeAndRunUpdater()
         {
-            _updater = new WorldUpdater(_world, _gameData);
+            _updater = new WorldUpdater(_world);
             _updater.RenderedEntities = _renderedEntities;
             Thread updater = new Thread(_updater.Run);
             updater.Start();
@@ -46,7 +42,7 @@ namespace IndustrialEnginner
         private void InitializeWorld()
         {
             Random r = new Random();
-            var generator = new MapGenerator(_blockRegistry);
+            var generator = new MapGenerator(GameData.BlockRegistry);
             MapLoader = new MapLoader(_world.ChunksAroundMiddleChunks, _world.ChunksAroundMiddleChunks);
             if (_world.RenderArea > _world.MapSize)
             {

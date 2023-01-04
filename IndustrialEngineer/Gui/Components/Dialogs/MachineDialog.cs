@@ -8,16 +8,14 @@ namespace IndustrialEnginner.Gui
 {
     public class MachineDialog : GuiComponent
     {
-        private GameData _gameData;
         private Sprite[] _states;
         public ItemStorage[] ItemStorages { get; set; }
         public Vector2i[] StoragesPositionsInDialog { get; set; }
 
-        public MachineDialog(Sprite[] states, GameData gameData, ItemStorage[] itemStorages, Vector2i[] storagesPositionsInDialog) : base(states[0],
+        public MachineDialog(Sprite[] states, ItemStorage[] itemStorages, Vector2i[] storagesPositionsInDialog) : base(states[0],
             ComponentType.Interface)
         {
             _states = states;
-            _gameData = gameData;
             ItemStorages = itemStorages;
             StoragesPositionsInDialog = storagesPositionsInDialog;
             foreach (var itemStorage in itemStorages)
@@ -38,7 +36,7 @@ namespace IndustrialEnginner.Gui
             {
                 storages[i] = ItemStorages[i].Copy();
             }
-            return new MachineDialog(_states, _gameData, storages, StoragesPositionsInDialog);
+            return new MachineDialog(_states, storages, StoragesPositionsInDialog);
         }
         public void SetPosInWindow(int x, int y, Zoom zoom)
         {

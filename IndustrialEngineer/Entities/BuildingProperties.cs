@@ -13,11 +13,12 @@ namespace IndustrialEnginner.GameEntities
         public MachineDialog Dialog { get; set; }
         public int DropItemId { get; set; }
         public bool CanStepOn { get; set; }
-
         public Block FoundationBlock { get; set; }
 
+        public int MaximalBufferedEnergyValue { get; set; }
+
         public BuildingProperties(Sprite sprite, Sprite[] states, string name, int id,
-            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog) : base(sprite, states)
+            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog, int maximalBufferedEnergyValue) : base(sprite, states)
         {
             Name = name;
             Id = id;
@@ -25,11 +26,12 @@ namespace IndustrialEnginner.GameEntities
             Dialog = dialog;
             DropItemId = dropItemId;
             CanStepOn = canStepOn;
+            MaximalBufferedEnergyValue = maximalBufferedEnergyValue;
         }
 
         public BuildingProperties Copy()
         {
-            return new BuildingProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Dialog?.Copy());
+            return new BuildingProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Dialog?.Copy(), MaximalBufferedEnergyValue);
         }
     }
 }

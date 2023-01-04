@@ -17,10 +17,8 @@ namespace IndustrialEnginner
         public World World { get; set; }
         
         public List<Building> RenderedEntities { get; set; }
-        private GameData _gameData;
-        public WorldUpdater(World world, GameData gameData)
+        public WorldUpdater(World world)
         {
-            _gameData = gameData;
             UpdaterTime = new GameTime();
             World = world;
         }
@@ -61,7 +59,7 @@ namespace IndustrialEnginner
         {
             for (int i = RenderedEntities.Count-1; i > 0; i--)
             {
-                RenderedEntities[i].Update(deltaTime, World, _gameData);
+                RenderedEntities[i].Update(deltaTime, World);
             }
         }
     }

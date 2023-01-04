@@ -9,29 +9,17 @@ using SFML.Graphics;
 
 namespace IndustrialEnginner
 {
-    public class GameData
+    public static class GameData
     {
-        public BlockRegistry BlockRegistry { get; set; }
-        public ItemRegistry ItemRegistry { get; set; }
-        public BuildingsRegistry BuildingsRegistry { get; set; }
+        public static BlockRegistry BlockRegistry { get; set; }
+        public static ItemRegistry ItemRegistry { get; set; }
+        public static BuildingsRegistry BuildingsRegistry { get; set; }
 
-        public DialogsRegistry DialogsRegistry { get; set; }
-        public RecipesRegistry RecipesRegistry { get; set; }
-        private const string TEXTURES_DIRECTORY_PATH = "./assest/textures/";
-        private Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
-        // public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";font.psp
+        public static DialogsRegistry DialogsRegistry { get; set; }
+        public static RecipesRegistry RecipesRegistry { get; set; }
+        public const string TEXTURES_DIRECTORY_PATH = "./assest/textures/";
+        public static Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
         public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";
         public static Font Font;
-        public GameData()
-        {
-            Font = new Font(CONSOLE_FONT_PATH);
-            Sprites = SpriteFactory.LoadSprites(TEXTURES_DIRECTORY_PATH);
-        }
-        
-
-        public Sprite GetSprite(string key)
-        {
-            return Sprites[key];
-        }
     }
 }

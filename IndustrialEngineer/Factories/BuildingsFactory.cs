@@ -12,10 +12,10 @@ namespace IndustrialEngineer.Factories
 {
     public class BuildingsFactory
     {
-        public static BuildingsRegistry LoadBuildings(string path, GameData data)
+        public static BuildingsRegistry LoadBuildings(string path)
         {
             var presets = LoadJson(path);
-            var properties = MakePropertiesList(data, presets);
+            var properties = MakePropertiesList(presets);
             var registry = new BuildingsRegistry();
 
             registry.Drill = new Drill(properties.Find(x => x.Name == "Drill"));
@@ -29,13 +29,13 @@ namespace IndustrialEngineer.Factories
             return registry;
         }
 
-        public static void SetDialogsToMachines(GameData data)
+        public static void SetDialogsToMachines()
         {
-            data.BuildingsRegistry.Drill.Properties.Dialog = data.DialogsRegistry.DrillDialog;
-            data.BuildingsRegistry.Furnace.Properties.Dialog = data.DialogsRegistry.FurnaceDialog;
+            GameData.BuildingsRegistry.Drill.Properties.Dialog = GameData.DialogsRegistry.DrillDialog;
+            GameData.BuildingsRegistry.Furnace.Properties.Dialog = GameData.DialogsRegistry.FurnaceDialog;
         }
 
-        private static List<BuildingProperties> MakePropertiesList(GameData data, List<PlaceableEntityPreset> presets)
+        private static List<BuildingProperties> MakePropertiesList(List<PlaceableEntityPreset> presets)
         {
             List<BuildingProperties> propertiesList = new List<BuildingProperties>();
             foreach (var preset in presets)
@@ -43,9 +43,9 @@ namespace IndustrialEngineer.Factories
                 List<Sprite> states = new List<Sprite>();
                 foreach (var state in preset.States)
                 {
-                    states.Add(data.GetSprite(state));
+                    states.Add(GameData.Sprites[state]);
                 }
-                propertiesList.Add(new BuildingProperties(data.GetSprite(preset.Texture),states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType, preset.DropItemId, preset.CanStepOn, null));
+                propertiesList.Add(new BuildingProperties(GameData.Sprites[preset.Texture],states.ToArray(),preset.Name, preset.Id, (BlockType)preset.CanBePlacedOnType, preset.DropItemId, preset.CanStepOn, null, preset.MaximalBufferedEnergyValue));
             }
             return propertiesList;
         }
@@ -71,6 +71,7 @@ namespace IndustrialEngineer.Factories
             public int CanBePlacedOnType { get; set; }
             public int DropItemId { get; set; }
             public bool CanStepOn { get; set; }
+            public int MaximalBufferedEnergyValue { get; set; }
         }
     }
 }

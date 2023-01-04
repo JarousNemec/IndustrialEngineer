@@ -15,13 +15,11 @@ namespace IndustrialEnginner.Gui
 
         private Label _label;
         private PictureBox _pictureBox;
-        private GameData _gameData;
 
-        public ItemSlot(Sprite sprite, Sprite selectedSprite, GameData gameData, ComponentType type) : base(sprite,
+        public ItemSlot(Sprite sprite, Sprite selectedSprite, ComponentType type) : base(sprite,
             type)
         {
-            _gameData = gameData;
-            _pictureBox = new PictureBox(gameData.GetSprite("Unknown"));
+            _pictureBox = new PictureBox(GameData.Sprites["Unknown"]);
             _label = new Label(null, 8, "", GameData.Font);
             SelectedSprite = selectedSprite;
             StorageItem = null;
@@ -30,7 +28,7 @@ namespace IndustrialEnginner.Gui
 
         public ItemSlot Copy()
         {
-            ItemSlot slot = new ItemSlot(Sprite, SelectedSprite, _gameData, ComponentType.StorageSlot);
+            ItemSlot slot = new ItemSlot(Sprite, SelectedSprite, ComponentType.StorageSlot);
             slot.SetPosInWindow(ComponentPosInWindowX, ComponentPosInWindowY);
             slot.ActualizeDisplayingCords(DisplayingX, DisplayingY);
             return slot;

@@ -25,7 +25,7 @@ namespace IndustrialEnginner
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
         public const string WINDOW_TITLE = "IndustrialEnginner";
-        public GameData GameData;
+        // public GameData GameData;
         
         private GuiController _guiController;
 
@@ -205,9 +205,6 @@ namespace IndustrialEnginner
         {
             DebugUtil.LoadContent();
         }
-
-        private string msg = "----";
-        private string msg2 = "----";
 
         public void Move()
         {
@@ -394,13 +391,13 @@ namespace IndustrialEnginner
 
         private void InitializeGui()
         {
-            _guiController = new GuiController(GameData, View, Window, _zoom, _cursor);
+            _guiController = new GuiController(View, Window, _zoom, _cursor);
             _player.Inventory = _guiController.Gui.Inventory;
             _player.Hotbar = _guiController.Gui.Hotbar;
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
-            BuildingsFactory.SetDialogsToMachines(GameData);
+            BuildingsFactory.SetDialogsToMachines();
         }
 
         private void InitializeGame()
@@ -409,27 +406,28 @@ namespace IndustrialEnginner
             Window.SetMouseCursorVisible(true);
             _moving = new Moving(80);
             _mining = new Mining();
-            GameData = new GameData();
+            GameData.Font = new Font(GameData.CONSOLE_FONT_PATH);
+            GameData.Sprites = SpriteFactory.LoadSprites(GameData.TEXTURES_DIRECTORY_PATH);
             GameData.BlockRegistry = BlockFactory.LoadBlocks("./assest/settings/blockregistry.json");
-            GameData.ItemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json", GameData);
+            GameData.ItemRegistry = ItemFactory.LoadItems("./assest/settings/itemregistry.json");
             GameData.BuildingsRegistry =
-                BuildingsFactory.LoadBuildings("./assest/settings/placeableEntitiesRegistry.json", GameData);
-            GameData.RecipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json", GameData);
+                BuildingsFactory.LoadBuildings("./assest/settings/placeableEntitiesRegistry.json");
+            GameData.RecipesRegistry = RecipeFactory.LoadRecipes("./assest/settings/craftingrecipies.json");
         }
 
         private void InitializeEntities()
         {
-            _player = new Player(new GraphicsEntityProperties(GameData.GetSprite("Chuck"), null));
+            _player = new Player(new GraphicsEntityProperties(GameData.Sprites["Chuck"], null));
             Sprite[] progressBarStates =
             {
-                GameData.GetSprite("progressbar0"), GameData.GetSprite("progressbar1"),
-                GameData.GetSprite("progressbar2"), GameData.GetSprite("progressbar3"),
-                GameData.GetSprite("progressbar4"), GameData.GetSprite("progressbar5"),
-                GameData.GetSprite("progressbar6"), GameData.GetSprite("progressbar7"),
-                GameData.GetSprite("progressbar8"), GameData.GetSprite("progressbar9"),
-                GameData.GetSprite("progressbar10")
+                GameData.Sprites["progressbar0"], GameData.Sprites["progressbar1"],
+                GameData.Sprites["progressbar2"], GameData.Sprites["progressbar3"],
+                GameData.Sprites["progressbar4"], GameData.Sprites["progressbar5"],
+                GameData.Sprites["progressbar6"], GameData.Sprites["progressbar7"],
+                GameData.Sprites["progressbar8"], GameData.Sprites["progressbar9"],
+                GameData.Sprites["progressbar10"]
             };
-            _cursor = new Cursor(new GraphicsEntityProperties(GameData.GetSprite("selector"), null),
+            _cursor = new Cursor(new GraphicsEntityProperties(GameData.Sprites["selector"], null),
                 new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
             _player.SetPosition(_world.RenderArea / 2, _world.RenderArea / 2);
         }
@@ -445,7 +443,7 @@ namespace IndustrialEnginner
         private void InitializeWorld()
         {
             _world = new World(40, 27, 32, 5);
-            _worldManager = new WorldManager(_world, GameData);
+            _worldManager = new WorldManager(_world);
             _worldManager.Initialize();
         }
 
@@ -510,7 +508,7 @@ namespace IndustrialEnginner
             Window.Draw(_world.RenderedTiles);
             _worldManager.DrawEntities(Window);
             if (_guiController.Gui.State == GuiState.GamePlay)
-                msg2 = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
+                DebugMessages.Messages[0] = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
             _player.Draw(Window, View, _zoom);
 
             if (_mining.IsMining)
@@ -521,8 +519,8 @@ namespace IndustrialEnginner
             _guiController.DrawGui(Window, _zoom);
 
             if (_guiController.Gui.State != GuiState.GamePlay)
-                msg2 = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
-            msg = _guiController.GetClickedComponent(Mouse.GetPosition(Window))?.ToString();
+                DebugMessages.Messages[0] = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
+            DebugMessages.Messages[1] = _guiController.GetClickedComponent(Mouse.GetPosition(Window))?.ToString();
             // msg2 = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
             //msg = _mining.IsMining.ToString();
@@ -532,7 +530,7 @@ namespace IndustrialEnginner
             // msg = View.Size.ToString();
             // msg2 = Mouse.GetPosition().ToString();
 
-            DebugUtil.DrawPerformanceData(this, Color.White, View, msg, msg2, _zoom.FlippedZoomed);
+            DebugUtil.DrawPerformanceData(this, Color.White, View, _zoom.FlippedZoomed);
         }
     }
 }

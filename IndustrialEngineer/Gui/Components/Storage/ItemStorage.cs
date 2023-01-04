@@ -12,19 +12,17 @@ namespace IndustrialEnginner.Gui
     {
         public ItemSlot[,] Storage { get; set; }
         public Vector2u _itemSlotSize;
-        private GameData _gameData;
 
         public ItemStorage(Sprite sprite, Sprite itemSlotSprite, Sprite itemSlotSelectedSprite, int rows,
-            int columns, GameData gameData) : base(sprite, ComponentType.Storage, rows, columns)
+            int columns) : base(sprite, ComponentType.Storage, rows, columns)
         {
-            _gameData = gameData;
             _itemSlotSize = itemSlotSprite.Texture.Size;
             Storage = new ItemSlot[columns, rows];
             for (int i = 0; i < Storage.GetLength(0); i++)
             {
                 for (int j = 0; j < Storage.GetLength(1); j++)
                 {
-                    var slot = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite, gameData,
+                    var slot = new ItemSlot(itemSlotSprite, itemSlotSelectedSprite,
                         ComponentType.StorageSlot);
                     Storage[i, j] = slot;
                     _childComponentsToDraw.Add(slot);
@@ -32,15 +30,14 @@ namespace IndustrialEnginner.Gui
             }
         }
         
-        public ItemStorage(Sprite sprite,Sprite itemSlotSprite, GameData gameData, int rows, int columns) : base(sprite, ComponentType.Storage, rows, columns)
+        public ItemStorage(Sprite sprite,Sprite itemSlotSprite, int rows, int columns) : base(sprite, ComponentType.Storage, rows, columns)
         {
-            _gameData = gameData;
             _itemSlotSize = itemSlotSprite.Texture.Size;
         }
 
         public ItemStorage Copy()
         {
-            var newStorage = new ItemStorage(Sprite,Storage[0,0].Sprite,_gameData, Storage.GetLength(1),
+            var newStorage = new ItemStorage(Sprite,Storage[0,0].Sprite, Storage.GetLength(1),
                 Storage.GetLength(0))
             {
                 ClickGrid = ClickGrid

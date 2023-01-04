@@ -13,11 +13,11 @@ namespace IndustrialEngineer.Factories
 {
     public class RecipeFactory
     {
-        public static RecipesRegistry LoadRecipes(string path, GameData gameData)
+        public static RecipesRegistry LoadRecipes(string path)
         {
             RecipesRegistry registry = new RecipesRegistry();
             var presets = LoadJson(path);
-            var recipes = RecipesRegistrySetup(presets, gameData);
+            var recipes = RecipesRegistrySetup(presets);
 
             registry.CraftingRecipes = recipes.FindAll(x => x.RecipeType == RecipeType.Crafting);
             registry.SmeltingRecipes = recipes.FindAll(x => x.RecipeType == RecipeType.Smelting);
@@ -36,12 +36,12 @@ namespace IndustrialEngineer.Factories
             return presets;
         }
 
-        private static List<Recipe> RecipesRegistrySetup(List<RecipePreset> presets, GameData gameData)
+        private static List<Recipe> RecipesRegistrySetup(List<RecipePreset> presets)
         {
             List<Recipe> recipes = new List<Recipe>();
             foreach (var preset in presets)
             {
-                recipes.Add(new Recipe(preset.Name, gameData.GetSprite(preset.Texture), preset.Id, preset.DropId,
+                recipes.Add(new Recipe(preset.Name, GameData.Sprites[preset.Texture], preset.Id, preset.DropId,
                     preset.DropCount, (RecipeType)preset.RecipeType, preset.Ingredients));
             }
 

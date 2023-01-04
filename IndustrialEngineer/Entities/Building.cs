@@ -30,7 +30,7 @@ namespace IndustrialEnginner.GameEntities
             Properties.Sprite.Scale = new Vector2f(1, 1);
             window.Draw(Properties.Sprite);
         }
-        public virtual void Update(float deltaTime, World world, GameData gameData){}
+        public virtual void Update(float deltaTime, World world){}
 
     }
 }

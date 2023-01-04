@@ -9,36 +9,36 @@ namespace GameEngine_druhypokus.Factories
 {
     public class ItemFactory
     {
-        public static ItemRegistry LoadItems(string path, GameData gameData)
+        public static ItemRegistry LoadItems(string path)
         {
             ItemRegistry itemRegistry = new ItemRegistry();
             var presets = LoadJson(path);
 
-            itemRegistry.Log = new Log(ItemPropertiesSetup(presets, "Log", gameData));
+            itemRegistry.Log = new Log(ItemPropertiesSetup(presets, "Log"));
             itemRegistry.Registry.Add(itemRegistry.Log);
 
-            itemRegistry.Stone = new Stone(ItemPropertiesSetup(presets, "Stone", gameData));
+            itemRegistry.Stone = new Stone(ItemPropertiesSetup(presets, "Stone"));
             itemRegistry.Registry.Add(itemRegistry.Stone);
 
-            itemRegistry.RawIron = new RawIron(ItemPropertiesSetup(presets, "RawIron", gameData));
+            itemRegistry.RawIron = new RawIron(ItemPropertiesSetup(presets, "RawIron"));
             itemRegistry.Registry.Add(itemRegistry.RawIron);
 
-            itemRegistry.IronIngot = new IronIngot(ItemPropertiesSetup(presets, "IronIngot", gameData));
+            itemRegistry.IronIngot = new IronIngot(ItemPropertiesSetup(presets, "IronIngot"));
             itemRegistry.Registry.Add(itemRegistry.IronIngot);
 
-            itemRegistry.Drill = new Drill(ItemPropertiesSetup(presets, "Drill", gameData));
+            itemRegistry.Drill = new Drill(ItemPropertiesSetup(presets, "Drill"));
             itemRegistry.Registry.Add(itemRegistry.Drill);
 
-            itemRegistry.Furnace = new Furnace(ItemPropertiesSetup(presets, "Furnace", gameData));
+            itemRegistry.Furnace = new Furnace(ItemPropertiesSetup(presets, "Furnace"));
             itemRegistry.Registry.Add(itemRegistry.Furnace);
 
-            itemRegistry.WoodenPlatform = new WoodenPlatform(ItemPropertiesSetup(presets, "WoodenPlatform", gameData));
+            itemRegistry.WoodenPlatform = new WoodenPlatform(ItemPropertiesSetup(presets, "WoodenPlatform"));
             itemRegistry.Registry.Add(itemRegistry.WoodenPlatform);
 
-            itemRegistry.Energy = new Energy(ItemPropertiesSetup(presets, "Energy", gameData));
+            itemRegistry.Energy = new Energy(ItemPropertiesSetup(presets, "Energy"));
             itemRegistry.Registry.Add(itemRegistry.Energy);
 
-            itemRegistry.Time = new Time(ItemPropertiesSetup(presets, "Time", gameData));
+            itemRegistry.Time = new Time(ItemPropertiesSetup(presets, "Time"));
             itemRegistry.Registry.Add(itemRegistry.Time);
 
             return itemRegistry;
@@ -56,10 +56,10 @@ namespace GameEngine_druhypokus.Factories
             return presets;
         }
 
-        private static ItemProperties ItemPropertiesSetup(List<ItemPreset> presets, string name, GameData gameData)
+        private static ItemProperties ItemPropertiesSetup(List<ItemPreset> presets, string name)
         {
             var preset = presets.Find(x => x.Name == name);
-            return new ItemProperties(preset.Id, preset.Name, gameData.GetSprite(preset.Texture),
+            return new ItemProperties(preset.Id, preset.Name, GameData.Sprites[preset.Texture],
                 preset.MaxStackCount,preset.Flammable, preset.CalorificValue, preset.Placeable, preset.PlacedEntityId);
         }
     }

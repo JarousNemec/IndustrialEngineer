@@ -20,15 +20,13 @@ namespace IndustrialEnginner.Gui
         // private ItemRegistry _registry;
         private ItemTransportPacket _packet;
         private Cursor _cursor;
-        private GameData _gameData;
 
-        public GuiController(GameData gameData, View view, RenderWindow window, Zoom zoom,
+        public GuiController(View view, RenderWindow window, Zoom zoom,
             Cursor cursor)
         {
-            _gameData = gameData;
             _cursor = cursor;
             _packet = new ItemTransportPacket();
-            Gui = new Gui(gameData, window, zoom);
+            Gui = new Gui(window, zoom);
             Gui.State = GuiState.GamePlay;
             window.MouseButtonPressed += OnMousePressed;
             window.MouseButtonReleased += OnMouseReleased;
@@ -180,7 +178,7 @@ namespace IndustrialEnginner.Gui
 
             var craftedItem = new StorageItem()
             {
-                Item = _gameData.ItemRegistry.Registry.Find(x => x.Properties.Id == recipe.DropId),
+                Item = GameData.ItemRegistry.Registry.Find(x => x.Properties.Id == recipe.DropId),
                 Count = recipe.DropCount
             };
 

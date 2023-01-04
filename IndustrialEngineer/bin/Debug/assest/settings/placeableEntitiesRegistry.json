@@ -6,7 +6,8 @@
       "States": ["Furnace","Furnace_active"],
       "CanBePlacedOnType" : 4,
       "DropItemId":5,
-      "CanStepOn":false
+      "CanStepOn":false,
+      "MaximalBufferedEnergyValue": 200
     },
     {
       "Name": "Drill",
@@ -15,7 +16,8 @@
       "States": ["Drill","Drill_active"],
       "CanBePlacedOnType" : 0,
       "DropItemId":4,
-      "CanStepOn":false
+      "CanStepOn":false,
+      "MaximalBufferedEnergyValue": 100
     },
     {
       "Name": "WoodenPlatform",

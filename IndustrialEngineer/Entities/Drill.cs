@@ -11,9 +11,9 @@ namespace IndustrialEnginner.GameEntities
             _mining = new Mining();
         }
 
-        public override void Update(float deltaTime, World world, GameData gameData)
+        public override void Update(float deltaTime, World world)
         {
-            base.Update(deltaTime,world, gameData);
+            base.Update(deltaTime,world);
             // CheckAndConsumeFuel();
             // Mine(deltaTime, world);
         }
@@ -25,10 +25,7 @@ namespace IndustrialEnginner.GameEntities
         {
             
         }
-        public Item Energy { get; set; }/// <summary>
-                                        /// //////////////////////////////////////////////////////// <---- continue here , next step will be remake GameData to static class 
-                                        /// </summary>
-        public int EnergyValue { get; set; } = 0;
+        public int EnergyBuffer { get; set; } = 0;
         private void Mine(float deltaTime, World world)
         {
             if (!_miningInProgress)
@@ -105,7 +102,7 @@ namespace IndustrialEnginner.GameEntities
 
         private void SetupMining()
         {
-            if (Properties.FoundationBlock.Properties.Harvestable && EnergyValue > 10)
+            if (Properties.FoundationBlock.Properties.Harvestable && EnergyBuffer > 10)
             {
                 _mining.IsMining = true;
                 _mining.FinishValue = Properties.FoundationBlock.Properties.HarvestTime;

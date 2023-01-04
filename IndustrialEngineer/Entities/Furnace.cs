@@ -8,9 +8,9 @@ namespace IndustrialEnginner.GameEntities
         {
         }
 
-        public override void Update(float deltaTime, World world, GameData gameData)
+        public override void Update(float deltaTime, World world)
         {
-            base.Update(deltaTime, world, gameData);
+            base.Update(deltaTime, world);
         }
     }
 }
