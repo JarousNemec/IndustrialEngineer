@@ -414,6 +414,11 @@ namespace IndustrialEnginner.Gui
             }
         }
 
+        public void ClosePlayerInventory()
+        {
+            Gui.State = GuiState.GamePlay;
+        }
+
         public void OpenMachineDialog(MachineDialog dialog)
         {
             Gui.ActualOpenedDialog = dialog;

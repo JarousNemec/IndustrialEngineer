@@ -1,3 +1,5 @@
+using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -12,10 +14,39 @@ namespace IndustrialEngineer.Factories
 {
     public class BuildingsFactory
     {
+        public static List<BuildingProperties> BuildingPropertiesList { get; set; }
+
+        public static Building MakeNewInstanceOfBuilding(Type type)
+        {
+            if (type == typeof(Drill))
+            {
+                var drill = new Drill(GameData.BuildingsRegistry.Drill.Properties.Copy());
+                drill.Properties.Dialog = GameData.DialogsRegistry.DrillDialog.Copy();
+                drill.InputFuelSlot = drill.Properties.Dialog.ItemStorages[0].Storage[0, 0];
+                drill.OutputStorage = drill.Properties.Dialog.ItemStorages[1];
+                return drill;
+            }
+            if (type == typeof(Furnace))
+            {
+                var furnace = new Furnace(GameData.BuildingsRegistry.Furnace.Properties.Copy());
+                furnace.Properties.Dialog = GameData.DialogsRegistry.FurnaceDialog.Copy();
+                furnace.InputFuelSlot = furnace.Properties.Dialog.ItemStorages[1].Storage[0, 0];
+                furnace.InputIngredientSlot = furnace.Properties.Dialog.ItemStorages[0].Storage[0, 0];
+                furnace.OutputStorage = furnace.Properties.Dialog.ItemStorages[2];
+                return furnace;
+            }
+            if (type == typeof(WoodenPlatform))
+            {
+                return new WoodenPlatform(GameData.BuildingsRegistry.WoodenPlatform.Properties.Copy());
+            }
+
+            return null;
+        }
         public static BuildingsRegistry LoadBuildings(string path)
         {
             var presets = LoadJson(path);
             var properties = MakePropertiesList(presets);
+            BuildingPropertiesList = properties;
             var registry = new BuildingsRegistry();
 
             registry.Drill = new Drill(properties.Find(x => x.Name == "Drill"));
@@ -32,7 +63,12 @@ namespace IndustrialEngineer.Factories
         public static void SetDialogsToMachines()
         {
             GameData.BuildingsRegistry.Drill.Properties.Dialog = GameData.DialogsRegistry.DrillDialog;
+            GameData.BuildingsRegistry.Drill.InputFuelSlot = GameData.BuildingsRegistry.Drill.Properties.Dialog.ItemStorages[0].Storage[0, 0];
+            GameData.BuildingsRegistry.Drill.OutputStorage = GameData.BuildingsRegistry.Drill.Properties.Dialog.ItemStorages[1];
             GameData.BuildingsRegistry.Furnace.Properties.Dialog = GameData.DialogsRegistry.FurnaceDialog;
+            GameData.BuildingsRegistry.Furnace.InputFuelSlot = GameData.BuildingsRegistry.Furnace.Properties.Dialog.ItemStorages[1].Storage[0, 0];
+            GameData.BuildingsRegistry.Furnace.InputIngredientSlot = GameData.BuildingsRegistry.Furnace.Properties.Dialog.ItemStorages[0].Storage[0, 0];
+            GameData.BuildingsRegistry.Furnace.OutputStorage = GameData.BuildingsRegistry.Furnace.Properties.Dialog.ItemStorages[2];
         }
 
         private static List<BuildingProperties> MakePropertiesList(List<PlaceableEntityPreset> presets)

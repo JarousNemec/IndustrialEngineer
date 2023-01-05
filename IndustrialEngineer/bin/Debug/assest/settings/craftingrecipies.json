@@ -55,8 +55,8 @@
         "RecipeType": 1,
         "Ingredients": [
             {
-                "Id": 0,
-                "Count": 5
+                "Id": 2,
+                "Count": 1
             },{
                 "Id": -1,
                 "Count": 45

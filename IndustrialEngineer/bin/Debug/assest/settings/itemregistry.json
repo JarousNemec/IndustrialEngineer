@@ -3,7 +3,7 @@
       "Name": "Log",
       "Texture": "item_Log",
       "Id": 0,
-      "MaxStackCount" : 1,
+      "MaxStackCount" : 128,
       "Flammable":true,
       "CalorificValue":15
     },

@@ -3,19 +3,15 @@ using SFML.System;
 
 namespace IndustrialEnginner.GameEntities
 {
-    public class Building
+    
+    public abstract class Building
     {
         public BuildingProperties Properties { get; set; }
         public Building(BuildingProperties properties)
         {
             Properties = properties;
         }
-
-        public Building Copy()
-        {
-            return new Building(Properties.Copy());
-        }
-
+        
         public void SetPosition(Vector2i pos)
         {
             Properties.X = pos.X;
@@ -30,7 +26,7 @@ namespace IndustrialEnginner.GameEntities
             Properties.Sprite.Scale = new Vector2f(1, 1);
             window.Draw(Properties.Sprite);
         }
-        public virtual void Update(float deltaTime, World world){}
 
+        public abstract void Update(float deltaTime, World world);
     }
 }

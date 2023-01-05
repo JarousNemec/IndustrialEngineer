@@ -1,3 +1,4 @@
+using System;
 using SFML.Graphics;
 
 namespace IndustrialEnginner.GameEntities
@@ -22,7 +23,5 @@ namespace IndustrialEnginner.GameEntities
         {
             return new GraphicsEntityProperties(Sprite, States, X, Y);
         }
-
-
     }
 }

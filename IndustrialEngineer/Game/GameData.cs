@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using IndustrialEngineer.Blocks;
 using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.GameEntities;
@@ -15,11 +16,14 @@ namespace IndustrialEnginner
         public static ItemRegistry ItemRegistry { get; set; }
         public static BuildingsRegistry BuildingsRegistry { get; set; }
 
+        public static GraphicsEntitiesRegistry GraphicsEntitiesRegistry { get; set; }
+
         public static DialogsRegistry DialogsRegistry { get; set; }
         public static RecipesRegistry RecipesRegistry { get; set; }
         public const string TEXTURES_DIRECTORY_PATH = "./assest/textures/";
         public static Dictionary<string, Sprite> Sprites = new Dictionary<string, Sprite>();
         public const string CONSOLE_FONT_PATH = "./fonts/arial.ttf";
         public static Font Font;
+        
     }
 }

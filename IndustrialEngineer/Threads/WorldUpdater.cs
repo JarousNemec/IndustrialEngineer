@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
-using System.Threading;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using IndustrialEnginner.GameEntities;
+using IndustrialEnginner.Interfaces;
 
 namespace IndustrialEnginner
 {
-    public class WorldUpdater
+    public class WorldUpdater : IThread
     {
         public const int TARGET_FPS = 60;
         public const long MINIMAL_TIME_BETWEEN_FRAMES = TimeSpan.TicksPerSecond / TARGET_FPS;
@@ -49,17 +46,16 @@ namespace IndustrialEnginner
         {
             return (float)ticks / TimeSpan.TicksPerSecond;
         }
-
         private void Update()
         {
             UpdateEntities(UpdaterTime.DeltaTime);
         }
-
+        
         private void UpdateEntities(float deltaTime)
         {
-            for (int i = RenderedEntities.Count-1; i > 0; i--)
+            for (int i = RenderedEntities.Count; i > 0; i--)
             {
-                RenderedEntities[i].Update(deltaTime, World);
+                RenderedEntities[i-1].Update(deltaTime, World);
             }
         }
     }

@@ -5,34 +5,39 @@ using System.Threading;
 using GameEngine_druhypokus.Factories;
 using IndustrialEngineer.Blocks;
 using IndustrialEngineer.Factories;
+using IndustrialEngineer.Threads;
 using IndustrialEnginner.Blocks;
 using IndustrialEnginner.CraftingRecipies;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Enums;
 using IndustrialEnginner.GameEntities;
 using IndustrialEnginner.Gui;
+using IndustrialEnginner.Interfaces;
 using IndustrialEnginner.Items;
 using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
+using Drill = IndustrialEnginner.Items.Drill;
 
 namespace IndustrialEnginner
 {
     public class Game : GameLoop
     {
-        public const uint DEFAULT_WIN_WIDTH = 1200;
-        public const uint DEFAULT_WIN_HEIGHT = 900;
+        // public const uint DEFAULT_WIN_WIDTH = 1200;
+        // public const uint DEFAULT_WIN_HEIGHT = 900;
+        public const uint DEFAULT_WIN_WIDTH = 1900;
+        public const uint DEFAULT_WIN_HEIGHT = 1000;
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
+
         public const string WINDOW_TITLE = "IndustrialEnginner";
-        // public GameData GameData;
-        
+
         private GuiController _guiController;
 
         private World _world;
         private WorldManager _worldManager;
 
-        
+        private ThreadManager _threadManager;
 
         private Zoom _zoom;
         private Moving _moving;
@@ -68,6 +73,10 @@ namespace IndustrialEnginner
                 case Keyboard.Key.E:
                     _guiController.OpenOrClosePlayerInventory();
                     break;
+                case Keyboard.Key.Escape:
+                    _guiController.ClosePlayerInventory();
+                    break;
+                    
             }
         }
 
@@ -288,8 +297,9 @@ namespace IndustrialEnginner
                 return;
             if (entitySlot.StorageItem.Item == null)
                 return;
-            var placingEntity = GameData.BuildingsRegistry.Registry.Find(x =>
-                x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId).Copy();
+            var placingEntityType = GameData.BuildingsRegistry.Registry.Find(x =>
+                x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId);
+            var placingEntity = BuildingsFactory.MakeNewInstanceOfBuilding(placingEntityType.GetType());
             if (selectedBlock.Properties.CanPlaceOn &&
                 placingEntity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType &&
                 selectedBlock.Properties.PlacedEntity == null)
@@ -311,13 +321,14 @@ namespace IndustrialEnginner
             }
 
             var selectedBlock = _world.Map[_cursorWorldPos.X, _cursorWorldPos.Y];
-            _mining.ActualProgress += _mining.speed * GameTime.DeltaTime;
+            _mining.ActualProgress += _mining.Speed * GameTime.DeltaTime;
             if (_mining.ActualProgress < _mining.FinishValue)
             {
                 return;
             }
+
             _mining.IsMining = false;
-            
+
             if (selectedBlock.Properties.PlacedEntity == null)
             {
                 StorageItem itemToAdd = new StorageItem()
@@ -374,8 +385,6 @@ namespace IndustrialEnginner
                     }
                 }
             }
-
-            
         }
 
         #region Initialization
@@ -397,11 +406,14 @@ namespace IndustrialEnginner
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
             _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
+            _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.Log.Copy() });
+            _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.RawIron.Copy() });
             BuildingsFactory.SetDialogsToMachines();
         }
 
         private void InitializeGame()
         {
+            _threadManager = new ThreadManager();
             _zoom = new Zoom(2, 1, 2, 4, 0.5f);
             Window.SetMouseCursorVisible(true);
             _moving = new Moving(80);
@@ -417,7 +429,9 @@ namespace IndustrialEnginner
 
         private void InitializeEntities()
         {
-            _player = new Player(new GraphicsEntityProperties(GameData.Sprites["Chuck"], null));
+            GameData.GraphicsEntitiesRegistry = new GraphicsEntitiesRegistry();
+            GameData.GraphicsEntitiesRegistry.Player = new GraphicsEntityProperties(GameData.Sprites["Chuck"], null);
+            _player = new Player(GameData.GraphicsEntitiesRegistry.Player.Copy());
             Sprite[] progressBarStates =
             {
                 GameData.Sprites["progressbar0"], GameData.Sprites["progressbar1"],
@@ -427,8 +441,11 @@ namespace IndustrialEnginner
                 GameData.Sprites["progressbar8"], GameData.Sprites["progressbar9"],
                 GameData.Sprites["progressbar10"]
             };
-            _cursor = new Cursor(new GraphicsEntityProperties(GameData.Sprites["selector"], null),
-                new GraphicsEntityProperties(progressBarStates[0], progressBarStates), _player);
+            GameData.GraphicsEntitiesRegistry.ProgressBar =
+                new GraphicsEntityProperties(progressBarStates[0], progressBarStates);
+            GameData.GraphicsEntitiesRegistry.Cursor = new GraphicsEntityProperties(GameData.Sprites["selector"], null);
+            _cursor = new Cursor(GameData.GraphicsEntitiesRegistry.Cursor.Copy(),
+                GameData.GraphicsEntitiesRegistry.ProgressBar.Copy(), _player);
             _player.SetPosition(_world.RenderArea / 2, _world.RenderArea / 2);
         }
 
@@ -445,9 +462,16 @@ namespace IndustrialEnginner
             _world = new World(40, 27, 32, 5);
             _worldManager = new WorldManager(_world);
             _worldManager.Initialize();
+            _threadManager.StartThread(_worldManager.Updater);
         }
 
         #endregion
+
+        public override void WindowClosed(object sender, EventArgs e)
+        {
+            _threadManager.StopAllThreads();
+            base.WindowClosed(sender, e);
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -508,7 +532,8 @@ namespace IndustrialEnginner
             Window.Draw(_world.RenderedTiles);
             _worldManager.DrawEntities(Window);
             if (_guiController.Gui.State == GuiState.GamePlay)
-                DebugMessages.Messages[0] = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
+                DebugUtil.DebugTexts[0].DisplayedString =
+                    _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
             _player.Draw(Window, View, _zoom);
 
             if (_mining.IsMining)
@@ -519,18 +544,20 @@ namespace IndustrialEnginner
             _guiController.DrawGui(Window, _zoom);
 
             if (_guiController.Gui.State != GuiState.GamePlay)
-                DebugMessages.Messages[0] = _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
-            DebugMessages.Messages[1] = _guiController.GetClickedComponent(Mouse.GetPosition(Window))?.ToString();
-            // msg2 = _zoom.Zoomed.ToString();
+                DebugUtil.DebugTexts[0].DisplayedString =
+                    _cursor.Draw(Window, _cursorPos, _zoom, View, _guiController.Gui.State).ToString();
+            DebugUtil.DebugTexts[1].DisplayedString =
+                _guiController.GetClickedComponent(Mouse.GetPosition(Window))?.ToString();
+            // DebugUtil.debugTexts[2].DisplayedString = _zoom.Zoomed.ToString();
             // msg = _zoom.FlippedZoomed.ToString();
             //msg = _mining.IsMining.ToString();
             //msg2 = _zoomed.ToString();
-            // msg = Mouse.GetPosition(Window).ToString();
+            // DebugUtil.debugTexts[3].DisplayedString = Mouse.GetPosition(Window).ToString();
             //msg2 = _guiController.GetGui().Inventory.Sprite.Texture.Size.ToString();
             // msg = View.Size.ToString();
             // msg2 = Mouse.GetPosition().ToString();
 
-            DebugUtil.DrawPerformanceData(this, Color.White, View, _zoom.FlippedZoomed);
+            // DebugUtil.DrawPerformanceData(this, Color.White, View, _zoom.FlippedZoomed);
         }
     }
 }

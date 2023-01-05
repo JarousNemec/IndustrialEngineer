@@ -42,14 +42,12 @@ namespace IndustrialEnginner.Gui
             GameData.DialogsRegistry.DrillDialog =
                 new MachineDialog(
                     new[] { GameData.Sprites["drill_dialog"], GameData.Sprites["drill_dialog_active"] },
-                    GenerateItemStoragesForDialog(2, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,57), new Vector2i(65,117)});
+                    GenerateItemStoragesForDialog(2, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,57), new Vector2i(65,117)},new ProgressBarComponent(GameData.GraphicsEntitiesRegistry.ProgressBar.Sprite,GameData.GraphicsEntitiesRegistry.ProgressBar.States), new Vector2i(45,30));
             GameData.DialogsRegistry.FurnaceDialog =
                 new MachineDialog(
-                    new[] { GameData.Sprites["furnace_dialog"], GameData.Sprites["furnace_dialog_active"] }, GenerateItemStoragesForDialog(3, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,89), new Vector2i(50,118),new Vector2i(93,89)});
-
-            
+                    new[] { GameData.Sprites["furnace_dialog"], GameData.Sprites["furnace_dialog_active"] }, GenerateItemStoragesForDialog(3, GameData.Sprites["itemslot"],GameData.Sprites["itemslot_selected"]), new []{new Vector2i(5,89), new Vector2i(50,118),new Vector2i(93,89)},new ProgressBarComponent(GameData.GraphicsEntitiesRegistry.ProgressBar.Sprite,GameData.GraphicsEntitiesRegistry.ProgressBar.States),new Vector2i(45,30));
         }
-
+        
         private ItemStorage[] GenerateItemStoragesForDialog(int count, Sprite itemSlot, Sprite selectedSlot)
         {
             ItemStorage[] storages = new ItemStorage[count];

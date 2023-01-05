@@ -98,10 +98,13 @@
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Components\Area.cs" />
-        <Compile Include="Game\WorldUpdater.cs" />
+        <Compile Include="Entities\GraphicsEntitiesRegistry.cs" />
+        <Compile Include="Game\Crafting.cs" />
         <Compile Include="Gui\Components\Dialogs\DialogsRegistry.cs" />
         <Compile Include="Gui\Components\General\ClickableComponent.cs" />
         <Compile Include="Gui\Components\Dialogs\MachineDialog.cs" />
+        <Compile Include="Gui\Components\General\ProgressBarComponent.cs" />
+        <Compile Include="Interfaces\IThread.cs" />
         <Compile Include="Recipies\Ingredient.cs" />
         <Compile Include="Recipies\Recipe.cs" />
         <Compile Include="Recipies\RecipesRegistry.cs" />
@@ -130,7 +133,6 @@
         <Compile Include="Factories\SpriteFactory.cs" />
         <Compile Include="GameLoop\GameLoop.cs" />
         <Compile Include="GameLoop\GameTime.cs" />
-        <Compile Include="Game\DebugUtil.cs" />
         <Compile Include="Game\Direction.cs" />
         <Compile Include="Game\Game.cs" />
         <Compile Include="Game\GameData.cs" />
@@ -174,6 +176,9 @@
         <Compile Include="Libraries\FastNoiseLite.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
+        <Compile Include="Threads\ThreadManager.cs" />
+        <Compile Include="Threads\WorldUpdater.cs" />
+        <Compile Include="Utils\DebugUtil.cs" />
     </ItemGroup>
     <ItemGroup>
       <Content Include="..\README.md">

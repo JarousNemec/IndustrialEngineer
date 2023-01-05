@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using IndustrialEngineer.Enums;
+using IndustrialEnginner.GameEntities;
 using SFML.Graphics;
 
 namespace IndustrialEnginner.CraftingRecipies
@@ -12,6 +15,7 @@ namespace IndustrialEnginner.CraftingRecipies
         public int DropCount { get; set; }
         public RecipeType RecipeType { get; set; }
         public Ingredient[] Ingredients { get; set; }
+        public List<Ingredient> IngredientsList { get; set; }
 
         public Recipe(string name, Sprite sprite, int id, int dropId, int dropCount, RecipeType recipeType, Ingredient[] ingredients)
         {
@@ -22,6 +26,7 @@ namespace IndustrialEnginner.CraftingRecipies
             DropCount = dropCount;
             RecipeType = recipeType;
             Ingredients = ingredients;
+            IngredientsList = Ingredients.ToList();
         }
     }
 }

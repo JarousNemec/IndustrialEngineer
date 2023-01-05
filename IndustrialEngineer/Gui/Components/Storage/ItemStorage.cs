@@ -1,5 +1,3 @@
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
 using IndustrialEngineer.Enums;
 using IndustrialEnginner.DataModels;
 using IndustrialEnginner.Items;
@@ -29,15 +27,16 @@ namespace IndustrialEnginner.Gui
                 }
             }
         }
-        
-        public ItemStorage(Sprite sprite,Sprite itemSlotSprite, int rows, int columns) : base(sprite, ComponentType.Storage, rows, columns)
+
+        public ItemStorage(Sprite sprite, Sprite itemSlotSprite, int rows, int columns) : base(sprite,
+            ComponentType.Storage, rows, columns)
         {
             _itemSlotSize = itemSlotSprite.Texture.Size;
         }
 
         public ItemStorage Copy()
         {
-            var newStorage = new ItemStorage(Sprite,Storage[0,0].Sprite, Storage.GetLength(1),
+            var newStorage = new ItemStorage(Sprite, Storage[0, 0].Sprite, Storage.GetLength(1),
                 Storage.GetLength(0))
             {
                 ClickGrid = ClickGrid
@@ -76,6 +75,7 @@ namespace IndustrialEnginner.Gui
 
         public StorageItem AddItem(StorageItem storageItem)
         {
+            if (storageItem.Item == null) return new StorageItem();
             repeat:
             ItemSlot slotEnableToAddItem = FindEmptyOrWithSameItem(Storage, storageItem.Item);
             if (slotEnableToAddItem == null)

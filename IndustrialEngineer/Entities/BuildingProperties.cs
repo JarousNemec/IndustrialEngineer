@@ -18,7 +18,8 @@ namespace IndustrialEnginner.GameEntities
         public int MaximalBufferedEnergyValue { get; set; }
 
         public BuildingProperties(Sprite sprite, Sprite[] states, string name, int id,
-            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog, int maximalBufferedEnergyValue) : base(sprite, states)
+            BlockType canBePlacedOnType, int dropItemId, bool canStepOn, MachineDialog dialog,
+            int maximalBufferedEnergyValue) : base(sprite, states)
         {
             Name = name;
             Id = id;
@@ -29,7 +30,7 @@ namespace IndustrialEnginner.GameEntities
             MaximalBufferedEnergyValue = maximalBufferedEnergyValue;
         }
 
-        public BuildingProperties Copy()
+        public new BuildingProperties Copy()
         {
             return new BuildingProperties(Sprite, States, Name, Id, CanBePlacedOnType,DropItemId,CanStepOn, Dialog?.Copy(), MaximalBufferedEnergyValue);
         }

@@ -11,6 +11,6 @@ namespace IndustrialEnginner
 
         public Vector2i MiningCoords { get; set; }
 
-        public float speed { get; set; } = 2f;
+        public float Speed { get; set; } = 2f;
     }
 }

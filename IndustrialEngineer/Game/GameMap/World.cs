@@ -18,6 +18,8 @@ namespace IndustrialEnginner
         public int RenderArea { get; set; }
         public int ChunksAroundMiddleChunks { get; set; }
 
+        public WorldManager Manager { get; set; }
+
         public World(int chunkSize, int chunksInLineCount, int tileSize, int renderChunks)
         {
             ChunkSize = chunkSize;

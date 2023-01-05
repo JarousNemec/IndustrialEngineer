@@ -14,7 +14,7 @@ namespace IndustrialEnginner
         private World _world;
         private List<Building> _renderedEntities;
         private Vector2i _renderedAreaCorrections;
-        private WorldUpdater _updater;
+        public WorldUpdater Updater;
 
         public WorldManager(World world)
         {
@@ -28,14 +28,13 @@ namespace IndustrialEnginner
             InitializeWorld();
             InitializeRenderedTiles();
             InitializeAndRunUpdater();
+            _world.Manager = this;
         }
 
         private void InitializeAndRunUpdater()
         {
-            _updater = new WorldUpdater(_world);
-            _updater.RenderedEntities = _renderedEntities;
-            Thread updater = new Thread(_updater.Run);
-            updater.Start();
+            Updater = new WorldUpdater(_world);
+            Updater.RenderedEntities = _renderedEntities;
         }
 
 

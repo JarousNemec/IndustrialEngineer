@@ -85,7 +85,7 @@ namespace IndustrialEnginner
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(GameTime gameTime);
 
-        private void WindowClosed(object sender, EventArgs e)
+        public virtual void WindowClosed(object sender, EventArgs e)
         {
             Window.Close();
         }
