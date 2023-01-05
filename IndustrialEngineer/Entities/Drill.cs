@@ -82,7 +82,7 @@ namespace IndustrialEnginner.GameEntities
                     selectedBlock.Properties.OriginalDropCount;
                 if (selectedBlock.Properties.Richness <= 0)
                 {
-                    var entity = selectedBlock.Properties.PlacedEntity;
+                    var entity = selectedBlock.Properties.PlacedBuilding;
                     world.Map[(int)Properties.X, (int)Properties.Y] = GameData.BlockRegistry.Registry.Find(x =>
                         x.Properties.Id ==
                         selectedBlock.Properties.FoundationId);

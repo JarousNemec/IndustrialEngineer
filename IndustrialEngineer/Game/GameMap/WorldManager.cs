@@ -81,9 +81,9 @@ namespace IndustrialEnginner
             {
                 for (int x = 0; x < _world.RenderedMapPart.GetLength(1); x++)
                 {
-                    if (_world.RenderedMapPart[y, x].Properties.PlacedEntity != null)
+                    if (_world.RenderedMapPart[y, x].Properties.PlacedBuilding != null)
                     {
-                        _renderedEntities.Add(_world.RenderedMapPart[y, x].Properties.PlacedEntity);
+                        _renderedEntities.Add(_world.RenderedMapPart[y, x].Properties.PlacedBuilding);
                     }
                 }
             }

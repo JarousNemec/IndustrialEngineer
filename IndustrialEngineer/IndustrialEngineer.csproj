@@ -98,8 +98,11 @@
         <Compile Include="Blocks\Tree.cs" />
         <Compile Include="Blocks\Water.cs" />
         <Compile Include="Components\Area.cs" />
+        <Compile Include="DataModels\Crafting.cs" />
+        <Compile Include="DataModels\Mining.cs" />
+        <Compile Include="DataModels\Moving.cs" />
         <Compile Include="Entities\GraphicsEntitiesRegistry.cs" />
-        <Compile Include="Game\Crafting.cs" />
+        <Compile Include="Enums\Direction.cs" />
         <Compile Include="Gui\Components\Dialogs\DialogsRegistry.cs" />
         <Compile Include="Gui\Components\General\ClickableComponent.cs" />
         <Compile Include="Gui\Components\Dialogs\MachineDialog.cs" />
@@ -133,7 +136,6 @@
         <Compile Include="Factories\SpriteFactory.cs" />
         <Compile Include="GameLoop\GameLoop.cs" />
         <Compile Include="GameLoop\GameTime.cs" />
-        <Compile Include="Game\Direction.cs" />
         <Compile Include="Game\Game.cs" />
         <Compile Include="Game\GameData.cs" />
         <Compile Include="Game\GameMap\World.cs" />
@@ -141,8 +143,6 @@
         <Compile Include="Game\GameMap\MapLoader.cs" />
         <Compile Include="Game\GameMap\WorldManager.cs" />
         <Compile Include="Game\GameMap\Tilemap.cs" />
-        <Compile Include="Game\Mining.cs" />
-        <Compile Include="Game\Moving.cs" />
         <Compile Include="Gui\Components\Crafting\CraftingButton.cs" />
         <Compile Include="Gui\Components\General\ClickGrid.cs" />
         <Compile Include="Gui\Components\General\GuiComponent.cs" />
@@ -184,6 +184,12 @@
       <Content Include="..\README.md">
         <Link>README.md</Link>
       </Content>
+      <Content Include=".Documentation\drill.png" />
+      <Content Include=".Documentation\furnace.png" />
+      <Content Include=".Documentation\inventoryHotbarCrafting.png" />
+      <Content Include=".Documentation\mining.png" />
+      <Content Include=".Documentation\pagelogo.png" />
+      <Content Include=".Documentation\proceduralGeneratedWorld.png" />
       <Content Include="csfml-audio-2.dll">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

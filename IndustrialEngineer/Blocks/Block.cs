@@ -28,7 +28,7 @@ namespace IndustrialEngineer.Blocks
             if (Properties.HarvestTime == 0)
                 Properties.HarvestTime = 2;
             Properties.CanStepOn = entity.Properties.CanStepOn;
-            Properties.PlacedEntity = entity;
+            Properties.PlacedBuilding = entity;
         }
 
         public void RemoveEntity()

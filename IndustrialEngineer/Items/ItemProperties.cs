@@ -10,25 +10,25 @@ namespace IndustrialEnginner.Items
         public Sprite Sprite { get; private set; }
         
         public bool Placeable { get; set; }
-        public int PlacedEntityId { get; set; }
+        public int PlacedBuildingId { get; set; }
         public bool Flammable { get; set; }
         public int CalorificValue { get; set; }
         
-        public ItemProperties(int id, string name, Sprite sprite, int maxStackCount,bool flammable, int calorificValue, bool placeable = false, int placedEntityId = 0)
+        public ItemProperties(int id, string name, Sprite sprite, int maxStackCount,bool flammable, int calorificValue, bool placeable = false, int placedBuildingId = 0)
         {
             Id = id;
             Name = name;
             Sprite = sprite;
             MaxStackCount = maxStackCount;
             Placeable = placeable;
-            PlacedEntityId = placedEntityId;
+            PlacedBuildingId = placedBuildingId;
             Flammable = flammable;
             CalorificValue = calorificValue;
         }
 
         public ItemProperties Copy()
         {
-            return new ItemProperties(Id, Name, Sprite, MaxStackCount,Flammable, CalorificValue, Placeable, PlacedEntityId);
+            return new ItemProperties(Id, Name, Sprite, MaxStackCount,Flammable, CalorificValue, Placeable, PlacedBuildingId);
         }
     }
 }

@@ -279,11 +279,11 @@ namespace IndustrialEnginner
             if (pos.X < 0 || pos.Y < 0 || pos.X > _world.MapSize || pos.Y > _world.MapSize)
                 return;
             var selectedBlock = _world.Map[pos.X, pos.Y];
-            if (selectedBlock.Properties.PlacedEntity != null)
+            if (selectedBlock.Properties.PlacedBuilding != null)
             {
-                if (selectedBlock.Properties.PlacedEntity.Properties.Dialog != null)
+                if (selectedBlock.Properties.PlacedBuilding.Properties.Dialog != null)
                 {
-                    _guiController.OpenMachineDialog(selectedBlock.Properties.PlacedEntity.Properties.Dialog);
+                    _guiController.OpenMachineDialog(selectedBlock.Properties.PlacedBuilding.Properties.Dialog);
                 }
 
                 return;
@@ -298,11 +298,11 @@ namespace IndustrialEnginner
             if (entitySlot.StorageItem.Item == null)
                 return;
             var placingEntityType = GameData.BuildingsRegistry.Registry.Find(x =>
-                x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedEntityId);
+                x.Properties.Id == entitySlot.StorageItem.Item.Properties.PlacedBuildingId);
             var placingEntity = BuildingsFactory.MakeNewInstanceOfBuilding(placingEntityType.GetType());
             if (selectedBlock.Properties.CanPlaceOn &&
                 placingEntity.Properties.CanBePlacedOnType == selectedBlock.Properties.BlockType &&
-                selectedBlock.Properties.PlacedEntity == null)
+                selectedBlock.Properties.PlacedBuilding == null)
             {
                 selectedBlock.PlaceEntity(placingEntity);
                 placingEntity.SetPosition(pos);
@@ -329,7 +329,7 @@ namespace IndustrialEnginner
 
             _mining.IsMining = false;
 
-            if (selectedBlock.Properties.PlacedEntity == null)
+            if (selectedBlock.Properties.PlacedBuilding == null)
             {
                 StorageItem itemToAdd = new StorageItem()
                 {
@@ -366,7 +366,7 @@ namespace IndustrialEnginner
                 {
                     Item =
                         GameData.ItemRegistry.Registry.Find(x =>
-                            x.Properties.Id == selectedBlock.Properties.PlacedEntity.Properties.DropItemId),
+                            x.Properties.Id == selectedBlock.Properties.PlacedBuilding.Properties.DropItemId),
                     Count = 1
                 };
                 StorageItem returnedStorageItem = _player.Hotbar.AddItem(itemToAdd);
@@ -403,11 +403,11 @@ namespace IndustrialEnginner
             _guiController = new GuiController(View, Window, _zoom, _cursor);
             _player.Inventory = _guiController.Gui.Inventory;
             _player.Hotbar = _guiController.Gui.Hotbar;
-            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
-            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
-            _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
-            _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.Log.Copy() });
-            _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.RawIron.Copy() });
+            // _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Drill.Copy() });
+            // _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.Furnace.Copy() });
+            // _player.Hotbar.AddItem(new StorageItem() { Count = 3, Item = GameData.ItemRegistry.WoodenPlatform.Copy() });
+            // _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.Log.Copy() });
+            // _player.Hotbar.AddItem(new StorageItem() { Count = 10, Item = GameData.ItemRegistry.RawIron.Copy() });
             BuildingsFactory.SetDialogsToMachines();
         }
 
