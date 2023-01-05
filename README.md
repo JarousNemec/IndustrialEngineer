@@ -113,6 +113,8 @@ Odkaz na knihovnu je zde ___https://www.sfml-dev.org/___.
 ### Programovací jazyk a verze
 - Jako programovací jazyk byl zvolen ***C# .NetFramework v4.8*** kvůli kompatibilitě s knihovnou SFML.
 
+### Autor: Jaroslav Němec T2 SSAKHK 2022/2023
+
 
 
 
