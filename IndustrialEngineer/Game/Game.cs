@@ -25,8 +25,8 @@ namespace IndustrialEnginner
     {
         // public const uint DEFAULT_WIN_WIDTH = 1200;
         // public const uint DEFAULT_WIN_HEIGHT = 900;
-        public const uint DEFAULT_WIN_WIDTH = 1900;
-        public const uint DEFAULT_WIN_HEIGHT = 1000;
+        public const uint DEFAULT_WIN_WIDTH = 1500;
+        public const uint DEFAULT_WIN_HEIGHT = 800;
         public uint view_width = DEFAULT_WIN_WIDTH;
         public uint view_height = DEFAULT_WIN_HEIGHT;
 
